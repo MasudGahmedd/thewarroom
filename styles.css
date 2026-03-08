@@ -1,0 +1,44 @@
+/* The WarRoom - Optional External Stylesheet */
+/* Note: The main index.html already includes all necessary styles via Tailwind CDN and inline styles */
+
+body {
+    background-color: #0f0f10;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.war-red {
+    color: #ef4444;
+}
+
+.story-card {
+    background-color: #1a1a1b;
+    border: 1px solid #2a2a2b;
+    transition: border-color 0.2s;
+}
+
+.story-card:hover {
+    border-color: #3a3a3b;
+}
+
+.vote-btn {
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.vote-btn:hover {
+    transform: scale(1.1);
+}
+
+.vote-btn.upvoted {
+    color: #10b981;
+}
+
+.vote-btn.downvoted {
+    color: #ef4444;
+}
+
+.verification-badge {
+    display: inline-block;
+    color: #3b82f6;
+    font-size: 1rem;
+}

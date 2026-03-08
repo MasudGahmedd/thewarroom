@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The WarRoom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f0f10;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .war-red {
+            color: #ef4444;
+        }
+        .story-card {
+            background-color: #1a1a1b;
+            border: 1px solid #2a2a2b;
+            transition: border-color 0.2s;
+        }
+        .story-card:hover {
+            border-color: #3a3a3b;
+        }
+        .vote-btn {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .vote-btn:hover {
+            transform: scale(1.1);
+        }
+        .vote-btn.upvoted {
+            color: #10b981;
+        }
+        .vote-btn.downvoted {
+            color: #ef4444;
+        }
+        .verification-badge {
+            display: inline-block;
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body class="text-gray-100">
+    
+    <!-- Header -->
+    <header class="sticky top-0 bg-[#0f0f10] border-b border-gray-800 z-10">
+        <div class="max-w-[700px] mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 class="text-2xl font-bold">
+                The <span class="war-red">WarRoom</span>
+            </h1>
+            <div class="flex gap-3">
+                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Leaderboard</button>
+                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Submit Report</button>
+                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-[700px] mx-auto px-4 py-6">
+        
+        <!-- Top Report Section -->
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 text-gray-300">Top War Report Today</h2>
+            <div id="topReport" class="story-card rounded-lg p-5">
+                <!-- Top report will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Feed Title -->
+        <h2 class="text-lg font-semibold mb-4 text-gray-300">Live Feed</h2>
+
+        <!-- Story Feed -->
+        <div id="storyFeed" class="space-y-4">
+            <!-- Stories will be inserted here -->
+        </div>
+
+    </main>
+
+    <script>
+        // Mock data
+        let reports = [
+            {
+                id: 1,
+                journalist: "Sarah Khan",
+                verified: true,
+                location: "Kharkiv, Ukraine",
+                text: "Russian artillery struck the northern district earlier today. Multiple explosions heard across the city. Residents taking shelter.",
+                upvotes: 142,
+                downvotes: 12,
+                timestamp: "2 hours ago",
+                userVote: null // null, 'up', or 'down'
+            },
+            {
+                id: 2,
+                journalist: "Ahmed Hassan",
+                verified: true,
+                location: "Gaza City",
+                text: "Heavy bombardment reported in eastern neighborhoods. Medical facilities struggling to cope with casualties. Water and power remain cut.",
+                upvotes: 98,
+                downvotes: 8,
+                timestamp: "3 hours ago",
+                userVote: null
+            },
+            {
+                id: 3,
+                journalist: "Maria Gonzalez",
+                verified: true,
+                location: "Kyiv, Ukraine",
+                text: "Air raid sirens across the capital. Explosions heard in the outskirts. All residents advised to seek shelter immediately.",
+                upvotes: 215,
+                downvotes: 15,
+                timestamp: "1 hour ago",
+                userVote: null
+            },
+            {
+                id: 4,
+                journalist: "James Mitchell",
+                verified: true,
+                location: "Donetsk Region",
+                text: "Confirmed reports of drone strikes on infrastructure. Power grid damaged. Emergency services responding to multiple incidents.",
+                upvotes: 67,
+                downvotes: 5,
+                timestamp: "4 hours ago",
+                userVote: null
+            },
+            {
+                id: 5,
+                journalist: "Fatima Al-Sayed",
+                verified: true,
+                location: "Aleppo, Syria",
+                text: "Humanitarian convoy reached displaced families today. Distribution of food and medical supplies ongoing despite security concerns.",
+                upvotes: 189,
+                downvotes: 3,
+                timestamp: "5 hours ago",
+                userVote: null
+            },
+            {
+                id: 6,
+                journalist: "Viktor Petrov",
+                verified: true,
+                location: "Bakhmut Front",
+                text: "Intense fighting continues on the eastern front. Artillery exchanges throughout the night. Situation remains extremely volatile.",
+                upvotes: 134,
+                downvotes: 18,
+                timestamp: "6 hours ago",
+                userVote: null
+            }
+        ];
+
+        function getVoteScore(report) {
+            return report.upvotes - report.downvotes;
+        }
+
+        function handleVote(reportId, voteType) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            // Remove previous vote if exists
+            if (report.userVote === 'up') {
+                report.upvotes--;
+            } else if (report.userVote === 'down') {
+                report.downvotes--;
+            }
+
+            // Apply new vote or remove if clicking same button
+            if (report.userVote === voteType) {
+                report.userVote = null;
+            } else {
+                report.userVote = voteType;
+                if (voteType === 'up') {
+                    report.upvotes++;
+                } else {
+                    report.downvotes++;
+                }
+            }
+
+            renderFeed();
+            renderTopReport();
+        }
+
+        function createStoryCard(report) {
+            const score = getVoteScore(report);
+            
+            return `
+                <div class="story-card rounded-lg p-5">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-semibold text-gray-100">${report.journalist}</span>
+                                ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <span>${report.location}</span>
+                                <span class="mx-2">•</span>
+                                <span>${report.timestamp}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-200 mb-4 leading-relaxed">${report.text}</p>
+                    
+                    <div class="flex items-center gap-4">
+                        <button onclick="handleVote(${report.id}, 'up')" 
+                                class="vote-btn flex items-center gap-1 ${report.userVote === 'up' ? 'upvoted' : 'text-gray-400'}">
+                            <span class="text-xl">▲</span>
+                            <span class="font-semibold">${report.upvotes}</span>
+                        </button>
+                        <button onclick="handleVote(${report.id}, 'down')" 
+                                class="vote-btn flex items-center gap-1 ${report.userVote === 'down' ? 'downvoted' : 'text-gray-400'}">
+                            <span class="text-xl">▼</span>
+                            <span class="font-semibold">${report.downvotes}</span>
+                        </button>
+                        <span class="text-gray-500 text-sm ml-2">
+                            Score: <span class="font-semibold ${score > 0 ? 'text-green-500' : score < 0 ? 'text-red-500' : 'text-gray-400'}">${score > 0 ? '+' : ''}${score}</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFeed() {
+            const feedElement = document.getElementById('storyFeed');
+            // Sort by timestamp (newest first, based on index for now)
+            feedElement.innerHTML = reports.map(report => createStoryCard(report)).join('');
+        }
+
+        function renderTopReport() {
+            const topReportElement = document.getElementById('topReport');
+            // Find report with highest score
+            const topReport = reports.reduce((top, current) => 
+                getVoteScore(current) > getVoteScore(top) ? current : top
+            );
+            
+            topReportElement.innerHTML = createStoryCard(topReport).replace('story-card', 'story-card border-2 border-yellow-600');
+        }
+
+        // Initial render
+        renderFeed();
+        renderTopReport();
+
+        // Make handleVote available globally
+        window.handleVote = handleVote;
+    </script>
+
+</body>
+</html>
