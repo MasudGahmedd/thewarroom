@@ -2,246 +2,769 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>The WarRoom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #0f0f10;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        
+        * {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            box-sizing: border-box;
         }
-        .war-red {
-            color: #ef4444;
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #000000;
+            --text-secondary: #536471;
+            --border: #eff3f4;
+            --hover: #f7f9f9;
+            --accent: #000000;
         }
-        .story-card {
-            background-color: #1a1a1b;
-            border: 1px solid #2a2a2b;
-            transition: border-color 0.2s;
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-card: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: #71767b;
+            --border: #2f3336;
+            --hover: #16181a;
+            --accent: #ffffff;
         }
-        .story-card:hover {
-            border-color: #3a3a3b;
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
         }
-        .vote-btn {
-            transition: all 0.2s;
+
+        /* Header */
+        .war-room-header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-primary);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Buttons */
+        .nav-button {
+            padding: 7px 14px;
+            border-radius: 9999px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
-        .vote-btn:hover {
-            transform: scale(1.1);
+
+        .nav-button:active {
+            transform: scale(0.95);
         }
-        .vote-btn.upvoted {
-            color: #10b981;
+
+        .nav-button.secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
         }
-        .vote-btn.downvoted {
-            color: #ef4444;
+
+        .theme-toggle {
+            min-width: 36px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 16px;
+            flex-shrink: 0;
         }
+
+        .theme-toggle:active {
+            transform: scale(0.9);
+        }
+
+        /* Cards */
+        .report-card {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.15s;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .report-card:active {
+            background-color: var(--hover);
+        }
+
+        .report-card.top-report {
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            margin: 0 16px 16px 16px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .card-content {
+            padding: 14px 16px;
+        }
+
+        .top-report .card-content {
+            padding: 18px;
+        }
+
+        .top-badge {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 10px;
+            letter-spacing: 1.2px;
+            border-radius: 0 10px 0 8px;
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .avatar.large {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            font-size: 20px;
+        }
+
+        /* Typography */
+        .journalist-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .report-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .report-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-top: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 12px;
+            padding: 0 16px;
+        }
+
+        /* Vote buttons */
+        .vote-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .vote-button:active {
+            transform: scale(0.92);
+        }
+
+        .vote-button svg {
+            flex-shrink: 0;
+        }
+
+        .stats-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
         .verification-badge {
-            display: inline-block;
-            color: #3b82f6;
-            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 17px;
+            height: 17px;
+            min-width: 17px;
+            background: #1d9bf0;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+            animation: fadeIn 0.2s;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overscroll-behavior: contain;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .close-button {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .close-button:active {
+            transform: scale(0.9);
+            background-color: var(--hover);
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--border);
+            margin: 16px 0;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* Safe area for iOS */
+        @supports (padding: max(0px)) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .modal-content {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 640px) {
+            .logo {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 19px;
+            }
+
+            .modal-overlay {
+                align-items: center;
+                padding: 20px;
+            }
+
+            .modal-content {
+                max-width: 600px;
+                border-radius: 16px;
+                max-height: 85vh;
+            }
+
+            .report-card:hover {
+                background-color: var(--hover);
+            }
+
+            .vote-button:hover {
+                background-color: var(--hover);
+                border-color: var(--accent);
+            }
+
+            .theme-toggle:hover {
+                background-color: var(--hover);
+            }
+
+            .nav-button:hover {
+                opacity: 0.85;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Pull to refresh prevention */
+        body {
+            overscroll-behavior-y: contain;
         }
     </style>
 </head>
-<body class="text-gray-100">
+<body>
     
     <!-- Header -->
-    <header class="sticky top-0 bg-[#0f0f10] border-b border-gray-800 z-10">
-        <div class="max-w-[700px] mx-auto px-4 py-4 flex items-center justify-between">
-            <h1 class="text-2xl font-bold">
-                The <span class="war-red">WarRoom</span>
-            </h1>
-            <div class="flex gap-3">
-                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Leaderboard</button>
-                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Submit Report</button>
-                <button class="text-sm text-gray-400 hover:text-gray-200 transition">Login</button>
+    <header class="war-room-header">
+        <div class="header-content">
+            <h1 class="logo">The WarRoom</h1>
+            <div class="header-actions">
+                <button class="nav-button secondary" onclick="showSubmitForm()" style="display: none;" id="submitBtn">Submit</button>
+                <button class="nav-button" onclick="showSubmitForm()">+</button>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span id="themeIcon">◐</span>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-[700px] mx-auto px-4 py-6">
+    <main style="max-width: 600px; margin: 0 auto;">
         
         <!-- Top Report Section -->
-        <div class="mb-6">
-            <h2 class="text-lg font-semibold mb-3 text-gray-300">Top War Report Today</h2>
-            <div id="topReport" class="story-card rounded-lg p-5">
-                <!-- Top report will be inserted here -->
-            </div>
+        <div style="padding: 20px 0 0 0;">
+            <h2 class="section-title">Top Report</h2>
+            <div id="topReport"></div>
         </div>
 
-        <!-- Feed Title -->
-        <h2 class="text-lg font-semibold mb-4 text-gray-300">Live Feed</h2>
+        <div class="divider" style="margin: 20px 16px;"></div>
 
-        <!-- Story Feed -->
-        <div id="storyFeed" class="space-y-4">
-            <!-- Stories will be inserted here -->
+        <!-- Feed Section -->
+        <div style="padding-bottom: 24px;">
+            <h2 class="section-title">Live Feed</h2>
+            <div id="storyFeed"></div>
         </div>
 
     </main>
 
+    <!-- Modal -->
+    <div id="reportModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 style="font-size: 16px; font-weight: 700; margin: 0;">Report Details</h3>
+                <button class="close-button" onclick="closeModal()" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="modalContent" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Mock data
-        let reports = [
-            {
-                id: 1,
-                journalist: "Sarah Khan",
-                verified: true,
-                location: "Kharkiv, Ukraine",
-                text: "Russian artillery struck the northern district earlier today. Multiple explosions heard across the city. Residents taking shelter.",
-                upvotes: 142,
-                downvotes: 12,
-                timestamp: "2 hours ago",
-                userVote: null // null, 'up', or 'down'
-            },
-            {
-                id: 2,
-                journalist: "Ahmed Hassan",
-                verified: true,
-                location: "Gaza City",
-                text: "Heavy bombardment reported in eastern neighborhoods. Medical facilities struggling to cope with casualties. Water and power remain cut.",
-                upvotes: 98,
-                downvotes: 8,
-                timestamp: "3 hours ago",
-                userVote: null
-            },
-            {
-                id: 3,
-                journalist: "Maria Gonzalez",
-                verified: true,
-                location: "Kyiv, Ukraine",
-                text: "Air raid sirens across the capital. Explosions heard in the outskirts. All residents advised to seek shelter immediately.",
-                upvotes: 215,
-                downvotes: 15,
-                timestamp: "1 hour ago",
-                userVote: null
-            },
-            {
-                id: 4,
-                journalist: "James Mitchell",
-                verified: true,
-                location: "Donetsk Region",
-                text: "Confirmed reports of drone strikes on infrastructure. Power grid damaged. Emergency services responding to multiple incidents.",
-                upvotes: 67,
-                downvotes: 5,
-                timestamp: "4 hours ago",
-                userVote: null
-            },
-            {
-                id: 5,
-                journalist: "Fatima Al-Sayed",
-                verified: true,
-                location: "Aleppo, Syria",
-                text: "Humanitarian convoy reached displaced families today. Distribution of food and medical supplies ongoing despite security concerns.",
-                upvotes: 189,
-                downvotes: 3,
-                timestamp: "5 hours ago",
-                userVote: null
-            },
-            {
-                id: 6,
-                journalist: "Viktor Petrov",
-                verified: true,
-                location: "Bakhmut Front",
-                text: "Intense fighting continues on the eastern front. Artillery exchanges throughout the night. Situation remains extremely volatile.",
-                upvotes: 134,
-                downvotes: 18,
-                timestamp: "6 hours ago",
-                userVote: null
-            }
-        ];
 
-        function getVoteScore(report) {
-            return report.upvotes - report.downvotes;
+    const SUPABASE_URL = "https://gmqnjseeefjkdzhkxwla.supabase.co"
+    const SUPABASE_KEY = "sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    let reports = []
+    let currentTheme = localStorage.getItem('theme') || 'dark'
+
+    // Initialize
+    function init() {
+        initTheme()
+        loadReports()
+        
+        // Show submit button text on wider screens
+        if (window.innerWidth >= 480) {
+            document.getElementById('submitBtn').style.display = 'inline-block'
+        }
+    }
+
+    function initTheme() {
+        document.documentElement.setAttribute('data-theme', currentTheme)
+        updateThemeIcon()
+        updateMetaThemeColor()
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', currentTheme)
+        localStorage.setItem('theme', currentTheme)
+        updateThemeIcon()
+        updateMetaThemeColor()
+    }
+
+    function updateThemeIcon() {
+        document.getElementById('themeIcon').textContent = currentTheme === 'light' ? '◑' : '◐'
+    }
+
+    function updateMetaThemeColor() {
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+        metaThemeColor.setAttribute('content', currentTheme === 'light' ? '#ffffff' : '#000000')
+    }
+
+    function getVoteScore(report) {
+        return report.upvotes - report.downvotes
+    }
+
+    async function loadReports() {
+        const { data, error } = await supabaseClient
+            .from("reports")
+            .select("*")
+            .order("created_at", {ascending: false})
+
+        if (error) {
+            console.log(error)
+            return
         }
 
-        function handleVote(reportId, voteType) {
-            const report = reports.find(r => r.id === reportId);
-            if (!report) return;
+        reports = data
+        renderFeed()
+        renderTopReport()
+    }
 
-            // Remove previous vote if exists
-            if (report.userVote === 'up') {
-                report.upvotes--;
-            } else if (report.userVote === 'down') {
-                report.downvotes--;
-            }
+    async function handleVote(reportId, voteType, event) {
+        event.stopPropagation()
 
-            // Apply new vote or remove if clicking same button
-            if (report.userVote === voteType) {
-                report.userVote = null;
-            } else {
-                report.userVote = voteType;
-                if (voteType === 'up') {
-                    report.upvotes++;
-                } else {
-                    report.downvotes++;
-                }
-            }
+        const report = reports.find(r => r.id === reportId)
+        if (!report) return
 
-            renderFeed();
-            renderTopReport();
+        let upvotes = report.upvotes
+        let downvotes = report.downvotes
+
+        if (voteType === "up") {
+            upvotes++
+        } else {
+            downvotes++
         }
 
-        function createStoryCard(report) {
-            const score = getVoteScore(report);
+        const { error } = await supabaseClient
+            .from("reports")
+            .update({
+                upvotes: upvotes,
+                downvotes: downvotes
+            })
+            .eq("id", reportId)
+
+        if (error) {
+            console.log(error)
+            return
+        }
+
+        await loadReports()
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString)
+        const now = new Date()
+        const diffMs = now - date
+        const diffMins = Math.floor(diffMs / 60000)
+        const diffHours = Math.floor(diffMs / 3600000)
+        const diffDays = Math.floor(diffMs / 86400000)
+
+        if (diffMins < 1) return 'now'
+        if (diffMins < 60) return `${diffMins}m`
+        if (diffHours < 24) return `${diffHours}h`
+        if (diffDays < 7) return `${diffDays}d`
+        
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    }
+
+    function createStoryCard(report, isTop = false) {
+        const score = getVoteScore(report)
+        
+        return `
+        <div class="report-card ${isTop ? 'top-report' : ''}" onclick="openModal('${report.id}')" style="position: relative;">
+            ${isTop ? '<div class="top-badge">TOP</div>' : ''}
             
-            return `
-                <div class="story-card rounded-lg p-5">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-semibold text-gray-100">${report.journalist}</span>
-                                ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
-                            </div>
-                            <div class="text-sm text-gray-400">
-                                <span>${report.location}</span>
-                                <span class="mx-2">•</span>
-                                <span>${report.timestamp}</span>
-                            </div>
+            <div class="card-content">
+                <div style="display: flex; gap: 12px;">
+                    <div class="avatar ${isTop ? 'large' : ''}">
+                        ${report.journalist.charAt(0).toUpperCase()}
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px;">
+                            <span class="journalist-name">${report.journalist}</span>
+                            ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
+                            <span class="report-meta">· ${formatDate(report.created_at)}</span>
+                        </div>
+                        
+                        <div class="report-meta" style="margin-bottom: 2px;">
+                            ${report.location}
+                        </div>
+                        
+                        <div class="report-text">
+                            ${report.text}
+                        </div>
+                        
+                        <div class="stats-row">
+                            <button class="vote-button" onclick="handleVote('${report.id}', 'up', event)" aria-label="Upvote">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M12 19V5M5 12l7-7 7 7"/>
+                                </svg>
+                                <span>${report.upvotes}</span>
+                            </button>
+                            
+                            <button class="vote-button" onclick="handleVote('${report.id}', 'down', event)" aria-label="Downvote">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M12 5v14M19 12l-7 7-7-7"/>
+                                </svg>
+                                <span>${report.downvotes}</span>
+                            </button>
+                            
+                            <span class="report-meta">
+                                Score: <span style="font-weight: 600; color: var(--text-primary);">${score}</span>
+                            </span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        `
+    }
+
+    function renderFeed() {
+        const feed = document.getElementById("storyFeed")
+        feed.innerHTML = reports
+            .map(report => createStoryCard(report, false))
+            .join("")
+    }
+
+    function renderTopReport() {
+        const topElement = document.getElementById("topReport")
+
+        if (reports.length === 0) {
+            topElement.innerHTML = '<div style="padding: 32px 16px; text-align: center;"><span class="report-meta">No reports yet</span></div>'
+            return
+        }
+
+        const topReport = reports.reduce((top, current) =>
+            getVoteScore(current) > getVoteScore(top) ? current : top
+        )
+
+        topElement.innerHTML = createStoryCard(topReport, true)
+    }
+
+    function openModal(reportId) {
+        const report = reports.find(r => r.id === reportId)
+        if (!report) return
+
+        const score = getVoteScore(report)
+        const modal = document.getElementById('reportModal')
+        const modalContent = document.getElementById('modalContent')
+
+        modalContent.innerHTML = `
+            <div style="display: flex; gap: 14px; margin-bottom: 20px;">
+                <div class="avatar large">
+                    ${report.journalist.charAt(0).toUpperCase()}
+                </div>
+                
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;">
+                        <span class="journalist-name" style="font-size: 16px;">${report.journalist}</span>
+                        ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
+                    </div>
                     
-                    <p class="text-gray-200 mb-4 leading-relaxed">${report.text}</p>
-                    
-                    <div class="flex items-center gap-4">
-                        <button onclick="handleVote(${report.id}, 'up')" 
-                                class="vote-btn flex items-center gap-1 ${report.userVote === 'up' ? 'upvoted' : 'text-gray-400'}">
-                            <span class="text-xl">▲</span>
-                            <span class="font-semibold">${report.upvotes}</span>
-                        </button>
-                        <button onclick="handleVote(${report.id}, 'down')" 
-                                class="vote-btn flex items-center gap-1 ${report.userVote === 'down' ? 'downvoted' : 'text-gray-400'}">
-                            <span class="text-xl">▼</span>
-                            <span class="font-semibold">${report.downvotes}</span>
-                        </button>
-                        <span class="text-gray-500 text-sm ml-2">
-                            Score: <span class="font-semibold ${score > 0 ? 'text-green-500' : score < 0 ? 'text-red-500' : 'text-gray-400'}">${score > 0 ? '+' : ''}${score}</span>
-                        </span>
+                    <div class="report-meta">
+                        ${report.location}
+                    </div>
+                    <div class="report-meta">
+                        ${new Date(report.created_at).toLocaleString()}
                     </div>
                 </div>
-            `;
-        }
-
-        function renderFeed() {
-            const feedElement = document.getElementById('storyFeed');
-            // Sort by timestamp (newest first, based on index for now)
-            feedElement.innerHTML = reports.map(report => createStoryCard(report)).join('');
-        }
-
-        function renderTopReport() {
-            const topReportElement = document.getElementById('topReport');
-            // Find report with highest score
-            const topReport = reports.reduce((top, current) => 
-                getVoteScore(current) > getVoteScore(top) ? current : top
-            );
+            </div>
             
-            topReportElement.innerHTML = createStoryCard(topReport).replace('story-card', 'story-card border-2 border-yellow-600');
+            <div class="report-text" style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                ${report.text}
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="stats-row">
+                <button class="vote-button" onclick="handleVote('${report.id}', 'up', event)" aria-label="Upvote">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                    <span>${report.upvotes}</span>
+                </button>
+                
+                <button class="vote-button" onclick="handleVote('${report.id}', 'down', event)" aria-label="Downvote">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                    <span>${report.downvotes}</span>
+                </button>
+                
+                <span class="report-meta">
+                    Overall Score: <span style="font-weight: 600; color: var(--text-primary); font-size: 15px;">${score}</span>
+                </span>
+            </div>
+        `
+
+        modal.classList.add('active')
+        document.body.style.overflow = 'hidden'
+    }
+
+    function closeModal(event) {
+        if (event && event.target.id !== 'reportModal' && !event.currentTarget.classList.contains('close-button')) return
+        
+        const modal = document.getElementById('reportModal')
+        modal.classList.remove('active')
+        document.body.style.overflow = 'auto'
+    }
+
+    function showSubmitForm() {
+        alert('Submit Report feature coming soon!')
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeModal({ target: { id: 'reportModal' } })
         }
+    })
 
-        // Initial render
-        renderFeed();
-        renderTopReport();
+    // Handle resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 480) {
+            document.getElementById('submitBtn').style.display = 'inline-block'
+        } else {
+            document.getElementById('submitBtn').style.display = 'none'
+        }
+    })
 
-        // Make handleVote available globally
-        window.handleVote = handleVote;
+    // Initialize app
+    init()
+
     </script>
 
 </body>
