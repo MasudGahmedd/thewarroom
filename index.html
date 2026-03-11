@@ -10,1388 +10,1096 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
-        
-        * {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            box-sizing: border-box;
-        }
+        * { font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; box-sizing:border-box; }
 
-        :root {
-            --bg-primary: #ffffff;
-            --bg-card: #ffffff;
-            --text-primary: #000000;
-            --text-secondary: #536471;
-            --border: #eff3f4;
-            --hover: #f7f9f9;
-            --accent: #000000;
-            --dots-color: rgba(0, 0, 0, 0.08);
-        }
+        :root { --bg:#fff; --card:#fff; --txt:#000; --sub:#536471; --brd:#eff3f4; --hov:#f7f9f9; --acc:#000; --dot:rgba(0,0,0,.08); }
+        [data-theme="dark"] { --bg:#000; --card:#000; --txt:#fff; --sub:#71767b; --brd:#2f3336; --hov:#16181a; --acc:#fff; --dot:rgba(255,255,255,.08); }
 
-        [data-theme="dark"] {
-            --bg-primary: #000000;
-            --bg-card: #000000;
-            --text-primary: #ffffff;
-            --text-secondary: #71767b;
-            --border: #2f3336;
-            --hover: #16181a;
-            --accent: #ffffff;
-            --dots-color: rgba(255, 255, 255, 0.08);
-        }
+        html,body { margin:0;padding:0;width:100%;overflow-x:hidden;background:var(--bg);color:var(--txt);transition:background .3s,color .3s; }
 
-        html, body {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            overflow-x: hidden;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
+        /* ── Top loading bar ── */
+        #topBar {
+            position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;
+            background:linear-gradient(90deg,#10b981,#3b82f6);
+            transition:width .4s cubic-bezier(.4,0,.2,1),opacity .3s;
+            opacity:0;pointer-events:none;
+            box-shadow:0 0 10px rgba(16,185,129,.5);
         }
+        #topBar.running { opacity:1; }
 
-        /* ── Animated Background Dots ── */
-        .dots-background {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0; pointer-events: none; overflow: hidden;
-        }
-        .dot {
-            position: absolute; width: 2px; height: 2px;
-            background-color: var(--dots-color);
-            border-radius: 50%; opacity: 0.5;
-            animation: floatDot linear infinite;
-        }
-        @keyframes floatDot {
-            0%   { transform: translate(0, 0); }
-            100% { transform: translate(var(--tx), var(--ty)); }
-        }
+        /* ── Dots ── */
+        .dots-bg { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
+        .dot { position:absolute;width:2px;height:2px;background:var(--dot);border-radius:50%;opacity:.5;animation:floatDot linear infinite; }
+        @keyframes floatDot { 0%{transform:translate(0,0)} 100%{transform:translate(var(--tx),var(--ty))} }
 
         /* ── Header ── */
-        .war-room-header {
-            position: sticky; top: 0;
-            background-color: var(--bg-primary);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-        }
-        .header-content {
-            max-width: 600px; margin: 0 auto;
-            padding: 10px 16px;
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .header-top {
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .logo {
-            font-size: 17px; font-weight: 700;
-            letter-spacing: -0.5px; white-space: nowrap;
-        }
-        .header-actions {
-            display: flex; align-items: center; gap: 6px;
-        }
+        .war-room-header { position:sticky;top:0;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);z-index:100; }
+        .hdr { max-width:600px;margin:0 auto;padding:10px 16px;display:flex;flex-direction:column;gap:8px; }
+        .hdr-top { display:flex;align-items:center;justify-content:space-between; }
+        .logo { font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap; }
+        .hdr-actions { display:flex;align-items:center;gap:6px; }
 
         /* ── Buttons ── */
-        .nav-button {
-            padding: 7px 14px; border-radius: 9999px;
-            background: var(--accent); color: var(--bg-primary);
-            border: none; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s;
-            white-space: nowrap;
-            -webkit-tap-highlight-color: transparent; user-select: none;
-        }
-        .nav-button:active { transform: scale(0.95); }
-        .nav-button.secondary {
-            background: transparent; color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-        .theme-toggle {
-            min-width: 36px; width: 36px; height: 36px;
-            border-radius: 50%; border: 1px solid var(--border);
-            background: transparent;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            font-size: 16px; flex-shrink: 0;
-        }
-        .theme-toggle:active { transform: scale(0.9); }
+        .btn { padding:7px 14px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none; }
+        .btn:active { transform:scale(.95); }
+        .btn.sec { background:transparent;color:var(--txt);border:1px solid var(--brd); }
+        .btn.red { background:#ef4444;color:#fff; }
+        .btn.green { background:#10b981;color:#fff; }
+        .theme-btn { min-width:36px;width:36px;height:36px;border-radius:50%;border:1px solid var(--brd);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:16px;flex-shrink:0; }
+        .theme-btn:active { transform:scale(.9); }
 
-        /* ── Profile Button & Dropdown ── */
-        .profile-wrap { position: relative; }
-        .profile-btn {
-            width: 34px; height: 34px; border-radius: 50%;
-            border: 2px solid var(--border);
-            background: transparent; padding: 0;
-            cursor: pointer; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            transition: border-color 0.2s;
-        }
-        .profile-btn:active { transform: scale(0.93); }
-        .profile-avatar {
-            width: 100%; height: 100%;
-            border-radius: 50%; overflow: hidden;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 13px;
-        }
-        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        /* ── Profile ── */
+        .prof-wrap { position:relative; }
+        .prof-btn { width:34px;height:34px;border-radius:50%;border:2px solid var(--brd);background:transparent;padding:0;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s; }
+        .prof-btn:active { transform:scale(.93); }
+        .prof-av { width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden; }
+        .prof-av img { width:100%;height:100%;object-fit:cover; }
+        .prof-dd { position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--brd);border-radius:14px;min-width:190px;box-shadow:0 8px 32px rgba(0,0,0,.18);opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);transition:opacity .18s,transform .18s;z-index:500;overflow:hidden; }
+        .prof-dd.open { opacity:1;pointer-events:auto;transform:translateY(0) scale(1); }
+        .pd-name { padding:12px 14px 8px;font-size:13px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--brd); }
+        .pd-item { width:100%;padding:11px 14px;background:transparent;border:none;text-align:left;font-size:14px;font-weight:500;color:var(--txt);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .12s; }
+        .pd-item:hover { background:var(--hov); }
+        .pd-item.danger { color:#ef4444; }
 
-        .profile-dropdown {
-            position: absolute; right: 0; top: calc(100% + 8px);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px; min-width: 190px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            opacity: 0; pointer-events: none;
-            transform: translateY(-6px) scale(0.97);
-            transition: opacity 0.18s ease, transform 0.18s ease;
-            z-index: 500; overflow: hidden;
-        }
-        .profile-dropdown.open {
-            opacity: 1; pointer-events: auto;
-            transform: translateY(0) scale(1);
-        }
-        .pd-name {
-            padding: 12px 14px 8px;
-            font-size: 13px; font-weight: 600;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
-        }
-        .pd-item {
-            width: 100%; padding: 11px 14px;
-            background: transparent; border: none;
-            text-align: left; font-size: 14px; font-weight: 500;
-            color: var(--text-primary); cursor: pointer;
-            display: flex; align-items: center; gap: 10px;
-            transition: background 0.12s;
-            font-family: 'SF Pro Display', -apple-system, sans-serif;
-        }
-        .pd-item:hover { background: var(--hover); }
-        .pd-item.danger { color: #ef4444; }
+        /* ── Search ── */
+        .srch-wrap { position:relative;width:100%; }
+        .srch { width:100%;padding:8px 36px;border-radius:9999px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;transition:all .2s; }
+        .srch:focus { border-color:var(--acc);background:var(--hov); }
+        .srch::placeholder { color:var(--sub); }
+        .srch-icon { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none; }
+        .srch-clear { position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--sub);color:var(--bg);border:none;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:12px; }
+        .srch-clear.on { display:flex; }
 
-        /* ── Search Bar ── */
-        .search-container { position: relative; width: 100%; }
-        .search-input {
-            width: 100%; padding: 8px 36px;
-            border-radius: 9999px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--text-primary);
-            font-size: 14px; outline: none; transition: all 0.2s;
-        }
-        .search-input:focus { border-color: var(--accent); background: var(--hover); }
-        .search-input::placeholder { color: var(--text-secondary); }
-        .search-icon {
-            position: absolute; left: 12px; top: 50%;
-            transform: translateY(-50%); color: var(--text-secondary); pointer-events: none;
-        }
-        .clear-search {
-            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            width: 24px; height: 24px; border-radius: 50%;
-            background: var(--text-secondary); color: var(--bg-primary);
-            border: none; display: none;
-            align-items: center; justify-content: center;
-            cursor: pointer; font-size: 12px;
-        }
-        .clear-search.active { display: flex; }
-
-        /* ── Hero Section ── */
-        .hero-section {
-            padding: 36px 20px 28px;
-            border-bottom: 1px solid var(--border);
-        }
-        .hero-live-pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(239,68,68,0.08);
-            border: 1px solid rgba(239,68,68,0.25);
-            border-radius: 99px; padding: 4px 12px;
-            margin-bottom: 16px;
-        }
-        .live-pulse {
-            width: 7px; height: 7px;
-            background: #ef4444; border-radius: 50%;
-            display: inline-block;
-            animation: pulseDot 1.6s ease-in-out infinite;
-        }
-        @keyframes pulseDot {
-            0%,100% { opacity:1; transform:scale(1); }
-            50%      { opacity:0.4; transform:scale(0.75); }
-        }
-        .live-text {
-            font-size: 10px; font-weight: 800;
-            color: #ef4444; letter-spacing: 1.2px;
-        }
-        .hero-title {
-            font-size: 32px; font-weight: 800;
-            letter-spacing: -1px; line-height: 1.15;
-            margin: 0 0 12px;
-        }
-        @media(min-width:640px){ .hero-title { font-size: 40px; } }
-        .hero-sub {
-            font-size: 15px; color: var(--text-secondary);
-            line-height: 1.65; margin: 0 0 22px; max-width: 430px;
-        }
-        .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-        .hero-chip {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 5px 12px; border-radius: 99px;
-            border: 1px solid var(--border);
-            font-size: 12px; font-weight: 500; color: var(--text-secondary);
-        }
+        /* ── Hero ── */
+        .hero { padding:36px 20px 28px;border-bottom:1px solid var(--brd); }
+        .live-pill { display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:99px;padding:4px 12px;margin-bottom:16px; }
+        .live-dot { width:7px;height:7px;background:#ef4444;border-radius:50%;display:inline-block;animation:pulse 1.6s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+        .live-lbl { font-size:10px;font-weight:800;color:#ef4444;letter-spacing:1.2px; }
+        .hero-title { font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 12px; }
+        @media(min-width:640px){.hero-title{font-size:40px;}}
+        .hero-sub { font-size:15px;color:var(--sub);line-height:1.65;margin:0 0 22px;max-width:430px; }
+        .chips { display:flex;gap:8px;flex-wrap:wrap; }
+        .chip { display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub); }
 
         /* ── Cards ── */
-        .report-card {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            transition: background-color 0.15s;
-            cursor: pointer; -webkit-tap-highlight-color: transparent;
-            position: relative; z-index: 1;
-        }
-        .report-card:active { background-color: var(--hover); }
-        .report-card.top-report {
-            border: 2px solid var(--accent); border-radius: 12px;
-            margin: 0 16px 16px; border-bottom: 2px solid var(--accent);
-        }
-        .card-content { padding: 14px 16px; }
-        .top-report .card-content { padding: 18px; }
-        .top-badge {
-            position: absolute; top: -1px; right: -1px;
-            background: var(--accent); color: var(--bg-primary);
-            font-size: 9px; font-weight: 700;
-            padding: 4px 10px; letter-spacing: 1.2px;
-            border-radius: 0 10px 0 8px;
-        }
+        .report-card { background:var(--card);border-bottom:1px solid var(--brd);transition:background .15s;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:1; }
+        .report-card:active { background:var(--hov); }
+        .report-card.top-report { border:2px solid var(--acc);border-radius:12px;margin:0 16px 16px;border-bottom:2px solid var(--acc); }
+        .card-body { padding:14px 16px; }
+        .top-report .card-body { padding:18px; }
+        .top-badge { position:absolute;top:-1px;right:-1px;background:var(--acc);color:var(--bg);font-size:9px;font-weight:700;padding:4px 10px;letter-spacing:1.2px;border-radius:0 10px 0 8px; }
 
         /* ── Avatar ── */
-        .avatar {
-            width: 40px; height: 40px; min-width: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 16px; overflow: hidden;
-        }
-        .avatar img { width:100%; height:100%; object-fit:cover; }
-        .avatar.large {
-            width: 48px; height: 48px; min-width: 48px; font-size: 20px;
-        }
+        .av { width:40px;height:40px;min-width:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px;overflow:hidden;cursor:pointer;transition:opacity .15s; }
+        .av:hover { opacity:.85; }
+        .av img { width:100%;height:100%;object-fit:cover; }
+        .av.lg { width:52px;height:52px;min-width:52px;font-size:22px; }
+        .av.xl { width:72px;height:72px;min-width:72px;font-size:28px; }
 
-        /* ── Typography ── */
-        .journalist-name { font-weight:600; font-size:15px; color:var(--text-primary); line-height:1.3; }
-        .report-meta { font-size:13px; color:var(--text-secondary); line-height:1.3; }
-        .report-text { font-size:15px; line-height:1.5; color:var(--text-primary); margin-top:10px; word-wrap:break-word; overflow-wrap:break-word; }
-        .section-title { font-size:18px; font-weight:700; letter-spacing:-0.3px; margin-bottom:12px; padding:0 16px; }
+        /* ── Type ── */
+        .j-name { font-weight:600;font-size:15px;color:var(--txt);line-height:1.3;cursor:pointer; }
+        .j-name:hover { text-decoration:underline; }
+        .r-meta { font-size:13px;color:var(--sub);line-height:1.3; }
+        .r-txt { font-size:15px;line-height:1.5;color:var(--txt);margin-top:10px;word-wrap:break-word; }
+        .sec-title { font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:12px;padding:0 16px; }
 
-        /* ── Vote Buttons ── */
-        .vote-button {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 6px 12px; border-radius: 9999px;
-            border: 1px solid var(--border); background: transparent;
-            color: var(--text-secondary); font-size: 13px; font-weight: 500;
-            cursor: pointer; transition: all 0.15s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation; user-select: none;
-        }
-        .vote-button:active { transform: scale(0.92); }
-        .vote-button svg { flex-shrink: 0; }
-        .stats-row { display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; }
+        /* ── Badges ── */
+        .badge-verified { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;background:#10b981;color:#fff;font-size:10px;font-weight:700;letter-spacing:.4px; }
+        .badge-credible { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;background:#3b82f6;color:#fff;font-size:10px;font-weight:700;letter-spacing:.4px; }
+        .badge-pending  { display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;background:#f59e0b;color:#fff;font-size:10px;font-weight:700; }
+        .badge-check    { display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;min-width:17px;background:#1d9bf0;border-radius:50%;color:#fff;font-size:10px;flex-shrink:0; }
 
-        /* ── Verification / Badges ── */
-        .verification-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 17px; height: 17px; min-width: 17px;
-            background: #1d9bf0; border-radius: 50%;
-            color: white; font-size: 10px; flex-shrink: 0;
-        }
-        .pending-badge {
-            display: inline-block; padding: 2px 8px;
-            background: #ffa500; color: white;
-            border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px;
-        }
+        /* ── Vote buttons ── */
+        .vote-btn { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none; }
+        .vote-btn:active { transform:scale(.92); }
+        .vote-btn.voted-up   { background:rgba(16,185,129,.12);border-color:#10b981;color:#10b981; }
+        .vote-btn.voted-down { background:rgba(239,68,68,.12);border-color:#ef4444;color:#ef4444; }
+        .stats-row { display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap; }
+
+        /* ── Comment button on card ── */
+        .comment-inline-btn { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s; }
+        .comment-inline-btn:active { transform:scale(.92); }
 
         /* ── Modal ── */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background-color: rgba(0,0,0,0.65);
-            display: none; align-items: flex-end; justify-content: center;
-            z-index: 200; animation: fadeIn 0.2s;
-            padding: 0; overflow: hidden;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px 16px 0 0;
-            width: 100%; max-height: 92vh;
-            overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
-            overscroll-behavior: contain;
-        }
-        .modal-header {
-            position: sticky; top: 0;
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 16px;
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 10;
-        }
-        .modal-body { padding: 16px; }
-        .close-button {
-            width: 36px; height: 36px; min-width: 36px;
-            border-radius: 50%; background: transparent; border: none;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: var(--text-primary);
-            transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-        }
-        .close-button:active { transform:scale(0.9); background-color:var(--hover); }
+        .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center;z-index:200;padding:0;overflow:hidden; }
+        .modal-overlay.active { display:flex; }
+        .modal-box { background:var(--card);border:1px solid var(--brd);border-radius:16px 16px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.4,0,.2,1);overscroll-behavior:contain; }
+        .modal-hdr { position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--brd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;z-index:10; }
+        .modal-bdy { padding:16px; }
+        .x-btn { width:36px;height:36px;min-width:36px;border-radius:50%;background:transparent;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt);transition:all .15s; }
+        .x-btn:active { transform:scale(.9);background:var(--hov); }
 
         /* ── Divider ── */
-        .divider { height:1px; background-color:var(--border); margin:16px 0; }
+        .div { height:1px;background:var(--brd);margin:16px 0; }
 
-        /* ── Form Styles ── */
-        .form-group { margin-bottom: 16px; }
-        .form-label { display:block; font-size:14px; font-weight:600; margin-bottom:6px; color:var(--text-primary); }
-        .form-input, .form-textarea {
-            width: 100%; padding: 10px 12px;
-            border-radius: 8px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--text-primary);
-            font-size: 14px; outline: none; transition: all 0.2s;
-            font-family: 'SF Pro Display', -apple-system, sans-serif;
-        }
-        .form-input:focus, .form-textarea:focus { border-color:var(--accent); background:var(--hover); }
-        .form-textarea { resize:vertical; min-height:120px; }
-        .form-button {
-            width: 100%; padding: 12px; border-radius: 9999px;
-            background: var(--accent); color: var(--bg-primary);
-            border: none; font-size: 15px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s;
-            font-family: 'SF Pro Display', -apple-system, sans-serif;
-        }
-        .form-button:active { transform:scale(0.98); }
-        .form-button:disabled { opacity:0.5; cursor:not-allowed; }
+        /* ── Forms ── */
+        .fg { margin-bottom:14px; }
+        .fl { display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--txt); }
+        .fl span { color:#ef4444; }
+        .fi,.ft { width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;transition:all .2s;font-family:inherit; }
+        .fi:focus,.ft:focus { border-color:var(--acc);background:var(--hov); }
+        .ft { resize:vertical;min-height:90px; }
+        .form-btn { width:100%;padding:12px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit; }
+        .form-btn:active { transform:scale(.98); }
+        .form-btn:disabled { opacity:.5;cursor:not-allowed; }
 
-        /* ── Auth Toggle with animated sliding pill ── */
-        .auth-type-toggle {
-            display: flex; gap: 0;
-            margin-bottom: 20px; padding: 4px;
-            background: var(--hover); border-radius: 9999px;
-            position: relative;
-        }
-        .auth-slider {
-            position: absolute; top: 4px;
-            height: calc(100% - 8px);
-            background: var(--bg-card); border-radius: 9999px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.12);
-            transition: left 0.28s cubic-bezier(0.34,1.3,0.64,1),
-                        width 0.28s cubic-bezier(0.34,1.3,0.64,1);
-            pointer-events: none; z-index: 0;
-            will-change: left, width;
-        }
-        .auth-type-btn {
-            flex: 1; padding: 8px 10px; border-radius: 9999px;
-            background: transparent; color: var(--text-secondary);
-            border: none; font-size: 13px; font-weight: 600;
-            cursor: pointer; position: relative; z-index: 1;
-            transition: color 0.22s ease; white-space: nowrap;
-            font-family: 'SF Pro Display', -apple-system, sans-serif;
-        }
-        .auth-type-btn.active { color: var(--text-primary); }
+        /* ── Auth toggle ── */
+        .auth-toggle { display:flex;margin-bottom:20px;padding:4px;background:var(--hov);border-radius:9999px;position:relative; }
+        .auth-slider { position:absolute;top:4px;height:calc(100% - 8px);background:var(--card);border-radius:9999px;box-shadow:0 1px 6px rgba(0,0,0,.12);transition:left .28s cubic-bezier(.34,1.3,.64,1),width .28s cubic-bezier(.34,1.3,.64,1);pointer-events:none;z-index:0; }
+        .auth-tab { flex:1;padding:8px 10px;border-radius:9999px;background:transparent;color:var(--sub);border:none;font-size:13px;font-weight:600;cursor:pointer;position:relative;z-index:1;transition:color .22s;white-space:nowrap;font-family:inherit; }
+        .auth-tab.on { color:var(--txt); }
 
-        /* ── Google Sign In ── */
-        .google-signin-btn {
-            width: 100%; padding: 12px 16px; border-radius: 8px;
-            border: 1px solid var(--border); background: var(--bg-card);
-            color: var(--text-primary); font-size: 14px; font-weight: 600;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center; gap: 12px;
-            transition: all 0.2s;
-            font-family: 'SF Pro Display', -apple-system, sans-serif;
-        }
-        .google-signin-btn:active { transform:scale(0.98); background:var(--hover); }
+        /* ── Google btn ── */
+        .g-btn { width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .2s;font-family:inherit; }
+        .g-btn:active { transform:scale(.98);background:var(--hov); }
 
-        /* ── Info Box ── */
-        .info-box {
-            padding: 12px; background: var(--hover);
-            border-radius: 8px; font-size: 12px;
-            color: var(--text-secondary); margin-top: 16px;
-        }
-        .info-box strong { color: var(--text-primary); }
+        /* ── Info box ── */
+        .info-box { padding:12px;background:var(--hov);border-radius:8px;font-size:12px;color:var(--sub);margin-top:14px; }
+        .info-box strong { color:var(--txt); }
 
-        /* ── Leaderboard Tabs ── */
-        .tab-container {
-            display: flex; gap: 8px;
-            padding: 0 16px 12px; border-bottom: 1px solid var(--border);
-        }
-        .tab-button {
-            padding: 6px 16px; border-radius: 9999px;
-            background: transparent; color: var(--text-secondary);
-            border: 1px solid var(--border);
-            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-        }
-        .tab-button.active { background:var(--accent); color:var(--bg-primary); border-color:var(--accent); }
+        /* ── Leaderboard tabs ── */
+        .tab-row { display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--brd); }
+        .tab { padding:6px 16px;border-radius:9999px;background:transparent;color:var(--sub);border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s; }
+        .tab.on { background:var(--acc);color:var(--bg);border-color:var(--acc); }
 
         /* ── Settings ── */
-        .settings-section { margin-bottom: 20px; }
-        .settings-label {
-            font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
-            text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px;
-        }
-        .settings-card {
-            background: var(--hover); border-radius: 12px;
-            padding: 14px; border: 1px solid var(--border);
-        }
-        .settings-row {
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .settings-toggle {
-            width: 42px; height: 24px; border-radius: 12px;
-            background: var(--accent); border: none;
-            cursor: pointer; font-size: 13px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
+        .s-sec { margin-bottom:20px; }
+        .s-lbl { font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:8px; }
+        .s-card { background:var(--hov);border-radius:12px;padding:14px;border:1px solid var(--brd); }
+        .s-row { display:flex;align-items:center;justify-content:space-between; }
+        .s-toggle { width:42px;height:24px;border-radius:12px;background:var(--acc);border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
 
-        /* ── Admin Table ── */
-        .admin-table { width:100%; border-collapse:collapse; margin-top:16px; }
-        .admin-table th, .admin-table td {
-            padding: 12px; text-align:left; border-bottom: 1px solid var(--border);
-        }
-        .admin-table th { font-weight:600; font-size:13px; color:var(--text-secondary); }
-        .admin-table td { font-size:14px; }
-        .admin-action-btn {
-            padding: 4px 12px; border-radius: 4px;
-            border: 1px solid var(--border); background: var(--bg-card);
-            color: var(--text-primary); cursor: pointer;
-            font-size: 12px; margin-right: 4px;
-        }
-        .admin-action-btn.approve { background:#10b981; color:white; border-color:#10b981; }
-        .admin-action-btn.reject  { background:#ef4444; color:white; border-color:#ef4444; }
+        /* ── Admin table ── */
+        .adm-table { width:100%;border-collapse:collapse;margin-top:16px; }
+        .adm-table th,.adm-table td { padding:12px;text-align:left;border-bottom:1px solid var(--brd); }
+        .adm-table th { font-weight:600;font-size:13px;color:var(--sub); }
+        .adm-table td { font-size:14px; }
+        .adm-btn { padding:4px 12px;border-radius:4px;border:1px solid var(--brd);background:var(--card);color:var(--txt);cursor:pointer;font-size:12px;margin-right:4px; }
+        .adm-btn.ok  { background:#10b981;color:#fff;border-color:#10b981; }
+        .adm-btn.no  { background:#ef4444;color:#fff;border-color:#ef4444; }
+
+        /* ── Comments ── */
+        .comment { display:flex;gap:10px;margin-bottom:16px; }
+        .comment-body { flex:1;background:var(--hov);border-radius:12px;padding:10px 14px; }
+        .comment-meta { font-size:12px;color:var(--sub);margin-top:4px; }
+        .comment-text { font-size:14px;color:var(--txt);margin-top:4px;line-height:1.5; }
+        .comment-input-row { display:flex;gap:8px;align-items:flex-start;margin-top:12px; }
+        .comment-input { flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;resize:none;min-height:42px;max-height:120px;font-family:inherit;transition:border-color .2s; }
+        .comment-input:focus { border-color:var(--acc); }
+        .comment-send { width:38px;height:38px;border-radius:50%;background:var(--acc);color:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
+        .comment-send:active { transform:scale(.9); }
+
+        /* ── Journalist profile modal ── */
+        .j-profile-hero { background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 20px 20px;text-align:center; }
+        .j-stat-row { display:flex;gap:0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd); }
+        .j-stat { flex:1;padding:14px;text-align:center;border-right:1px solid var(--brd); }
+        .j-stat:last-child { border-right:none; }
+        .j-stat-val { font-size:20px;font-weight:800; }
+        .j-stat-lbl { font-size:11px;color:var(--sub);margin-top:2px; }
+        .j-social-row { display:flex;gap:8px;flex-wrap:wrap;margin-top:8px; }
+        .j-social-tag { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub);text-decoration:none; }
+        .j-report-mini { padding:12px 0;border-bottom:1px solid var(--brd);cursor:pointer; }
+        .j-report-mini:hover { color:var(--sub); }
+        .j-report-mini:last-child { border-bottom:none; }
 
         /* ── Misc ── */
-        .no-results { padding:48px 16px; text-align:center; color:var(--text-secondary); font-size:15px; }
+        .no-res { padding:48px 16px;text-align:center;color:var(--sub);font-size:15px; }
+        .section-divider { height:1px;background:var(--brd);margin:20px 16px; }
 
         /* ── Animations ── */
-        @keyframes fadeIn  { from { opacity:0; }              to { opacity:1; } }
-        @keyframes slideUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
 
         /* ── Scrollbar ── */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
 
-        /* ── Safe area iOS ── */
-        @supports (padding: max(0px)) {
-            body { padding-bottom: env(safe-area-inset-bottom); }
-            .modal-content { padding-bottom: env(safe-area-inset-bottom); }
+        /* iOS safe area */
+        @supports(padding:max(0px)){body{padding-bottom:env(safe-area-inset-bottom)}.modal-box{padding-bottom:env(safe-area-inset-bottom)}}
+
+        /* Desktop */
+        @media(min-width:640px){
+            .logo{font-size:18px} .sec-title{font-size:19px}
+            .modal-overlay{align-items:center;padding:20px}
+            .modal-box{max-width:600px;border-radius:16px;max-height:85vh}
+            .report-card:hover{background:var(--hov)}
+            .vote-btn:hover{background:var(--hov);border-color:var(--acc)}
+            .theme-btn:hover,.prof-btn:hover{background:var(--hov)}
+            .btn:hover{opacity:.85}
+            .g-btn:hover{background:var(--hov)}
         }
-
-        /* ── Desktop ── */
-        @media (min-width: 640px) {
-            .logo { font-size: 18px; }
-            .section-title { font-size: 19px; }
-            .modal-overlay { align-items: center; padding: 20px; }
-            .modal-content { max-width: 600px; border-radius: 16px; max-height: 85vh; }
-            .report-card:hover { background-color: var(--hover); }
-            .vote-button:hover { background-color: var(--hover); border-color: var(--accent); }
-            .theme-toggle:hover { background-color: var(--hover); }
-            .nav-button:hover { opacity: 0.85; }
-            .google-signin-btn:hover { background: var(--hover); }
-            .profile-btn:hover { border-color: var(--accent); }
-        }
-
-        html { scroll-behavior: smooth; }
-        body { overscroll-behavior-y: contain; }
+        html{scroll-behavior:smooth} body{overscroll-behavior-y:contain}
     </style>
 </head>
 <body>
 
-    <!-- Animated Background Dots -->
-    <div class="dots-background" id="dotsBackground"></div>
+<!-- Top Loading Bar -->
+<div id="topBar"></div>
 
-    <!-- ── Header ── -->
-    <header class="war-room-header">
-        <div class="header-content">
-            <div class="header-top">
-                <h1 class="logo">The WarRoom</h1>
-                <div class="header-actions">
-                    <!-- Submit button (verified journalists only) -->
-                    <button class="nav-button" id="submitBtn" onclick="showSubmitForm()" style="display:none;">
-                        Submit
+<!-- Dots -->
+<div class="dots-bg" id="dotsBackground"></div>
+
+<!-- ── Header ── -->
+<header class="war-room-header">
+    <div class="hdr">
+        <div class="hdr-top">
+            <h1 class="logo">The WarRoom</h1>
+            <div class="hdr-actions">
+                <button class="btn" id="submitBtn" onclick="showSubmitForm()" style="display:none;">Submit</button>
+                <button class="btn sec" onclick="showLeaderboard()">Leaderboard</button>
+                <button class="btn sec" id="loginBtn" onclick="showAuthModal()">Login</button>
+                <div class="prof-wrap" id="profileWrap" style="display:none;">
+                    <button class="prof-btn" onclick="toggleDD(event)">
+                        <div class="prof-av" id="profAv"></div>
                     </button>
-                    <!-- Leaderboard -->
-                    <button class="nav-button secondary" onclick="showLeaderboard()">Leaderboard</button>
-                    <!-- Login (shown when logged out) -->
-                    <button class="nav-button secondary" id="loginBtn" onclick="showAuthModal()">Login</button>
-                    <!-- Profile avatar (shown when logged in) -->
-                    <div class="profile-wrap" id="profileWrap" style="display:none;">
-                        <button class="profile-btn" onclick="toggleProfileDropdown(event)" id="profileBtn" aria-label="Profile menu">
-                            <div class="profile-avatar" id="profileAvatar"></div>
+                    <div class="prof-dd" id="profDD">
+                        <div class="pd-name" id="pdName">—</div>
+                        <button class="pd-item" onclick="openSettings();closeDD()">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Settings
                         </button>
-                        <div class="profile-dropdown" id="profileDropdown">
-                            <div class="pd-name" id="pdName">—</div>
-                            <button class="pd-item" onclick="openSettings(); closeProfileDropdown()">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                                Settings
-                            </button>
-                            <button class="pd-item danger" onclick="logout(); closeProfileDropdown()">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                Sign Out
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Theme toggle -->
-                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                        <span id="themeIcon">◐</span>
-                    </button>
-                </div>
-            </div>
-            <!-- Search -->
-            <div class="search-container">
-                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                </svg>
-                <input type="text" class="search-input" id="searchInput"
-                    placeholder="Search reports..." oninput="handleSearch(this.value)" />
-                <button class="clear-search" id="clearSearch" onclick="clearSearch()">×</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- ── Main ── -->
-    <main style="max-width:600px; margin:0 auto; position:relative; z-index:1;">
-
-        <!-- Hero Section -->
-        <div class="hero-section" id="heroSection">
-            <div class="hero-live-pill">
-                <span class="live-pulse"></span>
-                <span class="live-text">LIVE</span>
-            </div>
-            <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
-            <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
-            <div class="hero-chips">
-                <span class="hero-chip">📡 Live conflict reporting</span>
-                <span class="hero-chip">✓ Verified journalists only</span>
-                <span class="hero-chip">↑ Community-ranked truth</span>
-            </div>
-        </div>
-
-        <!-- Top Report -->
-        <div style="padding:20px 0 0;" id="topReportSection">
-            <h2 class="section-title">Top Report</h2>
-            <div id="topReport"></div>
-        </div>
-
-        <div class="divider" style="margin:20px 16px;" id="mainDivider"></div>
-
-        <!-- Feed -->
-        <div style="padding-bottom:24px;">
-            <h2 class="section-title" id="feedTitle">Live Feed</h2>
-            <div id="storyFeed"></div>
-        </div>
-    </main>
-
-    <!-- ══════════════════════════════════════════
-         AUTH MODAL — Sign In / Journalist / Admin
-    ══════════════════════════════════════════ -->
-    <div id="authModal" class="modal-overlay" onclick="closeModal(event,'authModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Welcome to The WarRoom</h3>
-                <button class="close-button" onclick="closeModal(null,'authModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- 3-tab toggle with sliding pill -->
-                <div class="auth-type-toggle" id="authToggle">
-                    <div class="auth-slider" id="authSlider"></div>
-                    <button class="auth-type-btn active" id="tabUser"       onclick="switchAuthType('user')">Sign In</button>
-                    <button class="auth-type-btn"        id="tabJournalist" onclick="switchAuthType('journalist')">Journalist</button>
-                    <button class="auth-type-btn"        id="tabAdmin"      onclick="switchAuthType('admin')">Admin</button>
-                </div>
-
-                <!-- User Sign In -->
-                <div id="sectionUser">
-                    <p style="text-align:center;margin-bottom:20px;color:var(--text-secondary);font-size:14px;">
-                        Sign in with your Google account to vote and interact with reports
-                    </p>
-                    <button class="google-signin-btn" onclick="signInWithGoogle('user')">
-                        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                        Sign in with Google
-                    </button>
-                </div>
-
-                <!-- Journalist -->
-                <div id="sectionJournalist" style="display:none;">
-                    <p style="text-align:center;margin-bottom:20px;color:var(--text-secondary);font-size:14px;">
-                        Apply to become a verified journalist and submit war reports
-                    </p>
-                    <button class="google-signin-btn" onclick="signInWithGoogle('journalist')">
-                        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                        Apply with Google
-                    </button>
-                    <div class="info-box">
-                        <strong>What happens next?</strong><br>
-                        After signing in, your application is sent directly to our editors at thewarroomweb@gmail.com for review. You'll be notified once approved — typically within 24–48 hours.
+                        <button class="pd-item danger" onclick="logout();closeDD()">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            Sign Out
+                        </button>
                     </div>
                 </div>
-
-                <!-- Admin -->
-                <div id="sectionAdmin" style="display:none;">
-                    <p style="text-align:center;margin-bottom:20px;color:var(--text-secondary);font-size:14px;">
-                        Enter your admin credentials to access the control panel
-                    </p>
-                    <form onsubmit="handleAdminLogin(event)">
-                        <div class="form-group">
-                            <label class="form-label">Admin Password</label>
-                            <input type="password" class="form-input" id="adminPassword" placeholder="Enter admin password" required />
-                        </div>
-                        <button type="submit" class="form-button">Login as Admin</button>
-                    </form>
-                </div>
+                <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">◐</span></button>
             </div>
+        </div>
+        <div class="srch-wrap">
+            <svg class="srch-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="srch" id="searchInput" type="text" placeholder="Search reports..." oninput="handleSearch(this.value)">
+            <button class="srch-clear" id="clearSearch" onclick="clearSearch()">×</button>
         </div>
     </div>
+</header>
 
-    <!-- ══════════════════════════════════════════
-         SETTINGS MODAL
-    ══════════════════════════════════════════ -->
-    <div id="settingsModal" class="modal-overlay" onclick="closeModal(event,'settingsModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Settings</h3>
-                <button class="close-button" onclick="closeModal(null,'settingsModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+<!-- ── Main ── -->
+<main style="max-width:600px;margin:0 auto;position:relative;z-index:1;">
+    <!-- Hero -->
+    <div class="hero" id="heroSection">
+        <div class="live-pill"><span class="live-dot"></span><span class="live-lbl">LIVE</span></div>
+        <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
+        <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
+        <div class="chips">
+            <span class="chip">📡 Live conflict reporting</span>
+            <span class="chip">✓ Verified journalists only</span>
+            <span class="chip">↑ Community-ranked truth</span>
+        </div>
+    </div>
+    <!-- Top Report -->
+    <div style="padding:20px 0 0;" id="topReportSection">
+        <h2 class="sec-title">Top Report</h2>
+        <div id="topReport"></div>
+    </div>
+    <div class="section-divider" id="mainDivider"></div>
+    <!-- Feed -->
+    <div style="padding-bottom:24px;">
+        <h2 class="sec-title" id="feedTitle">Live Feed</h2>
+        <div id="storyFeed"></div>
+    </div>
+</main>
+
+<!-- ══ AUTH MODAL ══ -->
+<div id="authModal" class="modal-overlay" onclick="closeModal(event,'authModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Welcome to The WarRoom</h3>
+            <button class="x-btn" onclick="closeModal(null,'authModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="modal-bdy">
+            <div class="auth-toggle" id="authToggle">
+                <div class="auth-slider" id="authSlider"></div>
+                <button class="auth-tab on" id="tabUser" onclick="switchAuth('user')">Sign In</button>
+                <button class="auth-tab" id="tabJournalist" onclick="switchAuth('journalist')">Journalist</button>
+                <button class="auth-tab" id="tabAdmin" onclick="switchAuth('admin')">Admin</button>
+            </div>
+            <!-- Sign In -->
+            <div id="secUser">
+                <p style="text-align:center;margin-bottom:20px;color:var(--sub);font-size:14px;">Sign in with Google to vote, comment and interact</p>
+                <button class="g-btn" onclick="signInWithGoogle('user')">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Continue with Google
                 </button>
             </div>
-            <div class="modal-body">
-                <!-- Account info -->
-                <div class="settings-section">
-                    <div class="settings-label">Account</div>
-                    <div class="settings-card">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <div class="avatar large" id="settingsAvatar"></div>
-                            <div>
-                                <div style="font-weight:700;font-size:15px;" id="settingsName"></div>
-                                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;" id="settingsEmail"></div>
-                                <div style="margin-top:5px;" id="settingsRole"></div>
-                            </div>
+            <!-- Journalist Application Form -->
+            <div id="secJournalist" style="display:none;">
+                <p style="text-align:center;margin-bottom:16px;color:var(--sub);font-size:14px;">Fill in your details — we'll review your application within 24–48 hrs</p>
+                <form onsubmit="submitJournalistApp(event)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div class="fg">
+                            <label class="fl">Full Name <span>*</span></label>
+                            <input class="fi" id="jName" placeholder="Jane Smith" required>
+                        </div>
+                        <div class="fg">
+                            <label class="fl">Email <span>*</span></label>
+                            <input class="fi" type="email" id="jEmail" placeholder="jane@outlet.com" required>
                         </div>
                     </div>
-                </div>
-                <!-- Appearance -->
-                <div class="settings-section">
-                    <div class="settings-label">Appearance</div>
-                    <div class="settings-card">
-                        <div class="settings-row">
-                            <div>
-                                <div style="font-weight:600;font-size:14px;">Dark Mode</div>
-                                <div style="font-size:12px;color:var(--text-secondary);">Toggle between light and dark</div>
-                            </div>
-                            <button class="settings-toggle" onclick="toggleTheme()" id="settingsThemeBtn">
-                                <span id="settingsThemeIcon">🌙</span>
-                            </button>
+                    <div class="fg">
+                        <label class="fl">Current / Past Employer <span>*</span></label>
+                        <input class="fi" id="jEmployer" placeholder="e.g. Reuters, BBC, Freelance" required>
+                    </div>
+                    <div class="fg">
+                        <label class="fl">Beat / Coverage Area <span>*</span></label>
+                        <input class="fi" id="jBeat" placeholder="e.g. Middle East conflicts, Ukraine" required>
+                    </div>
+                    <div class="fg">
+                        <label class="fl">Brief Bio <span>*</span></label>
+                        <textarea class="ft" id="jBio" placeholder="Tell us about your journalism experience..." rows="3" required></textarea>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div class="fg">
+                            <label class="fl">Twitter / X</label>
+                            <input class="fi" id="jTwitter" placeholder="@handle">
+                        </div>
+                        <div class="fg">
+                            <label class="fl">LinkedIn</label>
+                            <input class="fi" id="jLinkedin" placeholder="linkedin.com/in/...">
                         </div>
                     </div>
-                </div>
-                <!-- Coming soon -->
-                <div class="settings-section">
-                    <div class="settings-label">More Features</div>
-                    <div class="settings-card" style="text-align:center;padding:20px;opacity:0.55;">
-                        <div style="font-size:26px;margin-bottom:8px;">🔧</div>
-                        <div style="font-size:13px;font-weight:600;">Notifications, preferences &amp; more coming soon</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div class="fg">
+                            <label class="fl">Instagram</label>
+                            <input class="fi" id="jInstagram" placeholder="@handle">
+                        </div>
+                        <div class="fg">
+                            <label class="fl">CV / Portfolio URL <span>*</span></label>
+                            <input class="fi" id="jCV" placeholder="https://..." required>
+                        </div>
                     </div>
-                </div>
-                <button class="form-button" style="background:#ef4444;" onclick="logout();closeModal(null,'settingsModal')">
-                    Sign Out
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════
-         ADMIN PANEL MODAL
-    ══════════════════════════════════════════ -->
-    <div id="adminPanelModal" class="modal-overlay" onclick="closeModal(event,'adminPanelModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Admin Panel</h3>
-                <button class="close-button" onclick="closeModal(null,'adminPanelModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h4 style="font-size:15px;font-weight:600;margin-bottom:12px;">Pending Journalist Applications</h4>
-                <div id="pendingApplications"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════
-         REPORT DETAIL MODAL
-    ══════════════════════════════════════════ -->
-    <div id="reportModal" class="modal-overlay" onclick="closeModal(event,'reportModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Report Details</h3>
-                <button class="close-button" onclick="closeModal(null,'reportModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div id="modalContent" class="modal-body"></div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════
-         SUBMIT REPORT MODAL
-    ══════════════════════════════════════════ -->
-    <div id="submitModal" class="modal-overlay" onclick="closeModal(event,'submitModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Submit War Report</h3>
-                <button class="close-button" onclick="closeModal(null,'submitModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="submitForm" onsubmit="handleSubmitReport(event)">
-                    <div class="form-group">
-                        <label class="form-label">Location *</label>
-                        <input type="text" class="form-input" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required />
+                    <div class="fg">
+                        <label class="fl">Additional Notes</label>
+                        <textarea class="ft" id="jNotes" placeholder="Anything else you'd like us to know..." rows="2"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Report *</label>
-                        <textarea class="form-textarea" id="reportText" placeholder="Describe the situation..." required></textarea>
-                    </div>
-                    <button type="submit" class="form-button" id="submitFormBtn">Submit Report</button>
+                    <button type="submit" class="form-btn" id="jSubmitBtn">Submit Application</button>
+                </form>
+            </div>
+            <!-- Admin -->
+            <div id="secAdmin" style="display:none;">
+                <p style="text-align:center;margin-bottom:16px;color:var(--sub);font-size:14px;">Enter admin credentials to access the control panel</p>
+                <form onsubmit="handleAdminLogin(event)">
+                    <div class="fg"><label class="fl">Admin Password</label><input type="password" class="fi" id="adminPassword" placeholder="Enter password" required></div>
+                    <button type="submit" class="form-btn">Login as Admin</button>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ══════════════════════════════════════════
-         LEADERBOARD MODAL
-    ══════════════════════════════════════════ -->
-    <div id="leaderboardModal" class="modal-overlay" onclick="closeModal(event,'leaderboardModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 style="font-size:16px;font-weight:700;margin:0;">Leaderboard</h3>
-                <button class="close-button" onclick="closeModal(null,'leaderboardModal')" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
+<!-- ══ SETTINGS MODAL ══ -->
+<div id="settingsModal" class="modal-overlay" onclick="closeModal(event,'settingsModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Settings</h3>
+            <button class="x-btn" onclick="closeModal(null,'settingsModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="modal-bdy">
+            <div class="s-sec">
+                <div class="s-lbl">Account</div>
+                <div class="s-card">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div class="av lg" id="settingsAv"></div>
+                        <div>
+                            <div style="font-weight:700;font-size:15px;" id="settingsName"></div>
+                            <div style="font-size:12px;color:var(--sub);margin-top:2px;" id="settingsEmail"></div>
+                            <div style="margin-top:5px;" id="settingsRole"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="tab-container">
-                <button class="tab-button active" onclick="switchLeaderboardTab('today',event)">Today</button>
-                <button class="tab-button" onclick="switchLeaderboardTab('week',event)">This Week</button>
+            <div class="s-sec">
+                <div class="s-lbl">Appearance</div>
+                <div class="s-card">
+                    <div class="s-row">
+                        <div><div style="font-weight:600;font-size:14px;">Dark Mode</div><div style="font-size:12px;color:var(--sub);">Toggle light / dark</div></div>
+                        <button class="s-toggle" onclick="toggleTheme()"><span id="settingsThemeIcon">🌙</span></button>
+                    </div>
+                </div>
             </div>
-            <div id="leaderboardContent" class="modal-body" style="padding-top:0;"></div>
+            <div class="s-sec">
+                <div class="s-lbl">More Features</div>
+                <div class="s-card" style="text-align:center;padding:20px;opacity:.55;">
+                    <div style="font-size:26px;margin-bottom:8px;">🔧</div>
+                    <div style="font-size:13px;font-weight:600;">Notifications, preferences & more coming soon</div>
+                </div>
+            </div>
+            <button class="form-btn btn red" style="border-radius:9999px;" onclick="logout();closeModal(null,'settingsModal')">Sign Out</button>
         </div>
     </div>
+</div>
 
-    <!-- ══════════════════════════════════════════
-         SCRIPTS
-    ══════════════════════════════════════════ -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script>
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adminPanelModal" class="modal-overlay" onclick="closeModal(event,'adminPanelModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Admin Panel</h3>
+            <button class="x-btn" onclick="closeModal(null,'adminPanelModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="modal-bdy">
+            <h4 style="font-size:15px;font-weight:600;margin-bottom:12px;">Pending Journalist Applications</h4>
+            <div id="pendingApplications"></div>
+        </div>
+    </div>
+</div>
 
-    // ── Config ──────────────────────────────────────────────────────────────
-    const SUPABASE_URL  = "https://gmqnjseeefjkdzhkxwla.supabase.co"
-    const SUPABASE_KEY  = "sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+<!-- ══ REPORT MODAL ══ -->
+<div id="reportModal" class="modal-overlay" onclick="closeModal(event,'reportModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Report Details</h3>
+            <button class="x-btn" onclick="closeModal(null,'reportModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div id="modalContent" class="modal-bdy"></div>
+    </div>
+</div>
 
-    const ADMIN_PASSWORD = "warroom_admin_2024"
-    const ADMIN_EMAIL    = "thewarroomweb@gmail.com"
+<!-- ══ JOURNALIST PROFILE MODAL ══ -->
+<div id="profileModal" class="modal-overlay" onclick="closeModal(event,'profileModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Journalist Profile</h3>
+            <button class="x-btn" onclick="closeModal(null,'profileModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div id="profileContent"></div>
+    </div>
+</div>
 
-    // ── State ────────────────────────────────────────────────────────────────
-    let reports            = []
-    let filteredReports    = []
-    let currentTheme       = localStorage.getItem('theme') || 'dark'
-    let currentUser        = JSON.parse(localStorage.getItem('warroomUser') || 'null')
-    let currentLeaderboardTab = 'today'
-    let currentAuthType    = 'user'
-    let isAdmin            = sessionStorage.getItem('isAdmin') === 'true'
+<!-- ══ SUBMIT REPORT ══ -->
+<div id="submitModal" class="modal-overlay" onclick="closeModal(event,'submitModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Submit War Report</h3>
+            <button class="x-btn" onclick="closeModal(null,'submitModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="modal-bdy">
+            <form onsubmit="handleSubmitReport(event)">
+                <div class="fg"><label class="fl">Location <span>*</span></label><input class="fi" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required></div>
+                <div class="fg"><label class="fl">Report <span>*</span></label><textarea class="ft" id="reportText" placeholder="Describe the situation..." required></textarea></div>
+                <button type="submit" class="form-btn" id="submitFormBtn">Submit Report</button>
+            </form>
+        </div>
+    </div>
+</div>
 
-    // ── Init ─────────────────────────────────────────────────────────────────
-    function init() {
-        initTheme()
-        initDots()
-        loadReports()
-        updateUI()
+<!-- ══ LEADERBOARD ══ -->
+<div id="leaderboardModal" class="modal-overlay" onclick="closeModal(event,'leaderboardModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Leaderboard</h3>
+            <button class="x-btn" onclick="closeModal(null,'leaderboardModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="tab-row">
+            <button class="tab on" onclick="switchLeaderTab('today',event)">Today</button>
+            <button class="tab" onclick="switchLeaderTab('week',event)">This Week</button>
+        </div>
+        <div id="leaderboardContent" class="modal-bdy" style="padding-top:0;"></div>
+    </div>
+</div>
 
-        // Listen for Supabase OAuth session (handles redirect back from Google)
-        supabaseClient.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' && session) {
-                const pendingRole = localStorage.getItem('pendingRole') || 'user'
-                localStorage.removeItem('pendingRole')
-                const u = session.user
-                currentUser = {
-                    id:       u.id,
-                    name:     u.user_metadata?.full_name || u.email.split('@')[0],
-                    email:    u.email,
-                    photo:    u.user_metadata?.avatar_url || null,
-                    role:     pendingRole,
-                    verified: pendingRole === 'user'
-                }
-                localStorage.setItem('warroomUser', JSON.stringify(currentUser))
-                if (pendingRole === 'journalist') {
-                    sendJournalistApplicationEmail(currentUser)
-                }
-                updateUI()
-                closeModal(null, 'authModal')
-            } else if (event === 'SIGNED_OUT') {
-                currentUser = null
-                localStorage.removeItem('warroomUser')
-                updateUI()
-            }
-        })
-    }
+<!-- ══ SCRIPTS ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
 
-    // ── UI update (replaces checkAuthStatus) ─────────────────────────────────
-    function updateUI() {
-        const profileWrap = document.getElementById('profileWrap')
-        const loginBtn    = document.getElementById('loginBtn')
-        const submitBtn   = document.getElementById('submitBtn')
+// ── Config ───────────────────────────────────────────────────────────────────
+const SUPABASE_URL  = "https://gmqnjseeefjkdzhkxwla.supabase.co"
+const SUPABASE_KEY  = "sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const ADMIN_PASSWORD = "warroom_admin_2024"
+const ADMIN_EMAIL    = "thewarroomweb@gmail.com"
 
-        if (currentUser) {
-            loginBtn.style.display   = 'none'
-            profileWrap.style.display = 'block'
+// ── State ────────────────────────────────────────────────────────────────────
+let reports      = []
+let filtered     = []
+let theme        = localStorage.getItem('theme') || 'dark'
+let me           = JSON.parse(localStorage.getItem('warroomUser') || 'null')
+let leaderTab    = 'today'
+let authType     = 'user'
+let isAdmin      = sessionStorage.getItem('isAdmin') === 'true'
+let myVotes      = JSON.parse(localStorage.getItem('myVotes') || '{}')   // {reportId: 'up'|'down'}
+let comments     = JSON.parse(localStorage.getItem('wrComments') || '{}') // {reportId: [...]}
+let jProfiles    = JSON.parse(localStorage.getItem('jProfiles') || '{}')  // {name: profile}
 
-            // Avatar
-            const av = document.getElementById('profileAvatar')
-            if (currentUser.photo) {
-                av.innerHTML = `<img src="${currentUser.photo}" alt="${currentUser.name}">`
-            } else {
-                av.textContent = currentUser.name.charAt(0).toUpperCase()
-            }
+// ── Loading bar ──────────────────────────────────────────────────────────────
+let barTimer = null
+function barStart() {
+    const b = document.getElementById('topBar')
+    b.style.transition = 'none'
+    b.style.width = '0%'
+    b.classList.add('running')
+    requestAnimationFrame(() => {
+        b.style.transition = 'width 1.8s cubic-bezier(.4,0,.2,1)'
+        b.style.width = '75%'
+    })
+}
+function barDone() {
+    const b = document.getElementById('topBar')
+    b.style.transition = 'width .3s ease,opacity .4s ease .2s'
+    b.style.width = '100%'
+    setTimeout(() => { b.classList.remove('running'); b.style.width = '0%' }, 600)
+}
 
-            // Dropdown name + role
-            let roleTag = ''
-            if (currentUser.role === 'journalist' && currentUser.verified) roleTag = ' ✓'
-            else if (currentUser.role === 'journalist') roleTag = ' (Pending)'
-            document.getElementById('pdName').textContent = currentUser.name + roleTag
+// ── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+    initTheme()
+    initDots()
+    loadReports()
+    updateUI()
 
-            // Submit button
-            submitBtn.style.display = (currentUser.role === 'journalist' && currentUser.verified) ? 'inline-block' : 'none'
-        } else {
-            loginBtn.style.display    = 'inline-block'
-            profileWrap.style.display = 'none'
-            submitBtn.style.display   = 'none'
-        }
-    }
-
-    // ── Profile dropdown ─────────────────────────────────────────────────────
-    function toggleProfileDropdown(e) {
-        e.stopPropagation()
-        document.getElementById('profileDropdown').classList.toggle('open')
-    }
-    function closeProfileDropdown() {
-        document.getElementById('profileDropdown').classList.remove('open')
-    }
-    document.addEventListener('click', () => closeProfileDropdown())
-
-    // ── Settings modal ───────────────────────────────────────────────────────
-    function openSettings() {
-        if (!currentUser) return
-        // Avatar
-        const av = document.getElementById('settingsAvatar')
-        if (currentUser.photo) {
-            av.innerHTML = `<img src="${currentUser.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">`
-        } else {
-            av.textContent = currentUser.name.charAt(0).toUpperCase()
-        }
-        document.getElementById('settingsName').textContent  = currentUser.name
-        document.getElementById('settingsEmail').textContent = currentUser.email || ''
-
-        const rd = document.getElementById('settingsRole')
-        if (currentUser.role === 'journalist' && currentUser.verified) {
-            rd.innerHTML = '<span class="verification-badge">✓</span> <span style="font-size:12px;color:var(--text-secondary);">Verified Journalist</span>'
-        } else if (currentUser.role === 'journalist') {
-            rd.innerHTML = '<span class="pending-badge">PENDING REVIEW</span>'
-        } else {
-            rd.innerHTML = '<span style="font-size:12px;color:var(--text-secondary);">Reader</span>'
-        }
-        document.getElementById('settingsThemeIcon').textContent = currentTheme === 'dark' ? '🌙' : '☀️'
-        openModal('settingsModal')
-    }
-
-    // ── Auth Modal ───────────────────────────────────────────────────────────
-    function showAuthModal() {
-        openModal('authModal')
-        // Position slider after the modal becomes visible
-        requestAnimationFrame(() => positionSlider('user'))
-    }
-
-    // ── 3-tab auth toggle with sliding pill ──────────────────────────────────
-    function positionSlider(type) {
-        const slider = document.getElementById('authSlider')
-        const tabId  = type === 'user' ? 'tabUser' : type === 'journalist' ? 'tabJournalist' : 'tabAdmin'
-        const btn    = document.getElementById(tabId)
-        if (!slider || !btn) return
-        slider.style.left  = btn.offsetLeft + 'px'
-        slider.style.width = btn.offsetWidth + 'px'
-    }
-
-    function switchAuthType(type) {
-        currentAuthType = type
-
-        // Buttons
-        document.querySelectorAll('.auth-type-btn').forEach(b => b.classList.remove('active'))
-        const tabId = type === 'user' ? 'tabUser' : type === 'journalist' ? 'tabJournalist' : 'tabAdmin'
-        document.getElementById(tabId).classList.add('active')
-
-        // Slide the pill
-        positionSlider(type)
-
-        // Panels
-        document.getElementById('sectionUser').style.display       = type === 'user'       ? 'block' : 'none'
-        document.getElementById('sectionJournalist').style.display = type === 'journalist' ? 'block' : 'none'
-        document.getElementById('sectionAdmin').style.display      = type === 'admin'      ? 'block' : 'none'
-    }
-
-    // ── Google OAuth ─────────────────────────────────────────────────────────
-    async function signInWithGoogle(type) {
-        localStorage.setItem('pendingRole', type)
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.href.split('?')[0],
-                queryParams: { access_type: 'offline', prompt: 'consent' }
-            }
-        })
-        if (error) {
-            // Demo fallback when OAuth not yet configured
-            const mockUser = {
-                id:       'demo_' + Date.now(),
-                name:     type === 'journalist' ? 'Demo Journalist' : 'Demo User',
-                email:    type === 'journalist' ? 'journalist@demo.com' : 'user@demo.com',
-                photo:    null,
-                role:     type,
-                verified: type === 'user'
-            }
-            if (type === 'journalist') sendJournalistApplicationEmail(mockUser)
-            currentUser = mockUser
-            localStorage.setItem('warroomUser', JSON.stringify(currentUser))
+    sb.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            const role = localStorage.getItem('pendingRole') || 'user'
             localStorage.removeItem('pendingRole')
+            const u = session.user
+            me = { id: u.id, name: u.user_metadata?.full_name || u.email.split('@')[0], email: u.email, photo: u.user_metadata?.avatar_url || null, role, verified: role === 'user' }
+            localStorage.setItem('warroomUser', JSON.stringify(me))
             updateUI()
             closeModal(null, 'authModal')
-        }
-    }
-
-    // ── Journalist application email ─────────────────────────────────────────
-    function sendJournalistApplicationEmail(user) {
-        // Store locally for admin panel
-        const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-        apps.push({ user_id: user.id, email: user.email, name: user.name, status: 'pending', created_at: new Date().toISOString() })
-        localStorage.setItem('journalistApplications', JSON.stringify(apps))
-
-        // Fire mailto to admin
-        const subj = encodeURIComponent(`New Journalist Application: ${user.name}`)
-        const body = encodeURIComponent(
-            `A new journalist has applied to The WarRoom.\n\nName: ${user.name}\nEmail: ${user.email}\nApplied: ${new Date().toLocaleString()}\n\nPlease review in the Admin Panel.`
-        )
-        window.open(`mailto:${ADMIN_EMAIL}?subject=${subj}&body=${body}`, '_blank')
-
-        alert('Application submitted! Our editors will review it within 24–48 hours.')
-    }
-
-    // ── Logout ───────────────────────────────────────────────────────────────
-    function logout() {
-        supabaseClient.auth.signOut()
-        currentUser = null
-        localStorage.removeItem('warroomUser')
-        updateUI()
-    }
-
-    // ── Admin ─────────────────────────────────────────────────────────────────
-    function handleAdminLogin(event) {
-        event.preventDefault()
-        const pw = document.getElementById('adminPassword').value
-        if (pw === ADMIN_PASSWORD) {
-            isAdmin = true
-            sessionStorage.setItem('isAdmin', 'true')
-            closeModal(null, 'authModal')
-            openAdminPanel()
-        } else {
-            alert('Invalid admin password')
-        }
-    }
-
-    function openAdminPanel() {
-        openModal('adminPanelModal')
-        loadPendingApplications()
-    }
-
-    function loadPendingApplications() {
-        const apps    = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-        const pending = apps.filter(a => a.status === 'pending')
-        const el      = document.getElementById('pendingApplications')
-        if (pending.length === 0) {
-            el.innerHTML = '<p class="no-results">No pending applications</p>'
-            return
-        }
-        el.innerHTML = `
-            <table class="admin-table">
-                <thead><tr><th>Name</th><th>Email</th><th>Date</th><th>Actions</th></tr></thead>
-                <tbody>
-                    ${pending.map((a, i) => `
-                        <tr>
-                            <td>${a.name}</td>
-                            <td>${a.email}</td>
-                            <td>${new Date(a.created_at).toLocaleDateString()}</td>
-                            <td>
-                                <button class="admin-action-btn approve" onclick="approveJournalist('${a.user_id}')">Approve</button>
-                                <button class="admin-action-btn reject"  onclick="rejectJournalist('${a.user_id}')">Reject</button>
-                            </td>
-                        </tr>`).join('')}
-                </tbody>
-            </table>`
-    }
-
-    function approveJournalist(userId) {
-        if (!confirm('Approve this journalist?')) return
-        const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-        const app  = apps.find(a => a.user_id === userId)
-        if (app) {
-            app.status = 'approved'
-            localStorage.setItem('journalistApplications', JSON.stringify(apps))
-            if (currentUser && currentUser.id === userId) {
-                currentUser.verified = true
-                localStorage.setItem('warroomUser', JSON.stringify(currentUser))
-                updateUI()
-            }
-            alert(`Approved! Notification sent to ${app.email}`)
-            loadPendingApplications()
-        }
-    }
-
-    function rejectJournalist(userId) {
-        if (!confirm('Reject this journalist?')) return
-        const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-        const app  = apps.find(a => a.user_id === userId)
-        if (app) {
-            app.status = 'rejected'
-            localStorage.setItem('journalistApplications', JSON.stringify(apps))
-            alert(`Rejected. Notification sent to ${app.email}`)
-            loadPendingApplications()
-        }
-    }
-
-    // ── Animated Dots ────────────────────────────────────────────────────────
-    function initDots() {
-        const container = document.getElementById('dotsBackground')
-        const count     = window.innerWidth < 640 ? 40 : 60
-        for (let i = 0; i < count; i++) {
-            const dot = document.createElement('div')
-            dot.className = 'dot'
-            const x  = Math.random() * 100
-            const y  = Math.random() * 100
-            const tx = (Math.random() - 0.5) * 200
-            const ty = (Math.random() - 0.5) * 200
-            const d  = 15 + Math.random() * 15
-            dot.style.left = x + '%'
-            dot.style.top  = y + '%'
-            dot.style.setProperty('--tx', tx + 'px')
-            dot.style.setProperty('--ty', ty + 'px')
-            dot.style.animationDuration = d + 's'
-            dot.style.animationDelay    = (Math.random() * -d) + 's'
-            container.appendChild(dot)
-        }
-    }
-
-    // ── Theme ────────────────────────────────────────────────────────────────
-    function initTheme() {
-        document.documentElement.setAttribute('data-theme', currentTheme)
-        updateThemeIcon()
-        updateMetaColor()
-    }
-    function toggleTheme() {
-        currentTheme = currentTheme === 'light' ? 'dark' : 'light'
-        document.documentElement.setAttribute('data-theme', currentTheme)
-        localStorage.setItem('theme', currentTheme)
-        updateThemeIcon()
-        updateMetaColor()
-        const si = document.getElementById('settingsThemeIcon')
-        if (si) si.textContent = currentTheme === 'dark' ? '🌙' : '☀️'
-    }
-    function updateThemeIcon() {
-        document.getElementById('themeIcon').textContent = currentTheme === 'light' ? '◑' : '◐'
-    }
-    function updateMetaColor() {
-        document.querySelector('meta[name="theme-color"]')
-            .setAttribute('content', currentTheme === 'light' ? '#ffffff' : '#000000')
-    }
-
-    // ── Data ─────────────────────────────────────────────────────────────────
-    function getVoteScore(r) { return r.upvotes - r.downvotes }
-
-    async function loadReports() {
-        const { data, error } = await supabaseClient
-            .from('reports').select('*').order('created_at', { ascending: false })
-        if (error) { console.error(error); return }
-        reports = data
-        filteredReports = data
-        renderFeed()
-        renderTopReport()
-    }
-
-    // ── Search ───────────────────────────────────────────────────────────────
-    function handleSearch(q) {
-        const btn = document.getElementById('clearSearch')
-        if (q.trim()) {
-            btn.classList.add('active')
-            const lq = q.toLowerCase()
-            filteredReports = reports.filter(r =>
-                r.text.toLowerCase().includes(lq) ||
-                r.location.toLowerCase().includes(lq) ||
-                r.journalist.toLowerCase().includes(lq)
-            )
-        } else {
-            btn.classList.remove('active')
-            filteredReports = reports
-        }
-        renderFeed()
-        if (q.trim()) {
-            document.getElementById('topReportSection').style.display = 'none'
-            document.getElementById('mainDivider').style.display = 'none'
-            document.getElementById('heroSection').style.display = 'none'
-            document.getElementById('feedTitle').textContent = `Search Results (${filteredReports.length})`
-        } else {
-            document.getElementById('topReportSection').style.display = 'block'
-            document.getElementById('mainDivider').style.display = 'block'
-            document.getElementById('heroSection').style.display = 'block'
-            document.getElementById('feedTitle').textContent = 'Live Feed'
-        }
-    }
-    function clearSearch() {
-        document.getElementById('searchInput').value = ''
-        handleSearch('')
-    }
-
-    // ── Voting ───────────────────────────────────────────────────────────────
-    async function handleVote(reportId, voteType, event) {
-        event.stopPropagation()
-        if (!currentUser) { showAuthModal(); return }
-        const report = reports.find(r => r.id === reportId)
-        if (!report) return
-        const up   = report.upvotes   + (voteType === 'up'   ? 1 : 0)
-        const down = report.downvotes + (voteType === 'down' ? 1 : 0)
-        const { error } = await supabaseClient.from('reports')
-            .update({ upvotes: up, downvotes: down }).eq('id', reportId)
-        if (error) { console.error(error); return }
-        await loadReports()
-    }
-
-    // ── Date formatting ──────────────────────────────────────────────────────
-    function formatDate(ds) {
-        const diff = Date.now() - new Date(ds)
-        const mins  = Math.floor(diff / 60000)
-        const hours = Math.floor(diff / 3600000)
-        const days  = Math.floor(diff / 86400000)
-        if (mins  <  1) return 'now'
-        if (mins  < 60) return `${mins}m`
-        if (hours < 24) return `${hours}h`
-        if (days  <  7) return `${days}d`
-        return new Date(ds).toLocaleDateString('en-US', { month:'short', day:'numeric' })
-    }
-
-    // ── Cards ────────────────────────────────────────────────────────────────
-    function createStoryCard(report, isTop = false) {
-        const score = getVoteScore(report)
-        return `
-        <div class="report-card ${isTop ? 'top-report' : ''}" onclick="openReportModal('${report.id}')" style="position:relative;">
-            ${isTop ? '<div class="top-badge">TOP</div>' : ''}
-            <div class="card-content">
-                <div style="display:flex;gap:12px;">
-                    <div class="avatar ${isTop ? 'large' : ''}">
-                        ${report.journalist.charAt(0).toUpperCase()}
-                    </div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
-                            <span class="journalist-name">${report.journalist}</span>
-                            ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
-                            <span class="report-meta">· ${formatDate(report.created_at)}</span>
-                        </div>
-                        <div class="report-meta" style="margin-bottom:2px;">${report.location}</div>
-                        <div class="report-text">${report.text}</div>
-                        <div class="stats-row">
-                            <button class="vote-button" onclick="handleVote('${report.id}','up',event)" aria-label="Upvote">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                                <span>${report.upvotes}</span>
-                            </button>
-                            <button class="vote-button" onclick="handleVote('${report.id}','down',event)" aria-label="Downvote">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-                                <span>${report.downvotes}</span>
-                            </button>
-                            <span class="report-meta">Score: <span style="font-weight:600;color:var(--text-primary);">${score}</span></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`
-    }
-
-    // ── Rendering ────────────────────────────────────────────────────────────
-    function renderFeed() {
-        const feed = document.getElementById('storyFeed')
-        if (filteredReports.length === 0) {
-            feed.innerHTML = '<div class="no-results">No reports found</div>'
-            return
-        }
-        feed.innerHTML = filteredReports.map(r => createStoryCard(r, false)).join('')
-    }
-
-    function renderTopReport() {
-        const el = document.getElementById('topReport')
-        if (reports.length === 0) {
-            el.innerHTML = '<div style="padding:32px 16px;text-align:center;"><span class="report-meta">No reports yet</span></div>'
-            return
-        }
-        const top = reports.reduce((best, cur) => getVoteScore(cur) > getVoteScore(best) ? cur : best)
-        el.innerHTML = createStoryCard(top, true)
-    }
-
-    // ── Report modal ─────────────────────────────────────────────────────────
-    function openReportModal(reportId) {
-        const report = reports.find(r => r.id === reportId)
-        if (!report) return
-        const score = getVoteScore(report)
-        document.getElementById('modalContent').innerHTML = `
-            <div style="display:flex;gap:14px;margin-bottom:20px;">
-                <div class="avatar large">${report.journalist.charAt(0).toUpperCase()}</div>
-                <div style="flex:1;min-width:0;">
-                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
-                        <span class="journalist-name" style="font-size:16px;">${report.journalist}</span>
-                        ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
-                    </div>
-                    <div class="report-meta">${report.location}</div>
-                    <div class="report-meta">${new Date(report.created_at).toLocaleString()}</div>
-                </div>
-            </div>
-            <div class="report-text" style="font-size:16px;line-height:1.6;margin-bottom:20px;">${report.text}</div>
-            <div class="divider"></div>
-            <div class="stats-row">
-                <button class="vote-button" onclick="handleVote('${report.id}','up',event)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                    <span>${report.upvotes}</span>
-                </button>
-                <button class="vote-button" onclick="handleVote('${report.id}','down',event)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-                    <span>${report.downvotes}</span>
-                </button>
-                <span class="report-meta">Overall Score: <span style="font-weight:600;color:var(--text-primary);font-size:15px;">${score}</span></span>
-            </div>`
-        openModal('reportModal')
-    }
-
-    // ── Submit form ──────────────────────────────────────────────────────────
-    function showSubmitForm() {
-        if (!currentUser) { showAuthModal(); return }
-        if (currentUser.role !== 'journalist' || !currentUser.verified) {
-            alert('Only verified journalists can submit reports'); return
-        }
-        openModal('submitModal')
-    }
-
-    async function handleSubmitReport(event) {
-        event.preventDefault()
-        if (!currentUser || currentUser.role !== 'journalist' || !currentUser.verified) {
-            alert('Only verified journalists can submit reports'); return
-        }
-        const location  = document.getElementById('reportLocation').value.trim()
-        const text      = document.getElementById('reportText').value.trim()
-        const btn       = document.getElementById('submitFormBtn')
-        btn.disabled    = true
-        btn.textContent = 'Submitting...'
-        const { error } = await supabaseClient.from('reports').insert([{
-            journalist: currentUser.name, location, text,
-            verified: true, upvotes: 0, downvotes: 0
-        }])
-        btn.disabled    = false
-        btn.textContent = 'Submit Report'
-        if (error) { console.error(error); alert('Error submitting. Please try again.'); return }
-        document.getElementById('reportLocation').value = ''
-        document.getElementById('reportText').value = ''
-        closeModal(null, 'submitModal')
-        alert('Report submitted!')
-        loadReports()
-    }
-
-    // ── Leaderboard ──────────────────────────────────────────────────────────
-    function showLeaderboard() {
-        openModal('leaderboardModal')
-        renderLeaderboard()
-    }
-
-    function switchLeaderboardTab(tab, event) {
-        currentLeaderboardTab = tab
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'))
-        event.target.classList.add('active')
-        renderLeaderboard()
-    }
-
-    function renderLeaderboard() {
-        const content = document.getElementById('leaderboardContent')
-        const now     = new Date()
-        let list      = reports
-
-        if (currentLeaderboardTab === 'today') {
-            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-            list = reports.filter(r => new Date(r.created_at) >= start)
-        } else if (currentLeaderboardTab === 'week') {
-            const start = new Date(now - 7 * 864e5)
-            list = reports.filter(r => new Date(r.created_at) >= start)
-        }
-
-        const sorted = [...list].sort((a, b) => getVoteScore(b) - getVoteScore(a))
-        if (sorted.length === 0) {
-            content.innerHTML = '<div class="no-results">No reports in this timeframe</div>'
-            return
-        }
-        content.innerHTML = sorted.slice(0, 10).map((report, i) => {
-            const score = getVoteScore(report)
-            return `
-            <div class="report-card" onclick="openReportModal('${report.id}')" style="margin-bottom:8px;">
-                <div class="card-content">
-                    <div style="display:flex;gap:12px;align-items:start;">
-                        <div style="font-size:20px;font-weight:700;color:var(--text-secondary);min-width:28px;">#${i+1}</div>
-                        <div class="avatar">${report.journalist.charAt(0).toUpperCase()}</div>
-                        <div style="flex:1;min-width:0;">
-                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-                                <span class="journalist-name">${report.journalist}</span>
-                                ${report.verified ? '<span class="verification-badge">✓</span>' : ''}
-                            </div>
-                            <div class="report-meta" style="margin-bottom:6px;">${report.location}</div>
-                            <div class="report-text" style="font-size:14px;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${report.text}</div>
-                            <div style="margin-top:8px;display:flex;gap:12px;align-items:center;">
-                                <span class="report-meta">Score: <span style="font-weight:700;color:var(--text-primary);font-size:15px;">${score}</span></span>
-                                <span class="report-meta">↑ ${report.upvotes} · ↓ ${report.downvotes}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`
-        }).join('')
-    }
-
-    // ── Modal helpers ────────────────────────────────────────────────────────
-    function openModal(id) {
-        document.getElementById(id).classList.add('active')
-        document.body.style.overflow = 'hidden'
-    }
-    function closeModal(event, id) {
-        if (event && event.target.id !== id && !event.currentTarget.classList.contains('close-button')) return
-        document.getElementById(id).classList.remove('active')
-        document.body.style.overflow = 'auto'
-    }
-
-    // Esc to close
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'))
-            document.body.style.overflow = 'auto'
+        } else if (event === 'SIGNED_OUT') {
+            me = null; localStorage.removeItem('warroomUser'); updateUI()
         }
     })
+}
 
-    // ── Bootstrap ────────────────────────────────────────────────────────────
-    init()
+// ── UI Update ────────────────────────────────────────────────────────────────
+function updateUI() {
+    const wrap = document.getElementById('profileWrap')
+    const lBtn = document.getElementById('loginBtn')
+    const sBtn = document.getElementById('submitBtn')
+    if (me) {
+        lBtn.style.display  = 'none'
+        wrap.style.display  = 'block'
+        const av = document.getElementById('profAv')
+        av.innerHTML = me.photo ? `<img src="${me.photo}" alt="">` : me.name.charAt(0).toUpperCase()
+        let tag = me.role === 'journalist' && me.verified ? ' ✓' : me.role === 'journalist' ? ' (Pending)' : ''
+        document.getElementById('pdName').textContent = me.name + tag
+        sBtn.style.display = (me.role === 'journalist' && me.verified) ? 'inline-block' : 'none'
+    } else {
+        lBtn.style.display  = 'inline-block'
+        wrap.style.display  = 'none'
+        sBtn.style.display  = 'none'
+    }
+}
 
-    </script>
+// ── Profile Dropdown ─────────────────────────────────────────────────────────
+function toggleDD(e) { e.stopPropagation(); document.getElementById('profDD').classList.toggle('open') }
+function closeDD() { document.getElementById('profDD').classList.remove('open') }
+document.addEventListener('click', () => closeDD())
+
+// ── Settings ─────────────────────────────────────────────────────────────────
+function openSettings() {
+    if (!me) return
+    const av = document.getElementById('settingsAv')
+    av.innerHTML = me.photo ? `<img src="${me.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">` : me.name.charAt(0).toUpperCase()
+    document.getElementById('settingsName').textContent  = me.name
+    document.getElementById('settingsEmail').textContent = me.email || ''
+    const rd = document.getElementById('settingsRole')
+    if (me.role === 'journalist' && me.verified) rd.innerHTML = '<span class="badge-verified">✓ VERIFIED</span>'
+    else if (me.role === 'journalist') rd.innerHTML = '<span class="badge-pending">PENDING REVIEW</span>'
+    else rd.innerHTML = '<span style="font-size:12px;color:var(--sub);">Reader</span>'
+    document.getElementById('settingsThemeIcon').textContent = theme === 'dark' ? '🌙' : '☀️'
+    openModal('settingsModal')
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+function showAuthModal() {
+    openModal('authModal')
+    requestAnimationFrame(() => slideAuth('user'))
+}
+function slideAuth(type) {
+    const s = document.getElementById('authSlider')
+    const b = document.getElementById(type === 'user' ? 'tabUser' : type === 'journalist' ? 'tabJournalist' : 'tabAdmin')
+    if (!s || !b) return
+    s.style.left  = b.offsetLeft + 'px'
+    s.style.width = b.offsetWidth + 'px'
+}
+function switchAuth(type) {
+    authType = type
+    document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('on'))
+    document.getElementById(type === 'user' ? 'tabUser' : type === 'journalist' ? 'tabJournalist' : 'tabAdmin').classList.add('on')
+    slideAuth(type)
+    document.getElementById('secUser').style.display       = type === 'user'       ? 'block' : 'none'
+    document.getElementById('secJournalist').style.display = type === 'journalist' ? 'block' : 'none'
+    document.getElementById('secAdmin').style.display      = type === 'admin'      ? 'block' : 'none'
+}
+
+// Google OAuth
+async function signInWithGoogle(type) {
+    localStorage.setItem('pendingRole', type)
+    const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:window.location.href.split('?')[0], queryParams:{ access_type:'offline', prompt:'consent' } } })
+    if (error) {
+        const mock = { id:'demo_'+Date.now(), name: type==='journalist'?'Demo Journalist':'Demo User', email: type==='journalist'?'journalist@demo.com':'user@demo.com', photo:null, role:type, verified:type==='user' }
+        me = mock
+        localStorage.setItem('warroomUser', JSON.stringify(me))
+        localStorage.removeItem('pendingRole')
+        updateUI()
+        closeModal(null, 'authModal')
+    }
+}
+
+// Journalist application form
+function submitJournalistApp(e) {
+    e.preventDefault()
+    const btn = document.getElementById('jSubmitBtn')
+    btn.disabled = true; btn.textContent = 'Submitting...'
+    const profile = {
+        name:     document.getElementById('jName').value.trim(),
+        email:    document.getElementById('jEmail').value.trim(),
+        employer: document.getElementById('jEmployer').value.trim(),
+        beat:     document.getElementById('jBeat').value.trim(),
+        bio:      document.getElementById('jBio').value.trim(),
+        twitter:  document.getElementById('jTwitter').value.trim(),
+        linkedin: document.getElementById('jLinkedin').value.trim(),
+        instagram:document.getElementById('jInstagram').value.trim(),
+        cv:       document.getElementById('jCV').value.trim(),
+        notes:    document.getElementById('jNotes').value.trim(),
+        status:   'pending',
+        created_at: new Date().toISOString(),
+        user_id: 'app_'+Date.now()
+    }
+    // Save profile data
+    jProfiles[profile.name] = profile
+    localStorage.setItem('jProfiles', JSON.stringify(jProfiles))
+
+    // Store in applications
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    apps.push(profile); localStorage.setItem('journalistApplications', JSON.stringify(apps))
+
+    // Email admin
+    const subj = encodeURIComponent(`Journalist Application: ${profile.name}`)
+    const body = encodeURIComponent(`New application from ${profile.name}\nEmail: ${profile.email}\nEmployer: ${profile.employer}\nBeat: ${profile.beat}\nCV: ${profile.cv}\nTwitter: ${profile.twitter}\nLinkedIn: ${profile.linkedin}\n\nBio: ${profile.bio}\n\nNotes: ${profile.notes}`)
+    window.open(`mailto:${ADMIN_EMAIL}?subject=${subj}&body=${body}`, '_blank')
+
+    btn.disabled = false; btn.textContent = 'Submit Application'
+    alert('Application submitted! We\'ll review it within 24–48 hours.')
+    closeModal(null, 'authModal')
+}
+
+// Logout with loading bar
+function logout() {
+    barStart()
+    setTimeout(async () => {
+        await sb.auth.signOut()
+        me = null; localStorage.removeItem('warroomUser')
+        myVotes = {}; localStorage.removeItem('myVotes')
+        updateUI()
+        barDone()
+    }, 900)
+}
+
+// Admin
+function handleAdminLogin(e) {
+    e.preventDefault()
+    if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+        isAdmin = true; sessionStorage.setItem('isAdmin','true')
+        closeModal(null,'authModal'); openAdminPanel()
+    } else { alert('Invalid admin password') }
+}
+function openAdminPanel() { openModal('adminPanelModal'); loadPendingApps() }
+function loadPendingApps() {
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]').filter(a=>a.status==='pending')
+    const el = document.getElementById('pendingApplications')
+    if (!apps.length) { el.innerHTML='<p class="no-res">No pending applications</p>'; return }
+    el.innerHTML = `<table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Employer</th><th>Beat</th><th>CV</th><th>Actions</th></tr></thead><tbody>
+        ${apps.map(a=>`<tr>
+            <td><strong>${a.name}</strong></td>
+            <td>${a.email}</td>
+            <td>${a.employer||'—'}</td>
+            <td>${a.beat||'—'}</td>
+            <td>${a.cv?`<a href="${a.cv}" target="_blank" style="color:#3b82f6;">View</a>`:'—'}</td>
+            <td>
+                <button class="adm-btn ok" onclick="approveJ('${a.user_id}')">Approve</button>
+                <button class="adm-btn no" onclick="rejectJ('${a.user_id}')">Reject</button>
+            </td>
+        </tr>`).join('')}
+    </tbody></table>`
+}
+function approveJ(uid) {
+    if (!confirm('Approve?')) return
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    const a = apps.find(x=>x.user_id===uid)
+    if (a) { a.status='approved'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Approved ${a.name}`); loadPendingApps() }
+}
+function rejectJ(uid) {
+    if (!confirm('Reject?')) return
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    const a = apps.find(x=>x.user_id===uid)
+    if (a) { a.status='rejected'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Rejected ${a.name}`); loadPendingApps() }
+}
+
+// ── Dots ─────────────────────────────────────────────────────────────────────
+function initDots() {
+    const c = document.getElementById('dotsBackground')
+    const n = window.innerWidth < 640 ? 40 : 60
+    for (let i=0;i<n;i++) {
+        const d=document.createElement('div'); d.className='dot'
+        const x=Math.random()*100,y=Math.random()*100,tx=(Math.random()-.5)*200,ty=(Math.random()-.5)*200,dur=15+Math.random()*15
+        Object.assign(d.style,{left:x+'%',top:y+'%',animationDuration:dur+'s',animationDelay:(Math.random()*-dur)+'s'})
+        d.style.setProperty('--tx',tx+'px'); d.style.setProperty('--ty',ty+'px')
+        c.appendChild(d)
+    }
+}
+
+// ── Theme ────────────────────────────────────────────────────────────────────
+function initTheme() { document.documentElement.setAttribute('data-theme',theme); updateThemeIcon(); updateMeta() }
+function toggleTheme() {
+    theme = theme==='light'?'dark':'light'
+    document.documentElement.setAttribute('data-theme',theme); localStorage.setItem('theme',theme)
+    updateThemeIcon(); updateMeta()
+    const si=document.getElementById('settingsThemeIcon'); if(si) si.textContent=theme==='dark'?'🌙':'☀️'
+}
+function updateThemeIcon() { document.getElementById('themeIcon').textContent = theme==='light'?'◑':'◐' }
+function updateMeta() { document.querySelector('meta[name="theme-color"]').setAttribute('content',theme==='light'?'#ffffff':'#000000') }
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+function score(r) { return r.upvotes - r.downvotes }
+
+async function loadReports() {
+    const {data,error} = await sb.from('reports').select('*').order('created_at',{ascending:false})
+    if (error) { console.error(error); return }
+    reports = data; filtered = data; renderFeed(); renderTop()
+}
+
+// ── Search ───────────────────────────────────────────────────────────────────
+function handleSearch(q) {
+    const btn = document.getElementById('clearSearch')
+    if (q.trim()) {
+        btn.classList.add('on')
+        const lq=q.toLowerCase()
+        filtered = reports.filter(r=>r.text.toLowerCase().includes(lq)||r.location.toLowerCase().includes(lq)||r.journalist.toLowerCase().includes(lq))
+    } else { btn.classList.remove('on'); filtered=reports }
+    renderFeed()
+    const show = !q.trim()
+    document.getElementById('topReportSection').style.display = show?'block':'none'
+    document.getElementById('mainDivider').style.display       = show?'block':'none'
+    document.getElementById('heroSection').style.display       = show?'block':'none'
+    document.getElementById('feedTitle').textContent = q.trim() ? `Search Results (${filtered.length})` : 'Live Feed'
+}
+function clearSearch() { document.getElementById('searchInput').value=''; handleSearch('') }
+
+// ── Voting ───────────────────────────────────────────────────────────────────
+async function handleVote(reportId, type, e) {
+    e.stopPropagation()
+    if (!me) { showAuthModal(); return }
+    if (myVotes[reportId]) { alert('You already voted on this report'); return }
+    const r = reports.find(x=>x.id===reportId); if(!r) return
+    const up   = r.upvotes   + (type==='up'   ? 1 : 0)
+    const down = r.downvotes + (type==='down' ? 1 : 0)
+    const {error} = await sb.from('reports').update({upvotes:up,downvotes:down}).eq('id',reportId)
+    if (error) { console.error(error); return }
+    myVotes[reportId] = type; localStorage.setItem('myVotes',JSON.stringify(myVotes))
+    await loadReports()
+}
+
+// ── Comments ─────────────────────────────────────────────────────────────────
+function getComments(reportId) { return comments[reportId] || [] }
+function saveComment(reportId, text) {
+    if (!me) return
+    if (!comments[reportId]) comments[reportId] = []
+    comments[reportId].push({ id:'c_'+Date.now(), uid:me.id, name:me.name, photo:me.photo, text, ts:new Date().toISOString() })
+    localStorage.setItem('wrComments', JSON.stringify(comments))
+}
+function renderComments(reportId, el) {
+    const list = getComments(reportId)
+    if (!list.length) { el.innerHTML='<div style="color:var(--sub);font-size:13px;padding:8px 0;">No comments yet. Be first!</div>'; return }
+    el.innerHTML = list.map(c=>`
+        <div class="comment">
+            <div class="av" style="width:32px;height:32px;min-width:32px;font-size:13px;" onclick="event.stopPropagation()">
+                ${c.photo?`<img src="${c.photo}" alt="">`:(c.name||'?').charAt(0).toUpperCase()}
+            </div>
+            <div class="comment-body">
+                <div style="font-weight:600;font-size:13px;">${c.name}</div>
+                <div class="comment-text">${escapeHtml(c.text)}</div>
+                <div class="comment-meta">${fmtDate(c.ts)}</div>
+            </div>
+        </div>`).join('')
+}
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function submitComment(reportId) {
+    const inp = document.getElementById('commentInput_'+reportId)
+    const txt = inp.value.trim()
+    if (!txt) return
+    if (!me) { showAuthModal(); return }
+    saveComment(reportId, txt)
+    inp.value = ''
+    const listEl = document.getElementById('commentList_'+reportId)
+    renderComments(reportId, listEl)
+}
+
+// ── Journalist Profile ────────────────────────────────────────────────────────
+function openJournalistProfile(name, e) {
+    if (e) e.stopPropagation()
+    const allReports = reports.filter(r => r.journalist === name)
+    const totalScore = allReports.reduce((s,r)=>s+score(r), 0)
+    const profile    = jProfiles[name] || {}
+    const content    = document.getElementById('profileContent')
+    const initials   = name.charAt(0).toUpperCase()
+
+    content.innerHTML = `
+        <!-- Hero -->
+        <div class="j-profile-hero">
+            <div class="av xl" style="margin:0 auto 12px;cursor:default;" onclick="event.stopPropagation()">
+                ${profile.photo?`<img src="${profile.photo}" alt="">`:(initials)}
+            </div>
+            <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${name}</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge-verified">✓ VERIFIED JOURNALIST</span>
+                ${profile.beat ? `<span style="font-size:12px;color:rgba(255,255,255,.7);">${profile.beat}</span>` : ''}
+            </div>
+            ${profile.employer ? `<div style="font-size:13px;color:rgba(255,255,255,.65);margin-top:6px;">${profile.employer}</div>` : ''}
+        </div>
+
+        <!-- Stats -->
+        <div class="j-stat-row">
+            <div class="j-stat"><div class="j-stat-val">${allReports.length}</div><div class="j-stat-lbl">Reports</div></div>
+            <div class="j-stat"><div class="j-stat-val">${allReports.reduce((s,r)=>s+r.upvotes,0)}</div><div class="j-stat-lbl">Upvotes</div></div>
+            <div class="j-stat"><div class="j-stat-val">${totalScore}</div><div class="j-stat-lbl">Total Score</div></div>
+        </div>
+
+        <div style="padding:16px;">
+            ${profile.bio ? `<p style="font-size:14px;line-height:1.6;color:var(--sub);margin:0 0 16px;">${profile.bio}</p>` : ''}
+
+            <!-- Socials -->
+            ${(profile.twitter||profile.linkedin||profile.instagram||profile.cv) ? `
+            <div class="j-social-row">
+                ${profile.twitter?`<a href="https://twitter.com/${profile.twitter.replace('@','')}" target="_blank" class="j-social-tag">𝕏 ${profile.twitter}</a>`:''}
+                ${profile.linkedin?`<a href="${profile.linkedin}" target="_blank" class="j-social-tag">in LinkedIn</a>`:''}
+                ${profile.instagram?`<a href="https://instagram.com/${profile.instagram.replace('@','')}" target="_blank" class="j-social-tag">📷 ${profile.instagram}</a>`:''}
+                ${profile.cv?`<a href="${profile.cv}" target="_blank" class="j-social-tag">📄 CV / Portfolio</a>`:''}
+            </div>` : ''}
+
+            <!-- Reports -->
+            <div class="div"></div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:8px;">Reports by ${name}</div>
+            ${allReports.length === 0 ? '<div style="color:var(--sub);font-size:13px;">No reports yet</div>' :
+                allReports.slice(0,5).map(r=>`
+                <div class="j-report-mini" onclick="closeModal(null,'profileModal');setTimeout(()=>openReportModal('${r.id}'),200)">
+                    <div style="font-size:13px;font-weight:600;">${r.location} · <span style="font-weight:400;color:var(--sub);">${fmtDate(r.created_at)}</span></div>
+                    <div style="font-size:13px;color:var(--sub);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${r.text}</div>
+                    <div style="font-size:12px;color:var(--sub);margin-top:4px;">↑ ${r.upvotes} · ↓ ${r.downvotes} · Score: ${score(r)}</div>
+                </div>`).join('')
+            }
+        </div>`
+
+    openModal('profileModal')
+}
+
+// ── Date ─────────────────────────────────────────────────────────────────────
+function fmtDate(ds) {
+    const diff=Date.now()-new Date(ds), m=Math.floor(diff/6e4), h=Math.floor(diff/36e5), d=Math.floor(diff/864e5)
+    if(m<1)return'now'; if(m<60)return`${m}m`; if(h<24)return`${h}h`; if(d<7)return`${d}d`
+    return new Date(ds).toLocaleDateString('en-US',{month:'short',day:'numeric'})
+}
+
+// ── Google SVG ───────────────────────────────────────────────────────────────
+const GSVG=`<svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>`
+
+// ── Cards ────────────────────────────────────────────────────────────────────
+function createCard(report, isTop=false) {
+    const sc    = score(report)
+    const voted = myVotes[report.id]
+    const cCount = (comments[report.id]||[]).length
+    const jname  = report.journalist || 'Unknown'
+
+    const verifiedBadge = report.verified
+        ? `<span class="badge-verified" style="font-size:9px;padding:1px 6px;">✓ VERIFIED</span>`
+        : ''
+    const credibleBadge = report.verified
+        ? `<span class="badge-credible" style="font-size:9px;padding:1px 6px;">CREDIBLE</span>`
+        : ''
+
+    return `
+    <div class="report-card ${isTop?'top-report':''}" onclick="openReportModal('${report.id}')" style="position:relative;">
+        ${isTop?'<div class="top-badge">TOP</div>':''}
+        <div class="card-body">
+            <div style="display:flex;gap:12px;">
+                <div class="av ${isTop?'lg':''}" onclick="openJournalistProfile('${jname}',event)">
+                    ${jname.charAt(0).toUpperCase()}
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+                        <span class="j-name" onclick="openJournalistProfile('${jname}',event)">${jname}</span>
+                        ${report.verified?'<span class="badge-check">✓</span>':''}
+                        ${verifiedBadge}
+                        ${credibleBadge}
+                        <span class="r-meta">· ${fmtDate(report.created_at)}</span>
+                    </div>
+                    <div class="r-meta" style="margin-bottom:2px;">${report.location}</div>
+                    <div class="r-txt">${report.text}</div>
+                    <div class="stats-row">
+                        <button class="vote-btn ${voted==='up'?'voted-up':''}" onclick="handleVote('${report.id}','up',event)">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                            ${report.upvotes}
+                        </button>
+                        <button class="vote-btn ${voted==='down'?'voted-down':''}" onclick="handleVote('${report.id}','down',event)">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                            ${report.downvotes}
+                        </button>
+                        <button class="comment-inline-btn" onclick="openReportModal('${report.id}');event.stopPropagation()">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            ${cCount}
+                        </button>
+                        <span class="r-meta">Score: <strong style="color:var(--txt);">${sc}</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderFeed() {
+    const el = document.getElementById('storyFeed')
+    el.innerHTML = filtered.length ? filtered.map(r=>createCard(r)).join('') : '<div class="no-res">No reports found</div>'
+}
+function renderTop() {
+    const el = document.getElementById('topReport')
+    if (!reports.length) { el.innerHTML='<div style="padding:32px 16px;text-align:center;"><span class="r-meta">No reports yet</span></div>'; return }
+    const top = reports.reduce((b,c)=>score(c)>score(b)?c:b)
+    el.innerHTML = createCard(top, true)
+}
+
+// ── Report Modal (with comments) ─────────────────────────────────────────────
+function openReportModal(reportId) {
+    const r = reports.find(x=>x.id===reportId); if(!r) return
+    const sc     = score(r)
+    const voted  = myVotes[reportId]
+    const jname  = r.journalist || 'Unknown'
+    const commentListId  = 'commentList_'+reportId
+    const commentInputId = 'commentInput_'+reportId
+
+    document.getElementById('modalContent').innerHTML = `
+        <!-- Journalist header -->
+        <div style="display:flex;gap:14px;margin-bottom:16px;">
+            <div class="av lg" onclick="closeModal(null,'reportModal');setTimeout(()=>openJournalistProfile('${jname}'),200)">
+                ${jname.charAt(0).toUpperCase()}
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+                    <span class="j-name" style="font-size:16px;" onclick="closeModal(null,'reportModal');setTimeout(()=>openJournalistProfile('${jname}'),200)">${jname}</span>
+                    ${r.verified?'<span class="badge-check">✓</span>':''}
+                    ${r.verified?'<span class="badge-verified">✓ VERIFIED</span>':''}
+                    ${r.verified?'<span class="badge-credible">CREDIBLE</span>':''}
+                </div>
+                <div class="r-meta">${r.location}</div>
+                <div class="r-meta">${new Date(r.created_at).toLocaleString()}</div>
+            </div>
+        </div>
+
+        <div class="r-txt" style="font-size:16px;line-height:1.65;margin-bottom:16px;">${r.text}</div>
+
+        <!-- Votes -->
+        <div class="div"></div>
+        <div class="stats-row" style="margin-top:0;">
+            <button class="vote-btn ${voted==='up'?'voted-up':''}" onclick="handleVote('${r.id}','up',event)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg> ${r.upvotes}
+            </button>
+            <button class="vote-btn ${voted==='down'?'voted-down':''}" onclick="handleVote('${r.id}','down',event)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> ${r.downvotes}
+            </button>
+            <span class="r-meta">Overall Score: <strong style="color:var(--txt);font-size:15px;">${sc}</strong></span>
+        </div>
+
+        <!-- Comments -->
+        <div class="div"></div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Comments</div>
+        <div id="${commentListId}"></div>
+
+        ${me ? `
+        <div class="comment-input-row">
+            <div class="av" style="width:32px;height:32px;min-width:32px;font-size:13px;cursor:default;" onclick="event.stopPropagation()">
+                ${me.photo?`<img src="${me.photo}" alt="">`:(me.name||'?').charAt(0).toUpperCase()}
+            </div>
+            <textarea class="comment-input" id="${commentInputId}" placeholder="Add a comment..." rows="1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment('${reportId}')}"></textarea>
+            <button class="comment-send" onclick="submitComment('${reportId}');event.stopPropagation()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </div>` : `<div class="info-box" style="cursor:pointer;" onclick="closeModal(null,'reportModal');showAuthModal()">
+            <strong>Sign in to comment</strong> — join the conversation
+        </div>`}
+    `
+    renderComments(reportId, document.getElementById(commentListId))
+    openModal('reportModal')
+}
+
+// ── Submit report ─────────────────────────────────────────────────────────────
+function showSubmitForm() {
+    if (!me) { showAuthModal(); return }
+    if (me.role!=='journalist'||!me.verified) { alert('Only verified journalists can submit reports'); return }
+    openModal('submitModal')
+}
+async function handleSubmitReport(e) {
+    e.preventDefault()
+    if (!me||me.role!=='journalist'||!me.verified) { alert('Only verified journalists can submit'); return }
+    const loc = document.getElementById('reportLocation').value.trim()
+    const txt = document.getElementById('reportText').value.trim()
+    const btn = document.getElementById('submitFormBtn')
+    btn.disabled=true; btn.textContent='Submitting...'
+    const {error} = await sb.from('reports').insert([{journalist:me.name,location:loc,text:txt,verified:true,upvotes:0,downvotes:0}])
+    btn.disabled=false; btn.textContent='Submit Report'
+    if (error) { console.error(error); alert('Error. Try again.'); return }
+    document.getElementById('reportLocation').value=''
+    document.getElementById('reportText').value=''
+    closeModal(null,'submitModal'); alert('Report submitted!')
+    loadReports()
+}
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+function showLeaderboard() { openModal('leaderboardModal'); renderLeader() }
+function switchLeaderTab(tab, e) {
+    leaderTab=tab
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'))
+    e.target.classList.add('on')
+    renderLeader()
+}
+function renderLeader() {
+    const el = document.getElementById('leaderboardContent')
+    const now = new Date()
+    let list = leaderTab==='today'
+        ? reports.filter(r=>new Date(r.created_at)>=new Date(now.getFullYear(),now.getMonth(),now.getDate()))
+        : leaderTab==='week'
+        ? reports.filter(r=>new Date(r.created_at)>=new Date(now-7*864e5))
+        : reports
+    const sorted = [...list].sort((a,b)=>score(b)-score(a))
+    if (!sorted.length) { el.innerHTML='<div class="no-res">No reports in this timeframe</div>'; return }
+    el.innerHTML = sorted.slice(0,10).map((r,i)=>`
+        <div class="report-card" onclick="openReportModal('${r.id}')" style="margin-bottom:8px;">
+            <div class="card-body">
+                <div style="display:flex;gap:12px;align-items:start;">
+                    <div style="font-size:20px;font-weight:700;color:var(--sub);min-width:28px;">#${i+1}</div>
+                    <div class="av" onclick="openJournalistProfile('${r.journalist}',event)">${(r.journalist||'?').charAt(0).toUpperCase()}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;">
+                            <span class="j-name" onclick="openJournalistProfile('${r.journalist}',event)">${r.journalist}</span>
+                            ${r.verified?'<span class="badge-verified" style="font-size:9px;padding:1px 6px;">✓ VERIFIED</span>':''}
+                        </div>
+                        <div class="r-meta" style="margin-bottom:4px;">${r.location}</div>
+                        <div class="r-txt" style="font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${r.text}</div>
+                        <div style="margin-top:8px;display:flex;gap:10px;align-items:center;">
+                            <span class="r-meta">Score: <strong style="color:var(--txt);font-size:14px;">${score(r)}</strong></span>
+                            <span class="r-meta">↑${r.upvotes} · ↓${r.downvotes}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`).join('')
+}
+
+// ── Modal helpers ─────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow='hidden' }
+function closeModal(e, id) {
+    if (e && e.target.id!==id && !e.currentTarget.classList.contains('x-btn')) return
+    document.getElementById(id).classList.remove('active'); document.body.style.overflow='auto'
+}
+document.addEventListener('keydown', e => {
+    if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); document.body.style.overflow='auto' }
+})
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+init()
+
+</script>
 </body>
 </html>
