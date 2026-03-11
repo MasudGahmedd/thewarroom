@@ -12,10 +12,13 @@
         @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
         * { font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; box-sizing:border-box; }
 
-        :root { --bg:#fff; --card:#fff; --txt:#000; --sub:#536471; --brd:#eff3f4; --hov:#f7f9f9; --acc:#000; --dot:rgba(0,0,0,.08); }
-        [data-theme="dark"] { --bg:#000; --card:#000; --txt:#fff; --sub:#71767b; --brd:#2f3336; --hov:#16181a; --acc:#fff; --dot:rgba(255,255,255,.08); }
+        :root { --bg:#fff; --card:#fff; --txt:#000; --sub:#536471; --brd:#eff3f4; --hov:#f7f9f9; --acc:#000;
+            --dot-sm:rgba(0,0,0,.18); --dot-md:rgba(0,0,0,.22); --dot-lg:rgba(0,0,0,.15); --dot-glow:rgba(59,130,246,.35); }
+        [data-theme="dark"] { --bg:#000; --card:#000; --txt:#fff; --sub:#71767b; --brd:#2f3336; --hov:#16181a; --acc:#fff;
+            --dot-sm:rgba(255,255,255,.22); --dot-md:rgba(255,255,255,.28); --dot-lg:rgba(255,255,255,.18); --dot-glow:rgba(99,179,237,.45); }
 
-        html,body { margin:0;padding:0;width:100%;overflow-x:hidden;background:var(--bg);color:var(--txt);transition:background .3s,color .3s; }
+        html { margin:0;padding:0;width:100%;overflow-x:hidden; }
+        body { margin:0;padding:0;width:100%;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:100vh;background:var(--bg);color:var(--txt);transition:background .3s,color .3s; }
 
         /* ── Top loading bar ── */
         #topBar {
@@ -29,12 +32,26 @@
 
         /* ── Dots ── */
         .dots-bg { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
-        .dot { position:absolute;width:2px;height:2px;background:var(--dot);border-radius:50%;opacity:.5;animation:floatDot linear infinite; }
-        @keyframes floatDot { 0%{transform:translate(0,0)} 100%{transform:translate(var(--tx),var(--ty))} }
+        .dot {
+            position:absolute;
+            border-radius:50%;
+            opacity:0;
+            animation:floatDot linear infinite;
+        }
+        .dot.sm  { width:2px;height:2px;background:var(--dot-sm); }
+        .dot.md  { width:3px;height:3px;background:var(--dot-md); }
+        .dot.lg  { width:4px;height:4px;background:var(--dot-lg); }
+        .dot.glow{ width:5px;height:5px;background:var(--dot-glow);box-shadow:0 0 6px 2px var(--dot-glow); }
+        @keyframes floatDot {
+            0%   { transform:translate(0,0);     opacity:0; }
+            8%   { opacity:1; }
+            92%  { opacity:1; }
+            100% { transform:translate(var(--tx),var(--ty)); opacity:0; }
+        }
 
         /* ── Header ── */
         .war-room-header { position:sticky;top:0;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);z-index:100; }
-        .hdr { max-width:600px;margin:0 auto;padding:10px 16px;display:flex;flex-direction:column;gap:8px; }
+        .hdr { max-width:700px;margin:0 auto;padding:10px 20px;display:flex;flex-direction:column;gap:8px; }
         .hdr-top { display:flex;align-items:center;justify-content:space-between; }
         .logo { font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap; }
         .hdr-actions { display:flex;align-items:center;gap:6px; }
@@ -221,14 +238,14 @@
         @media(min-width:640px){
             .logo{font-size:18px} .sec-title{font-size:19px}
             .modal-overlay{align-items:center;padding:20px}
-            .modal-box{max-width:600px;border-radius:16px;max-height:85vh}
+            .modal-box{max-width:700px;border-radius:16px;max-height:85vh}
             .report-card:hover{background:var(--hov)}
             .vote-btn:hover{background:var(--hov);border-color:var(--acc)}
             .theme-btn:hover,.prof-btn:hover{background:var(--hov)}
             .btn:hover{opacity:.85}
             .g-btn:hover{background:var(--hov)}
         }
-        html{scroll-behavior:smooth} body{overscroll-behavior-y:contain}
+        html{scroll-behavior:smooth}
     </style>
 </head>
 <body>
@@ -276,7 +293,7 @@
 </header>
 
 <!-- ── Main ── -->
-<main style="max-width:600px;margin:0 auto;position:relative;z-index:1;">
+<main style="max-width:700px;margin:0 auto;position:relative;z-index:1;">
     <!-- Hero -->
     <div class="hero" id="heroSection">
         <div class="live-pill"><span class="live-dot"></span><span class="live-lbl">LIVE</span></div>
@@ -541,25 +558,63 @@ function barDone() {
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
-function init() {
+async function init() {
     initTheme()
     initDots()
     loadReports()
-    updateUI()
 
-    sb.auth.onAuthStateChange(async (event, session) => {
+    // 1. Check for an existing Supabase session (handles page reload while logged in)
+    try {
+        const { data: { session } } = await sb.auth.getSession()
+        if (session) {
+            applySession(session, false)
+        } else {
+            updateUI() // show login button
+        }
+    } catch(e) {
+        updateUI()
+    }
+
+    // 2. Track last known user ID to prevent duplicate SIGNED_IN events
+    let _lastUid = me?.id || null
+
+    sb.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) {
-            const role = localStorage.getItem('pendingRole') || 'user'
-            localStorage.removeItem('pendingRole')
-            const u = session.user
-            me = { id: u.id, name: u.user_metadata?.full_name || u.email.split('@')[0], email: u.email, photo: u.user_metadata?.avatar_url || null, role, verified: role === 'user' }
-            localStorage.setItem('warroomUser', JSON.stringify(me))
-            updateUI()
+            if (session.user.id === _lastUid) return // already handled — ignore duplicate
+            _lastUid = session.user.id
+            applySession(session, true)
             closeModal(null, 'authModal')
         } else if (event === 'SIGNED_OUT') {
-            me = null; localStorage.removeItem('warroomUser'); updateUI()
+            _lastUid = null
+            me = null
+            localStorage.removeItem('warroomUser')
+            localStorage.removeItem('pendingRole')
+            updateUI()
         }
     })
+}
+
+// Apply Supabase session to app state
+function applySession(session, isNewLogin) {
+    const u = session.user
+    // Preserve existing role/verified status on page refresh (don't reset to 'user')
+    const stored = JSON.parse(localStorage.getItem('warroomUser') || 'null')
+    const pendingRole = isNewLogin ? localStorage.getItem('pendingRole') : null
+    if (isNewLogin && pendingRole) localStorage.removeItem('pendingRole')
+
+    const role     = pendingRole || stored?.role || 'user'
+    const verified = stored?.id === u.id ? stored.verified : (role === 'user')
+
+    me = {
+        id:       u.id,
+        name:     u.user_metadata?.full_name || u.email.split('@')[0],
+        email:    u.email,
+        photo:    u.user_metadata?.avatar_url || null,
+        role,
+        verified
+    }
+    localStorage.setItem('warroomUser', JSON.stringify(me))
+    updateUI()
 }
 
 // ── UI Update ────────────────────────────────────────────────────────────────
@@ -627,15 +682,30 @@ function switchAuth(type) {
 // Google OAuth
 async function signInWithGoogle(type) {
     localStorage.setItem('pendingRole', type)
-    const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:window.location.href.split('?')[0], queryParams:{ access_type:'offline', prompt:'consent' } } })
-    if (error) {
-        const mock = { id:'demo_'+Date.now(), name: type==='journalist'?'Demo Journalist':'Demo User', email: type==='journalist'?'journalist@demo.com':'user@demo.com', photo:null, role:type, verified:type==='user' }
+    const { data, error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.href.split('?')[0].split('#')[0],
+            queryParams: { access_type: 'offline', prompt: 'consent' }
+        }
+    })
+    // Only fall back to demo mode if there was a real error AND no redirect is happening
+    // (signInWithOAuth returns data.url on success — page will redirect shortly)
+    if (error && !data?.url) {
+        console.warn('OAuth unavailable, using demo mode:', error.message)
+        localStorage.removeItem('pendingRole')
+        const mock = {
+            id:       'demo_' + Date.now(),
+            name:     type === 'journalist' ? 'Demo Journalist' : 'Demo User',
+            email:    type === 'journalist' ? 'journalist@demo.com' : 'user@demo.com',
+            photo:    null, role: type, verified: type === 'user'
+        }
         me = mock
         localStorage.setItem('warroomUser', JSON.stringify(me))
-        localStorage.removeItem('pendingRole')
         updateUI()
         closeModal(null, 'authModal')
     }
+    // If no error, Supabase is redirecting the page — do nothing, onAuthStateChange will handle it
 }
 
 // Journalist application form
@@ -678,14 +748,20 @@ function submitJournalistApp(e) {
 
 // Logout with loading bar
 function logout() {
+    closeDD()
     barStart()
+    // Clear local state immediately so UI responds
+    me = null
+    updateUI()
     setTimeout(async () => {
-        await sb.auth.signOut()
-        me = null; localStorage.removeItem('warroomUser')
-        myVotes = {}; localStorage.removeItem('myVotes')
-        updateUI()
+        try { await sb.auth.signOut() } catch(e) { /* ignore */ }
+        localStorage.removeItem('warroomUser')
+        localStorage.removeItem('pendingRole')
+        // Close any open modals
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'))
+        document.body.style.overflow = 'auto'
         barDone()
-    }, 900)
+    }, 800)
 }
 
 // Admin
@@ -731,14 +807,29 @@ function rejectJ(uid) {
 // ── Dots ─────────────────────────────────────────────────────────────────────
 function initDots() {
     const c = document.getElementById('dotsBackground')
-    const n = window.innerWidth < 640 ? 40 : 60
-    for (let i=0;i<n;i++) {
-        const d=document.createElement('div'); d.className='dot'
-        const x=Math.random()*100,y=Math.random()*100,tx=(Math.random()-.5)*200,ty=(Math.random()-.5)*200,dur=15+Math.random()*15
-        Object.assign(d.style,{left:x+'%',top:y+'%',animationDuration:dur+'s',animationDelay:(Math.random()*-dur)+'s'})
-        d.style.setProperty('--tx',tx+'px'); d.style.setProperty('--ty',ty+'px')
-        c.appendChild(d)
-    }
+    c.innerHTML = '' // clear any existing
+    const isMobile = window.innerWidth < 640
+    const counts = { sm:isMobile?35:55, md:isMobile?20:35, lg:isMobile?10:18, glow:isMobile?5:10 }
+    const allTypes = Object.entries(counts)
+    allTypes.forEach(([type, count]) => {
+        for (let i = 0; i < count; i++) {
+            const d = document.createElement('div')
+            d.className = 'dot ' + type
+            const x   = Math.random() * 100
+            const y   = Math.random() * 100
+            const tx  = (Math.random() - 0.5) * 300
+            const ty  = (Math.random() - 0.5) * 300
+            const dur = 12 + Math.random() * 25
+            const del = -(Math.random() * dur)
+            d.style.left = x + '%'
+            d.style.top  = y + '%'
+            d.style.animationDuration = dur + 's'
+            d.style.animationDelay    = del + 's'
+            d.style.setProperty('--tx', tx + 'px')
+            d.style.setProperty('--ty', ty + 'px')
+            c.appendChild(d)
+        }
+    })
 }
 
 // ── Theme ────────────────────────────────────────────────────────────────────
@@ -1088,10 +1179,18 @@ function renderLeader() {
 }
 
 // ── Modal helpers ─────────────────────────────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow='hidden' }
+function openModal(id) {
+    document.getElementById(id).classList.add('active')
+    document.body.style.overflow = 'hidden'
+}
 function closeModal(e, id) {
-    if (e && e.target.id!==id && !e.currentTarget.classList.contains('x-btn')) return
-    document.getElementById(id).classList.remove('active'); document.body.style.overflow='auto'
+    // Called directly (e=null) or from overlay backdrop click (e.target must be the overlay itself)
+    if (e && e.target.id !== id) return
+    document.getElementById(id).classList.remove('active')
+    // Only restore scroll if no other modals are open
+    if (!document.querySelector('.modal-overlay.active')) {
+        document.body.style.overflow = 'auto'
+    }
 }
 document.addEventListener('keydown', e => {
     if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); document.body.style.overflow='auto' }
