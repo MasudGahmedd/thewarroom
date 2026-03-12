@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>WarRoom Admin</title>
+<title>WarRoom Admin Dashboard</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,26 +16,13 @@
 body{
 background:#000;
 color:white;
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-}
-
-/* star background */
-
-.stars{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:url("https://www.transparenttextures.com/patterns/stardust.png");
-opacity:0.15;
-pointer-events:none;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
 }
 
 .card{
 background:#0b0b0b;
-border:1px solid #2a2a2a;
-border-radius:14px;
+border:1px solid #262626;
+border-radius:12px;
 padding:20px;
 }
 
@@ -43,93 +31,46 @@ padding:20px;
 </head>
 
 <body>
-  <div class="admin-popup">
 
-<input 
-id="adminPassword"
-type="password" 
-placeholder="Enter Admin Password"
-class="password-input"
-/>
-
-<button onclick="checkAdminPassword()" class="enter-btn">
-Enter
-</button>
-
-<p id="errorText" style="color:red; display:none;">
-Wrong password
-</p>
-
-</div>
-
-<div class="stars"></div>
-
-<!-- PASSWORD SCREEN -->
-
-<div id="loginScreen" class="flex items-center justify-center h-screen">
-
-<div class="card w-[420px] text-center">
-
-<h1 class="text-2xl mb-6 font-bold">WarRoom Admin</h1>
-
-<input
-id="passwordInput"
-type="password"
-placeholder="Enter Admin Password"
-class="w-full bg-black border border-gray-700 p-3 rounded mb-4"
-/>
-
-<button onclick="checkPassword()" class="w-full bg-white text-black p-3 rounded">
-Enter Dashboard
-</button>
-
-<p id="error" class="text-red-400 mt-3 hidden">Incorrect password</p>
-
-</div>
-
-</div>
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="hidden p-8">
+<div class="p-8">
 
 <h1 class="text-3xl font-bold mb-8">WarRoom Intelligence Dashboard</h1>
 
-<!-- analytics cards -->
+<!-- analytics -->
 
-<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="grid md:grid-cols-4 gap-6 mb-8">
 
 <div class="card">
 <p class="text-gray-400">Reports</p>
-<p id="reportsCount" class="text-3xl font-bold">0</p>
+<p id="totalReports" class="text-3xl font-bold">0</p>
 </div>
 
 <div class="card">
 <p class="text-gray-400">Votes</p>
-<p id="votesCount" class="text-3xl font-bold">0</p>
+<p id="totalVotes" class="text-3xl font-bold">0</p>
 </div>
 
 <div class="card">
 <p class="text-gray-400">Comments</p>
-<p id="commentsCount" class="text-3xl font-bold">0</p>
+<p id="totalComments" class="text-3xl font-bold">0</p>
 </div>
 
 <div class="card">
 <p class="text-gray-400">Journalists</p>
-<p id="journalistsCount" class="text-3xl font-bold">0</p>
+<p id="totalJournalists" class="text-3xl font-bold">0</p>
 </div>
 
 </div>
 
-<!-- activity + reports -->
+<!-- comments + votes -->
 
-<div class="grid grid-cols-2 gap-8">
+<div class="grid md:grid-cols-2 gap-6">
 
 <div class="card">
 
 <h2 class="text-xl mb-4">Recent Comments</h2>
 
-<div id="commentsFeed"></div>
+<div id="commentsList"></div>
 
 </div>
 
@@ -137,30 +78,19 @@ Enter Dashboard
 
 <h2 class="text-xl mb-4">Recent Votes</h2>
 
-<div id="votesFeed"></div>
+<div id="votesList"></div>
 
 </div>
 
 </div>
+
+<!-- reports -->
 
 <div class="card mt-8">
 
-<h2 class="text-xl mb-4">Reports</h2>
+<h2 class="text-xl mb-4">Recent Reports</h2>
 
-<table class="w-full">
-
-<thead class="text-left text-gray-400">
-<tr>
-<th>Title</th>
-<th>Upvotes</th>
-<th>Downvotes</th>
-<th>Created</th>
-</tr>
-</thead>
-
-<tbody id="reportsTable"></tbody>
-
-</table>
+<div id="reportsList"></div>
 
 </div>
 
@@ -168,88 +98,40 @@ Enter Dashboard
 
 <script>
 
-/* PASSWORD */
-
-function checkPassword(){
-
-const pass=document.getElementById("passwordInput").value
-
-if(pass==="75516905.warroom"){
-
-document.getElementById("loginScreen").style.display="none"
-document.getElementById("dashboard").style.display="block"
-
-loadDashboard()
-
-}else{
-
-document.getElementById("error").style.display="block"
-
-}
-
-}
-
 /* SUPABASE */
 
-const supabase = window.supabase.createClient(
-"https://gmqnjseeefjkdzhkxwla.supabase.co",
-"sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
+const SUPABASE_URL  = "https://gmqnjseeefjkdzhkxwla.supabase.co"
+const SUPABASE_KEY  = "sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
+
+const supabase=window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 )
-
-async function loadDashboard(){
-
-loadCounts()
-loadReports()
-loadComments()
-loadVotes()
-
-}
 
 /* COUNTS */
 
-async function loadCounts(){
+async function loadStats(){
 
-let {count:reports}=await supabase.from("reports").select("*",{count:"exact",head:true})
-let {count:votes}=await supabase.from("report_votes").select("*",{count:"exact",head:true})
-let {count:comments}=await supabase.from("comments").select("*",{count:"exact",head:true})
-let {count:journalists}=await supabase.from("journalists").select("*",{count:"exact",head:true})
-
-document.getElementById("reportsCount").innerText=reports
-document.getElementById("votesCount").innerText=votes
-document.getElementById("commentsCount").innerText=comments
-document.getElementById("journalistsCount").innerText=journalists
-
-}
-
-/* REPORTS */
-
-async function loadReports(){
-
-let {data}=await supabase
+let {count:reports}=await supabase
 .from("reports")
-.select("*")
-.order("created_at",{ascending:false})
-.limit(10)
+.select("*",{count:"exact",head:true})
 
-let table=document.getElementById("reportsTable")
-table.innerHTML=""
+let {count:votes}=await supabase
+.from("report_votes")
+.select("*",{count:"exact",head:true})
 
-data.forEach(r=>{
+let {count:comments}=await supabase
+.from("comments")
+.select("*",{count:"exact",head:true})
 
-table.innerHTML+=`
+let {count:journalists}=await supabase
+.from("journalists")
+.select("*",{count:"exact",head:true})
 
-<tr class="border-t border-gray-800">
-
-<td class="py-3">${r.title}</td>
-<td>${r.upvotes}</td>
-<td>${r.downvotes}</td>
-<td>${r.created_at}</td>
-
-</tr>
-
-`
-
-})
+document.getElementById("totalReports").innerText=reports||0
+document.getElementById("totalVotes").innerText=votes||0
+document.getElementById("totalComments").innerText=comments||0
+document.getElementById("totalJournalists").innerText=journalists||0
 
 }
 
@@ -263,15 +145,23 @@ let {data}=await supabase
 .order("created_at",{ascending:false})
 .limit(10)
 
-let feed=document.getElementById("commentsFeed")
-feed.innerHTML=""
+const container=document.getElementById("commentsList")
+container.innerHTML=""
+
+if(!data) return
 
 data.forEach(c=>{
 
-feed.innerHTML+=`
+container.innerHTML+=`
 
 <div class="border-b border-gray-800 py-2 text-sm">
-${c.content}
+
+${c.content || "No text"}
+
+<p class="text-gray-500 text-xs">
+Report: ${c.report_id}
+</p>
+
 </div>
 
 `
@@ -290,15 +180,23 @@ let {data}=await supabase
 .order("created_at",{ascending:false})
 .limit(10)
 
-let feed=document.getElementById("votesFeed")
-feed.innerHTML=""
+const container=document.getElementById("votesList")
+container.innerHTML=""
+
+if(!data) return
 
 data.forEach(v=>{
 
-feed.innerHTML+=`
+container.innerHTML+=`
 
 <div class="border-b border-gray-800 py-2 text-sm">
-${v.vote_type} on report ${v.report_id}
+
+Vote: ${v.vote_type}
+
+<p class="text-gray-500 text-xs">
+Report: ${v.report_id}
+</p>
+
 </div>
 
 `
@@ -306,29 +204,61 @@ ${v.vote_type} on report ${v.report_id}
 })
 
 }
-  <script>
 
-function checkAdminPassword(){
+/* REPORTS */
 
-const password = document.getElementById("adminPassword").value
+async function loadReports(){
 
-if(password === "75516905.warroom"){
+let {data}=await supabase
+.from("reports")
+.select("*")
+.order("created_at",{ascending:false})
+.limit(10)
 
-window.location.href = "/admindashboard.html"
+const container=document.getElementById("reportsList")
+container.innerHTML=""
 
-}else{
+if(!data) return
 
-document.getElementById("errorText").style.display = "block"
+data.forEach(r=>{
+
+container.innerHTML+=`
+
+<div class="border-b border-gray-800 py-3">
+
+<h3 class="font-semibold">${r.title}</h3>
+
+<p class="text-sm text-gray-400">
+${(r.content || "").substring(0,120)}
+</p>
+
+<p class="text-xs text-gray-500">
+Upvotes: ${r.upvotes} | Downvotes: ${r.downvotes}
+</p>
+
+</div>
+
+`
+
+})
 
 }
 
+/* INIT */
+
+async function init(){
+
+await loadStats()
+await loadComments()
+await loadVotes()
+await loadReports()
+
 }
 
-</script>
+init()
 
 </script>
 
 </body>
 
 </html>
-
