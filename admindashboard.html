@@ -32,11 +32,38 @@ padding:20px;
 
 <body>
 
-<div class="p-8">
+<!-- PASSWORD SCREEN -->
+
+<div id="loginScreen" class="flex items-center justify-center h-screen">
+
+<div class="card w-[400px] text-center">
+
+<h1 class="text-2xl mb-6 font-bold">WarRoom Admin</h1>
+
+<input
+id="passwordInput"
+type="password"
+placeholder="Enter Admin Password"
+class="w-full bg-black border border-gray-700 p-3 rounded mb-4"
+/>
+
+<button onclick="checkPassword()" class="w-full bg-white text-black p-3 rounded">
+Enter Dashboard
+</button>
+
+<p id="errorText" class="text-red-400 mt-3 hidden">
+Wrong password
+</p>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="hidden p-8">
 
 <h1 class="text-3xl font-bold mb-8">WarRoom Intelligence Dashboard</h1>
-
-<!-- analytics -->
 
 <div class="grid md:grid-cols-4 gap-6 mb-8">
 
@@ -62,29 +89,19 @@ padding:20px;
 
 </div>
 
-<!-- comments + votes -->
-
 <div class="grid md:grid-cols-2 gap-6">
 
 <div class="card">
-
 <h2 class="text-xl mb-4">Recent Comments</h2>
-
 <div id="commentsList"></div>
-
 </div>
 
 <div class="card">
-
 <h2 class="text-xl mb-4">Recent Votes</h2>
-
 <div id="votesList"></div>
-
 </div>
 
 </div>
-
-<!-- reports -->
 
 <div class="card mt-8">
 
@@ -98,6 +115,27 @@ padding:20px;
 
 <script>
 
+/* PASSWORD SYSTEM */
+
+function checkPassword(){
+
+const pass=document.getElementById("passwordInput").value
+
+if(pass==="75516905.warroom"){
+
+document.getElementById("loginScreen").style.display="none"
+document.getElementById("dashboard").style.display="block"
+
+init()
+
+}else{
+
+document.getElementById("errorText").style.display="block"
+
+}
+
+}
+
 /* SUPABASE */
 
 const SUPABASE_URL  = "https://gmqnjseeefjkdzhkxwla.supabase.co"
@@ -108,25 +146,14 @@ SUPABASE_URL,
 SUPABASE_KEY
 )
 
-/* COUNTS */
+/* STATS */
 
 async function loadStats(){
 
-let {count:reports}=await supabase
-.from("reports")
-.select("*",{count:"exact",head:true})
-
-let {count:votes}=await supabase
-.from("report_votes")
-.select("*",{count:"exact",head:true})
-
-let {count:comments}=await supabase
-.from("comments")
-.select("*",{count:"exact",head:true})
-
-let {count:journalists}=await supabase
-.from("journalists")
-.select("*",{count:"exact",head:true})
+let {count:reports}=await supabase.from("reports").select("*",{count:"exact",head:true})
+let {count:votes}=await supabase.from("report_votes").select("*",{count:"exact",head:true})
+let {count:comments}=await supabase.from("comments").select("*",{count:"exact",head:true})
+let {count:journalists}=await supabase.from("journalists").select("*",{count:"exact",head:true})
 
 document.getElementById("totalReports").innerText=reports||0
 document.getElementById("totalVotes").innerText=votes||0
@@ -255,10 +282,7 @@ await loadReports()
 
 }
 
-init()
-
 </script>
 
 </body>
-
 </html>
