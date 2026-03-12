@@ -272,6 +272,10 @@
                     </button>
                     <div class="prof-dd" id="profDD">
                         <div class="pd-name" id="pdName">—</div>
+                        <button class="pd-item" id="pdMyProfile" onclick="openMyProfile();closeDD()" style="display:none;">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            My Profile
+                        </button>
                         <button class="pd-item" onclick="openSettings();closeDD()">
                             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             Settings
@@ -517,6 +521,17 @@
 </div>
 
 <!-- ══ SCRIPTS ══ -->
+<!-- ══ MY JOURNALIST PROFILE MODAL ══ -->
+<div id="myProfileModal" class="modal-overlay" onclick="closeModal(event,'myProfileModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">My Journalist Profile</h3>
+            <button class="x-btn" onclick="closeModal(null,'myProfileModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="modal-bdy" id="myProfileContent"></div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 
@@ -558,6 +573,171 @@ function barDone() {
     setTimeout(() => { b.classList.remove('running'); b.style.width = '0%' }, 600)
 }
 
+// ── My Journalist Profile ─────────────────────────────────────────────────────
+function openMyProfile() {
+    if (!me) return
+    renderProfileView()
+    openModal('myProfileModal')
+}
+
+function renderProfileView() {
+    const el = document.getElementById('myProfileContent')
+    const isVerified = me.role === 'journalist' && me.verified
+    const isPending  = me.role === 'journalist' && !me.verified
+
+    el.innerHTML = `
+        <!-- Hero -->
+        <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 20px 20px;border-radius:12px;text-align:center;margin-bottom:20px;">
+            <div style="position:relative;display:inline-block;margin-bottom:12px;">
+                <div class="av xl" style="margin:0 auto;cursor:default;">
+                    ${me.photo ? `<img src="${me.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : me.name.charAt(0).toUpperCase()}
+                </div>
+            </div>
+            <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${me.name}</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+                ${isVerified  ? '<span class="badge-verified">✓ VERIFIED JOURNALIST</span>' : ''}
+                ${isPending   ? '<span class="badge-pending">⏳ PENDING REVIEW</span>' : ''}
+                ${me.employer ? `<span style="font-size:12px;color:rgba(255,255,255,.7);">${me.employer}</span>` : ''}
+            </div>
+            ${me.beat ? `<div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${me.beat}</div>` : ''}
+        </div>
+
+        ${isPending ? `
+        <div style="padding:12px 14px;border-radius:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:13px;margin-bottom:16px;line-height:1.55;">
+            <strong>Application under review</strong><br>
+            Your journalist application is being reviewed by our team. You'll receive an email at <strong>${me.email}</strong> once approved.
+        </div>` : ''}
+
+        ${me.bio ? `
+        <div style="margin-bottom:16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub);margin-bottom:6px;">Bio</div>
+            <div style="font-size:14px;color:var(--sub);line-height:1.65;">${me.bio}</div>
+        </div>` : ''}
+
+        <!-- Socials -->
+        ${(me.twitter||me.linkedin||me.instagram||me.portfolio_link) ? `
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+            ${me.twitter       ? `<a href="https://twitter.com/${me.twitter.replace('@','')}" target="_blank" class="j-social-tag">𝕏 ${me.twitter}</a>` : ''}
+            ${me.linkedin      ? `<a href="${me.linkedin}" target="_blank" class="j-social-tag">in LinkedIn</a>` : ''}
+            ${me.instagram     ? `<a href="https://instagram.com/${me.instagram.replace('@','')}" target="_blank" class="j-social-tag">📷 ${me.instagram}</a>` : ''}
+            ${me.portfolio_link? `<a href="${me.portfolio_link}" target="_blank" class="j-social-tag">📄 Portfolio</a>` : ''}
+        </div>` : ''}
+
+        ${isVerified ? `<button class="form-btn" onclick="renderProfileEdit()" style="margin-bottom:8px;">✏️ Edit Profile</button>` : ''}
+    `
+}
+
+function renderProfileEdit() {
+    const el = document.getElementById('myProfileContent')
+    el.innerHTML = `
+        <div style="margin-bottom:16px;">
+            <button onclick="renderProfileView()" style="background:transparent;border:none;color:var(--sub);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back
+            </button>
+        </div>
+
+        <!-- Avatar URL -->
+        <div class="fg">
+            <label class="fl">Profile Photo URL</label>
+            <input class="fi" id="editPhoto" value="${me.photo||''}" placeholder="https://example.com/photo.jpg">
+            <div style="font-size:11px;color:var(--sub);margin-top:4px;">Paste a direct image URL (from Google profile, Gravatar, etc.)</div>
+        </div>
+
+        <!-- Name -->
+        <div class="fg">
+            <label class="fl">Display Name <span>*</span></label>
+            <input class="fi" id="editName" value="${me.name||''}" required placeholder="Your full name">
+        </div>
+
+        <!-- Bio -->
+        <div class="fg">
+            <label class="fl">Bio</label>
+            <textarea class="ft" id="editBio" rows="3" placeholder="Tell readers about yourself...">${me.bio||''}</textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="fg">
+                <label class="fl">Employer</label>
+                <input class="fi" id="editEmployer" value="${me.employer||''}" placeholder="Reuters, BBC…">
+            </div>
+            <div class="fg">
+                <label class="fl">Beat / Coverage Area</label>
+                <input class="fi" id="editBeat" value="${me.beat||''}" placeholder="Middle East, Ukraine…">
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="fg">
+                <label class="fl">Twitter / X</label>
+                <input class="fi" id="editTwitter" value="${me.twitter||''}" placeholder="@handle">
+            </div>
+            <div class="fg">
+                <label class="fl">LinkedIn</label>
+                <input class="fi" id="editLinkedin" value="${me.linkedin||''}" placeholder="linkedin.com/in/…">
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="fg">
+                <label class="fl">Instagram</label>
+                <input class="fi" id="editInstagram" value="${me.instagram||''}" placeholder="@handle">
+            </div>
+            <div class="fg">
+                <label class="fl">Portfolio / CV URL</label>
+                <input class="fi" id="editPortfolio" value="${me.portfolio_link||''}" placeholder="https://…">
+            </div>
+        </div>
+
+        <div id="profileSaveErr" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;"></div>
+
+        <button class="form-btn" id="saveProfileBtn" onclick="saveProfile()">Save Changes</button>
+    `
+}
+
+async function saveProfile() {
+    if (!me?.journalistId) return
+    const btn = document.getElementById('saveProfileBtn')
+    btn.disabled = true
+    btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Saving…</span>`
+
+    const updates = {
+        display_name:   document.getElementById('editName').value.trim(),
+        avatar_url:     document.getElementById('editPhoto').value.trim(),
+        bio:            document.getElementById('editBio').value.trim(),
+        employer:       document.getElementById('editEmployer').value.trim(),
+        beat:           document.getElementById('editBeat').value.trim(),
+        twitter:        document.getElementById('editTwitter').value.trim(),
+        linkedin:       document.getElementById('editLinkedin').value.trim(),
+        instagram:      document.getElementById('editInstagram').value.trim(),
+        portfolio_link: document.getElementById('editPortfolio').value.trim()
+    }
+
+    if (!updates.display_name) {
+        const err = document.getElementById('profileSaveErr')
+        err.textContent = 'Display name is required.'; err.style.display = 'block'
+        btn.disabled = false; btn.textContent = 'Save Changes'; return
+    }
+
+    const { error } = await sb
+        .from('journalists')
+        .update(updates)
+        .eq('id', me.journalistId)
+
+    btn.disabled = false; btn.textContent = 'Save Changes'
+
+    if (error) {
+        const err = document.getElementById('profileSaveErr')
+        err.textContent = 'Error saving: ' + error.message; err.style.display = 'block'
+        return
+    }
+
+    // Update local state
+    me = { ...me, name: updates.display_name, photo: updates.avatar_url || me.photo, bio: updates.bio, employer: updates.employer, beat: updates.beat, twitter: updates.twitter, linkedin: updates.linkedin, instagram: updates.instagram, portfolio_link: updates.portfolio_link }
+    localStorage.setItem('warroomUser', JSON.stringify(me))
+    updateUI()
+    renderProfileView() // back to view mode
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
     initTheme()
@@ -595,24 +775,79 @@ async function init() {
     })
 }
 
-// Apply Supabase session to app state
-function applySession(session, isNewLogin) {
-    const u = session.user
-    // Preserve existing role/verified status on page refresh (don't reset to 'user')
-    const stored = JSON.parse(localStorage.getItem('warroomUser') || 'null')
-    const pendingRole = isNewLogin ? localStorage.getItem('pendingRole') : null
-    if (isNewLogin && pendingRole) localStorage.removeItem('pendingRole')
+// Apply Supabase session — always checks DB to resolve journalist/reader status
+async function applySession(session, isNewLogin) {
+    const u     = session.user
+    const email = u.email
 
-    const role     = pendingRole || stored?.role || 'user'
-    const verified = stored?.id === u.id ? stored.verified : (role === 'user')
+    // Clear pendingRole regardless (it's only for directing the OAuth flow)
+    if (isNewLogin) localStorage.removeItem('pendingRole')
 
+    // 1. Check if this email is an APPROVED journalist
+    const { data: jRow } = await sb
+        .from('journalists')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle()
+
+    if (jRow) {
+        // ── Approved journalist ──────────────────────────────────────────
+        me = {
+            id:         u.id,
+            name:       jRow.display_name || jRow.name || u.user_metadata?.full_name || email.split('@')[0],
+            email,
+            photo:      jRow.avatar_url   || u.user_metadata?.avatar_url || null,
+            role:       'journalist',
+            verified:   true,
+            journalistId: jRow.id,
+            // keep full profile for edit modal
+            bio:        jRow.bio,
+            employer:   jRow.employer,
+            beat:       jRow.beat,
+            twitter:    jRow.twitter,
+            linkedin:   jRow.linkedin,
+            instagram:  jRow.instagram,
+            portfolio_link: jRow.portfolio_link
+        }
+        localStorage.setItem('warroomUser', JSON.stringify(me))
+        updateUI()
+        return
+    }
+
+    // 2. Check if this email has a PENDING application
+    const { data: appRow } = await sb
+        .from('journalist_applications')
+        .select('id, name, status')
+        .eq('email', email)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+    if (appRow) {
+        const isPending  = appRow.status === 'pending'
+        const isRejected = appRow.status === 'rejected'
+        me = {
+            id:       u.id,
+            name:     appRow.name || u.user_metadata?.full_name || email.split('@')[0],
+            email,
+            photo:    u.user_metadata?.avatar_url || null,
+            role:     isPending ? 'journalist' : 'user',
+            verified: false,
+            applicationStatus: appRow.status
+        }
+        localStorage.setItem('warroomUser', JSON.stringify(me))
+        updateUI()
+        return
+    }
+
+    // 3. Regular reader — no application on record
     me = {
         id:       u.id,
-        name:     u.user_metadata?.full_name || u.email.split('@')[0],
-        email:    u.email,
+        name:     u.user_metadata?.full_name || email.split('@')[0],
+        email,
         photo:    u.user_metadata?.avatar_url || null,
-        role,
-        verified
+        role:     'user',
+        verified: false
     }
     localStorage.setItem('warroomUser', JSON.stringify(me))
     updateUI()
@@ -624,17 +859,28 @@ function updateUI() {
     const lBtn = document.getElementById('loginBtn')
     const sBtn = document.getElementById('submitBtn')
     if (me) {
-        lBtn.style.display  = 'none'
-        wrap.style.display  = 'block'
+        lBtn.style.display   = 'none'
+        wrap.style.display   = 'block'
         const av = document.getElementById('profAv')
         av.innerHTML = me.photo ? `<img src="${me.photo}" alt="">` : me.name.charAt(0).toUpperCase()
-        let tag = me.role === 'journalist' && me.verified ? ' ✓' : me.role === 'journalist' ? ' (Pending)' : ''
+
+        let tag = ''
+        if (me.role === 'journalist' && me.verified) tag = ' ✓'
+        else if (me.role === 'journalist') {
+            const st = me.applicationStatus
+            tag = st === 'rejected' ? ' (Rejected)' : ' (Pending Review)'
+        }
         document.getElementById('pdName').textContent = me.name + tag
+
+        // Show My Profile link for journalists (approved or pending)
+        const myProfileBtn = document.getElementById('pdMyProfile')
+        if (myProfileBtn) myProfileBtn.style.display = me.role === 'journalist' ? 'flex' : 'none'
+
         sBtn.style.display = (me.role === 'journalist' && me.verified) ? 'inline-block' : 'none'
     } else {
-        lBtn.style.display  = 'inline-block'
-        wrap.style.display  = 'none'
-        sBtn.style.display  = 'none'
+        lBtn.style.display   = 'inline-block'
+        wrap.style.display   = 'none'
+        sBtn.style.display   = 'none'
     }
 }
 
@@ -650,10 +896,18 @@ function openSettings() {
     av.innerHTML = me.photo ? `<img src="${me.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">` : me.name.charAt(0).toUpperCase()
     document.getElementById('settingsName').textContent  = me.name
     document.getElementById('settingsEmail').textContent = me.email || ''
+
     const rd = document.getElementById('settingsRole')
-    if (me.role === 'journalist' && me.verified) rd.innerHTML = '<span class="badge-verified">✓ VERIFIED</span>'
-    else if (me.role === 'journalist') rd.innerHTML = '<span class="badge-pending">PENDING REVIEW</span>'
-    else rd.innerHTML = '<span style="font-size:12px;color:var(--sub);">Reader</span>'
+    if (me.role === 'journalist' && me.verified) {
+        rd.innerHTML = '<span class="badge-verified">✓ VERIFIED JOURNALIST</span>'
+    } else if (me.role === 'journalist' && me.applicationStatus === 'rejected') {
+        rd.innerHTML = '<span class="badge-pending" style="background:#ef4444;">✕ APPLICATION REJECTED</span>'
+    } else if (me.role === 'journalist') {
+        rd.innerHTML = `<span class="badge-pending">⏳ PENDING REVIEW</span>
+            <div style="font-size:11px;color:var(--sub);margin-top:5px;">Your application is under review. We'll contact you at ${me.email}.</div>`
+    } else {
+        rd.innerHTML = '<span style="font-size:12px;color:var(--sub);">Reader</span>'
+    }
     document.getElementById('settingsThemeIcon').textContent = theme === 'dark' ? '🌙' : '☀️'
     openModal('settingsModal')
 }
