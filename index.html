@@ -742,7 +742,8 @@ async function saveProfile() {
 async function init() {
     initTheme()
     initDots()
-    loadReports()
+    await loadReports()
+    initRealtime()
 
     // 1. Check for an existing Supabase session (handles page reload while logged in)
     try {
@@ -1229,7 +1230,78 @@ function score(r) { return r.upvotes - r.downvotes }
 async function loadReports() {
     const {data,error} = await sb.from('reports').select('*').order('created_at',{ascending:false})
     if (error) { console.error(error); return }
-    reports = data; filtered = data; renderFeed(); renderTop()
+    reports = data
+    // preserve any active search filter
+    const q = document.getElementById('searchInput')?.value?.trim()
+    if (q) {
+        const lq = q.toLowerCase()
+        filtered = reports.filter(r => r.text.toLowerCase().includes(lq) || r.location.toLowerCase().includes(lq) || r.journalist.toLowerCase().includes(lq))
+    } else {
+        filtered = data
+    }
+    renderFeed(); renderTop()
+}
+
+// ── Realtime subscriptions ────────────────────────────────────────────────────
+function initRealtime() {
+    // Reports channel — fires on any insert, update or delete
+    sb.channel('reports-live')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, payload => {
+            if (payload.eventType === 'INSERT') {
+                reports.unshift(payload.new)
+                filtered = [...reports]
+                renderFeed(); renderTop()
+                showLiveToast('📡 New report just came in')
+            } else if (payload.eventType === 'UPDATE') {
+                const idx = reports.findIndex(r => r.id === payload.new.id)
+                if (idx !== -1) {
+                    reports[idx] = payload.new
+                    filtered = filtered.map(r => r.id === payload.new.id ? payload.new : r)
+                    renderFeed(); renderTop()
+                    // Refresh open report modal if it's the same report
+                    const modal = document.getElementById('reportModal')
+                    if (modal?.classList.contains('active')) {
+                        const content = document.getElementById('modalContent')
+                        if (content?.innerHTML.includes(payload.new.id)) {
+                            openReportModal(payload.new.id)
+                        }
+                    }
+                }
+            } else if (payload.eventType === 'DELETE') {
+                reports  = reports.filter(r => r.id !== payload.old.id)
+                filtered = filtered.filter(r => r.id !== payload.old.id)
+                renderFeed(); renderTop()
+            }
+        })
+        .subscribe()
+
+    // Comments channel — fires when anyone posts a comment
+    sb.channel('comments-live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'report_comments' }, payload => {
+            const c = payload.new
+            // Update local cache
+            if (!comments[c.report_id]) comments[c.report_id] = []
+            // Don't add duplicate (our own submit already added it locally)
+            const alreadyHave = comments[c.report_id].some(x => x.id === c.id)
+            if (!alreadyHave) {
+                comments[c.report_id].push({ id: c.id, uid: c.user_id, name: c.user_name, photo: c.user_photo, text: c.text, ts: c.created_at })
+            }
+            // Re-render comment list if this report's modal is open
+            const listEl = document.getElementById('commentList_' + c.report_id)
+            if (listEl) renderComments(c.report_id, listEl)
+            // Update comment count on card
+            renderFeed()
+        })
+        .subscribe()
+}
+
+// ── Live toast (non-blocking, bottom of screen) ───────────────────────────────
+function showLiveToast(msg) {
+    const t = document.createElement('div')
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:99px;background:var(--card);border:1px solid var(--brd);color:var(--txt);font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .3s;white-space:nowrap;'
+    t.textContent = msg
+    document.body.appendChild(t)
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300) }, 3000)
 }
 
 // ── Search ───────────────────────────────────────────────────────────────────
@@ -1287,12 +1359,37 @@ async function handleVote(reportId, type, e) {
 
 // ── Comments ─────────────────────────────────────────────────────────────────
 function getComments(reportId) { return comments[reportId] || [] }
-function saveComment(reportId, text) {
-    if (!me) return
-    if (!comments[reportId]) comments[reportId] = []
-    comments[reportId].push({ id:'c_'+Date.now(), uid:me.id, name:me.name, photo:me.photo, text, ts:new Date().toISOString() })
-    localStorage.setItem('wrComments', JSON.stringify(comments))
+
+async function loadComments(reportId) {
+    const { data, error } = await sb
+        .from('report_comments')
+        .select('*')
+        .eq('report_id', reportId)
+        .order('created_at', { ascending: true })
+    if (error) { console.error(error); return }
+    comments[reportId] = (data || []).map(c => ({
+        id: c.id, uid: c.user_id, name: c.user_name, photo: c.user_photo, text: c.text, ts: c.created_at
+    }))
 }
+
+async function saveComment(reportId, text) {
+    if (!me) return
+    const { data, error } = await sb.from('report_comments').insert([{
+        report_id:  reportId,
+        user_id:    me.id,
+        user_name:  me.name,
+        user_photo: me.photo || null,
+        text
+    }]).select().single()
+    if (error) { console.error(error); return }
+    // Add to local cache immediately — realtime will also fire but we deduplicate
+    if (!comments[reportId]) comments[reportId] = []
+    const alreadyHave = comments[reportId].some(x => x.id === data.id)
+    if (!alreadyHave) {
+        comments[reportId].push({ id: data.id, uid: me.id, name: me.name, photo: me.photo, text, ts: data.created_at })
+    }
+}
+
 function renderComments(reportId, el) {
     const list = getComments(reportId)
     if (!list.length) { el.innerHTML='<div style="color:var(--sub);font-size:13px;padding:8px 0;">No comments yet. Be first!</div>'; return }
@@ -1308,16 +1405,21 @@ function renderComments(reportId, el) {
             </div>
         </div>`).join('')
 }
+
 function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-function submitComment(reportId) {
+
+async function submitComment(reportId) {
     const inp = document.getElementById('commentInput_'+reportId)
-    const txt = inp.value.trim()
+    const txt = inp?.value.trim()
     if (!txt) return
     if (!me) { showAuthModal(); return }
-    saveComment(reportId, txt)
     inp.value = ''
+    inp.disabled = true
+    await saveComment(reportId, txt)
+    inp.disabled = false
     const listEl = document.getElementById('commentList_'+reportId)
-    renderComments(reportId, listEl)
+    if (listEl) renderComments(reportId, listEl)
+    renderFeed() // refresh comment counts on cards
 }
 
 // ── Journalist Profile ────────────────────────────────────────────────────────
@@ -1539,6 +1641,11 @@ function openReportModal(reportId) {
     `
     renderComments(reportId, document.getElementById(commentListId))
     openModal('reportModal')
+    // Load comments from Supabase then re-render
+    loadComments(reportId).then(() => {
+        const el = document.getElementById(commentListId)
+        if (el) renderComments(reportId, el)
+    })
 }
 
 // ── Delete report ─────────────────────────────────────────────────────────────
