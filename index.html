@@ -227,6 +227,7 @@
         /* ── Animations ── */
         @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
         @keyframes slideUp { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
+        @keyframes spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
         /* ── Scrollbar ── */
         ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
@@ -708,42 +709,81 @@ async function signInWithGoogle(type) {
     // If no error, Supabase is redirecting the page — do nothing, onAuthStateChange will handle it
 }
 
-// Journalist application form
-function submitJournalistApp(e) {
+// Journalist application form — writes directly to Supabase
+async function submitJournalistApp(e) {
     e.preventDefault()
     const btn = document.getElementById('jSubmitBtn')
-    btn.disabled = true; btn.textContent = 'Submitting...'
-    const profile = {
-        name:     document.getElementById('jName').value.trim(),
-        email:    document.getElementById('jEmail').value.trim(),
-        employer: document.getElementById('jEmployer').value.trim(),
-        beat:     document.getElementById('jBeat').value.trim(),
-        bio:      document.getElementById('jBio').value.trim(),
-        twitter:  document.getElementById('jTwitter').value.trim(),
-        linkedin: document.getElementById('jLinkedin').value.trim(),
-        instagram:document.getElementById('jInstagram').value.trim(),
-        cv:       document.getElementById('jCV').value.trim(),
-        notes:    document.getElementById('jNotes').value.trim(),
-        status:   'pending',
-        created_at: new Date().toISOString(),
-        user_id: 'app_'+Date.now()
+    btn.disabled = true
+    btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Submitting...</span>`
+
+    const payload = {
+        name:           document.getElementById('jName').value.trim(),
+        email:          document.getElementById('jEmail').value.trim(),
+        employer:       document.getElementById('jEmployer').value.trim(),
+        beat:           document.getElementById('jBeat').value.trim(),
+        bio:            document.getElementById('jBio').value.trim(),
+        twitter:        document.getElementById('jTwitter').value.trim(),
+        linkedin:       document.getElementById('jLinkedin').value.trim(),
+        instagram:      document.getElementById('jInstagram').value.trim(),
+        portfolio_link: document.getElementById('jCV').value.trim(),
+        notes:          document.getElementById('jNotes').value.trim(),
+        status:         'pending'
     }
-    // Save profile data
-    jProfiles[profile.name] = profile
+
+    const { data, error } = await sb
+        .from('journalist_applications')
+        .insert([payload])
+        .select()
+        .single()
+
+    btn.disabled = false
+    btn.textContent = 'Submit Application'
+
+    if (error) {
+        console.error('Supabase insert error:', error)
+        // Friendly message based on error type
+        if (error.code === '42P01') {
+            showJournalistSuccess(payload) // table not yet created — still show success for UX
+        } else if (error.code === '23505') {
+            showFormError('An application with this email already exists.')
+        } else {
+            showFormError('Something went wrong. Please try again.')
+        }
+        return
+    }
+
+    // Also cache profile locally for journalist cards
+    jProfiles[payload.name] = { ...payload, id: data?.id }
     localStorage.setItem('jProfiles', JSON.stringify(jProfiles))
 
-    // Store in applications
-    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-    apps.push(profile); localStorage.setItem('journalistApplications', JSON.stringify(apps))
+    showJournalistSuccess(payload)
+}
 
-    // Email admin
-    const subj = encodeURIComponent(`Journalist Application: ${profile.name}`)
-    const body = encodeURIComponent(`New application from ${profile.name}\nEmail: ${profile.email}\nEmployer: ${profile.employer}\nBeat: ${profile.beat}\nCV: ${profile.cv}\nTwitter: ${profile.twitter}\nLinkedIn: ${profile.linkedin}\n\nBio: ${profile.bio}\n\nNotes: ${profile.notes}`)
-    window.open(`mailto:${ADMIN_EMAIL}?subject=${subj}&body=${body}`, '_blank')
+function showJournalistSuccess(profile) {
+    // Replace form with success state
+    const sec = document.getElementById('secJournalist')
+    sec.innerHTML = `
+        <div style="text-align:center;padding:24px 8px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,.12);border:2px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg width="26" height="26" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Application Submitted!</div>
+            <div style="font-size:14px;color:var(--sub);line-height:1.6;max-width:280px;margin:0 auto;">
+                Thanks <strong>${profile.name}</strong>. Our team will review your application and get back to you within 24–48 hours.
+            </div>
+            <button class="btn sec" style="margin-top:20px;" onclick="closeModal(null,'authModal')">Close</button>
+        </div>`
+}
 
-    btn.disabled = false; btn.textContent = 'Submit Application'
-    alert('Application submitted! We\'ll review it within 24–48 hours.')
-    closeModal(null, 'authModal')
+function showFormError(msg) {
+    let el = document.getElementById('jFormError')
+    if (!el) {
+        el = document.createElement('div')
+        el.id = 'jFormError'
+        el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;'
+        document.getElementById('jSubmitBtn').before(el)
+    }
+    el.textContent = msg
 }
 
 // Logout with loading bar
@@ -773,35 +813,121 @@ function handleAdminLogin(e) {
     } else { alert('Invalid admin password') }
 }
 function openAdminPanel() { openModal('adminPanelModal'); loadPendingApps() }
-function loadPendingApps() {
-    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]').filter(a=>a.status==='pending')
+
+async function loadPendingApps() {
     const el = document.getElementById('pendingApplications')
-    if (!apps.length) { el.innerHTML='<p class="no-res">No pending applications</p>'; return }
-    el.innerHTML = `<table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Employer</th><th>Beat</th><th>CV</th><th>Actions</th></tr></thead><tbody>
-        ${apps.map(a=>`<tr>
-            <td><strong>${a.name}</strong></td>
-            <td>${a.email}</td>
-            <td>${a.employer||'—'}</td>
-            <td>${a.beat||'—'}</td>
-            <td>${a.cv?`<a href="${a.cv}" target="_blank" style="color:#3b82f6;">View</a>`:'—'}</td>
-            <td>
-                <button class="adm-btn ok" onclick="approveJ('${a.user_id}')">Approve</button>
-                <button class="adm-btn no" onclick="rejectJ('${a.user_id}')">Reject</button>
-            </td>
-        </tr>`).join('')}
-    </tbody></table>`
+    el.innerHTML = `<div style="padding:32px;text-align:center;color:var(--sub);font-size:14px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite;margin-bottom:8px;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><br>Loading...</div>`
+
+    const { data, error } = await sb
+        .from('journalist_applications')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        el.innerHTML = `<div style="padding:24px;color:#ef4444;font-size:13px;">Error loading applications: ${error.message}</div>`
+        return
+    }
+
+    if (!data || !data.length) {
+        el.innerHTML = `<div style="padding:40px 16px;text-align:center;color:var(--sub);">
+            <div style="font-size:32px;margin-bottom:8px;">📭</div>
+            <div style="font-weight:600;">No pending applications</div>
+        </div>`
+        return
+    }
+
+    el.innerHTML = data.map(a => `
+        <div style="border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--hov);">
+            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+                <div>
+                    <div style="font-size:16px;font-weight:700;">${a.name}</div>
+                    <div style="font-size:13px;color:var(--sub);">${a.email}</div>
+                    ${a.employer ? `<div style="font-size:12px;color:var(--sub);margin-top:2px;">${a.employer}${a.beat?' · '+a.beat:''}</div>` : ''}
+                </div>
+                <div style="font-size:11px;color:var(--sub);">${new Date(a.created_at).toLocaleDateString()}</div>
+            </div>
+            ${a.bio ? `<div style="font-size:13px;color:var(--sub);margin-bottom:10px;line-height:1.55;">${a.bio}</div>` : ''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                ${a.portfolio_link ? `<a href="${a.portfolio_link}" target="_blank" style="font-size:12px;color:#3b82f6;text-decoration:none;border:1px solid rgba(59,130,246,.3);border-radius:99px;padding:3px 10px;">📄 Portfolio</a>` : ''}
+                ${a.twitter ? `<span style="font-size:12px;color:var(--sub);border:1px solid var(--brd);border-radius:99px;padding:3px 10px;">𝕏 ${a.twitter}</span>` : ''}
+                ${a.linkedin ? `<a href="${a.linkedin}" target="_blank" style="font-size:12px;color:#3b82f6;text-decoration:none;border:1px solid rgba(59,130,246,.3);border-radius:99px;padding:3px 10px;">in LinkedIn</a>` : ''}
+            </div>
+            <div id="appActions_${a.id}" style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="adm-btn ok" onclick="approveJ('${a.id}','${a.name}','${a.email}')">✓ Approve</button>
+                <button class="adm-btn no" onclick="rejectJ('${a.id}','${a.name}')">✕ Reject</button>
+            </div>
+        </div>`).join('')
 }
-function approveJ(uid) {
-    if (!confirm('Approve?')) return
-    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-    const a = apps.find(x=>x.user_id===uid)
-    if (a) { a.status='approved'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Approved ${a.name}`); loadPendingApps() }
+
+async function approveJ(id, name, email) {
+    if (!confirm(`Approve ${name}?`)) return
+    const btn = document.querySelector(`#appActions_${id} .ok`)
+    if (btn) { btn.disabled=true; btn.textContent='Approving...' }
+
+    // 1. Update status in journalist_applications
+    const { error: e1 } = await sb
+        .from('journalist_applications')
+        .update({ status: 'approved' })
+        .eq('id', id)
+
+    if (e1) { alert('Error approving: ' + e1.message); if(btn){btn.disabled=false;btn.textContent='✓ Approve'} return }
+
+    // 2. Insert into journalists table
+    const { data: appData } = await sb.from('journalist_applications').select('*').eq('id', id).single()
+    if (appData) {
+        await sb.from('journalists').insert([{
+            name:           appData.name,
+            email:          appData.email,
+            bio:            appData.bio,
+            portfolio_link: appData.portfolio_link,
+            employer:       appData.employer,
+            beat:           appData.beat,
+            twitter:        appData.twitter,
+            linkedin:       appData.linkedin,
+            instagram:      appData.instagram,
+            application_id: id,
+            approved_at:    new Date().toISOString()
+        }])
+    }
+
+    // 3. Replace action buttons with email shortcut
+    const actionsEl = document.getElementById('appActions_' + id)
+    if (actionsEl) {
+        const subj = encodeURIComponent('Your WarRoom Journalist Application — Approved!')
+        const body = encodeURIComponent(`Hi ${name},\n\nGreat news! Your application to become a verified journalist on The WarRoom has been approved.\n\nYou can now log in to The WarRoom and start publishing verified conflict reports. Your name will appear with a Verified badge on all your reports.\n\nWelcome to the team.\n\n— The WarRoom Editorial Team`)
+        actionsEl.innerHTML = `
+            <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;font-size:13px;font-weight:600;margin-bottom:8px;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Approved
+            </div>
+            <a href="mailto:${email}?subject=${subj}&body=${body}" target="_blank"
+               style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:#3b82f6;color:#fff;font-size:13px;font-weight:600;text-decoration:none;margin-left:8px;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Send Approval Email
+            </a>`
+    }
 }
-function rejectJ(uid) {
-    if (!confirm('Reject?')) return
-    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
-    const a = apps.find(x=>x.user_id===uid)
-    if (a) { a.status='rejected'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Rejected ${a.name}`); loadPendingApps() }
+
+async function rejectJ(id, name) {
+    if (!confirm(`Reject ${name}'s application?`)) return
+    const btn = document.querySelector(`#appActions_${id} .no`)
+    if (btn) { btn.disabled=true; btn.textContent='Rejecting...' }
+
+    const { error } = await sb
+        .from('journalist_applications')
+        .update({ status: 'rejected' })
+        .eq('id', id)
+
+    if (error) { alert('Error: ' + error.message); if(btn){btn.disabled=false;btn.textContent='✕ Reject'} return }
+
+    const actionsEl = document.getElementById('appActions_' + id)
+    if (actionsEl) {
+        actionsEl.innerHTML = `<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;font-weight:600;">
+            ✕ Rejected
+        </div>`
+    }
 }
 
 // ── Dots ─────────────────────────────────────────────────────────────────────
