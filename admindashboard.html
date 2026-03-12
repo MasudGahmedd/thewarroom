@@ -43,6 +43,24 @@ padding:20px;
 </head>
 
 <body>
+  <div class="admin-popup">
+
+<input 
+id="adminPassword"
+type="password" 
+placeholder="Enter Admin Password"
+class="password-input"
+/>
+
+<button onclick="checkAdminPassword()" class="enter-btn">
+Enter
+</button>
+
+<p id="errorText" style="color:red; display:none;">
+Wrong password
+</p>
+
+</div>
 
 <div class="stars"></div>
 
@@ -288,9 +306,29 @@ ${v.vote_type} on report ${v.report_id}
 })
 
 }
+  <script>
+
+function checkAdminPassword(){
+
+const password = document.getElementById("adminPassword").value
+
+if(password === "75516905.warroom"){
+
+window.location.href = "/admindashboard.html"
+
+}else{
+
+document.getElementById("errorText").style.display = "block"
+
+}
+
+}
+
+</script>
 
 </script>
 
 </body>
 
 </html>
+
