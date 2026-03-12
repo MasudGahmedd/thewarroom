@@ -1249,17 +1249,39 @@ function handleSearch(q) {
 }
 function clearSearch() { document.getElementById('searchInput').value=''; handleSearch('') }
 
-// ── Voting ───────────────────────────────────────────────────────────────────
+// ── Voting — writes to report_votes table ────────────────────────────────────
 async function handleVote(reportId, type, e) {
     e.stopPropagation()
     if (!me) { showAuthModal(); return }
-    if (myVotes[reportId]) { alert('You already voted on this report'); return }
-    const r = reports.find(x=>x.id===reportId); if(!r) return
-    const up   = r.upvotes   + (type==='up'   ? 1 : 0)
-    const down = r.downvotes + (type==='down' ? 1 : 0)
-    const {error} = await sb.from('reports').update({upvotes:up,downvotes:down}).eq('id',reportId)
-    if (error) { console.error(error); return }
-    myVotes[reportId] = type; localStorage.setItem('myVotes',JSON.stringify(myVotes))
+    if (myVotes[reportId]) { return } // silent — button already shows voted state
+
+    const r = reports.find(x => x.id === reportId); if (!r) return
+
+    // 1. Insert into report_votes (unique constraint prevents double voting)
+    const { error: vErr } = await sb.from('report_votes').insert([{
+        report_id:  reportId,
+        user_id:    me.id,
+        user_name:  me.name,
+        user_email: me.email,
+        vote_type:  type
+    }])
+
+    if (vErr) {
+        // code 23505 = unique violation = already voted
+        if (vErr.code === '23505') {
+            myVotes[reportId] = type
+            localStorage.setItem('myVotes', JSON.stringify(myVotes))
+        }
+        return
+    }
+
+    // 2. Increment the counter on the report
+    const up   = r.upvotes   + (type === 'up'   ? 1 : 0)
+    const down = r.downvotes + (type === 'down' ? 1 : 0)
+    await sb.from('reports').update({ upvotes: up, downvotes: down }).eq('id', reportId)
+
+    myVotes[reportId] = type
+    localStorage.setItem('myVotes', JSON.stringify(myVotes))
     await loadReports()
 }
 
@@ -1431,7 +1453,7 @@ function renderTop() {
     el.innerHTML = createCard(top, true)
 }
 
-// ── Report Modal (with comments) ─────────────────────────────────────────────
+// ── Report Modal (with comments + delete + voters) ───────────────────────────
 function openReportModal(reportId) {
     const r = reports.find(x=>x.id===reportId); if(!r) return
     const sc     = score(r)
@@ -1440,9 +1462,13 @@ function openReportModal(reportId) {
     const commentListId  = 'commentList_'+reportId
     const commentInputId = 'commentInput_'+reportId
 
+    // Is the currently logged-in journalist the author?
+    const isAuthor = me && me.role === 'journalist' && me.verified &&
+        (me.email === r.journalist_email || me.name === r.journalist)
+
     document.getElementById('modalContent').innerHTML = `
         <!-- Journalist header -->
-        <div style="display:flex;gap:14px;margin-bottom:16px;">
+        <div style="display:flex;gap:14px;margin-bottom:16px;align-items:start;">
             <div class="av lg" onclick="closeModal(null,'reportModal');setTimeout(()=>openJournalistProfile('${jname}'),200)">
                 ${jname.charAt(0).toUpperCase()}
             </div>
@@ -1456,6 +1482,13 @@ function openReportModal(reportId) {
                 <div class="r-meta">${r.location}</div>
                 <div class="r-meta">${new Date(r.created_at).toLocaleString()}</div>
             </div>
+            ${isAuthor ? `
+            <button onclick="confirmDeleteReport('${r.id}')" title="Delete report"
+                style="flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.08);color:#ef4444;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;"
+                onmouseover="this.style.background='rgba(239,68,68,.18)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                Delete
+            </button>` : ''}
         </div>
 
         <div class="r-txt" style="font-size:16px;line-height:1.65;margin-bottom:16px;">${r.text}</div>
@@ -1471,6 +1504,19 @@ function openReportModal(reportId) {
             </button>
             <span class="r-meta">Overall Score: <strong style="color:var(--txt);font-size:15px;">${sc}</strong></span>
         </div>
+
+        <!-- Voters panel — only visible to the report's author -->
+        ${isAuthor ? `
+        <div class="div"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:700;">Who voted</div>
+            <button onclick="loadVoters('${r.id}')" id="loadVotersBtn"
+                style="font-size:12px;color:var(--sub);background:transparent;border:none;cursor:pointer;text-decoration:underline;">
+                Load
+            </button>
+        </div>
+        <div id="votersList_${r.id}" style="min-height:32px;"></div>
+        ` : ''}
 
         <!-- Comments -->
         <div class="div"></div>
@@ -1495,6 +1541,56 @@ function openReportModal(reportId) {
     openModal('reportModal')
 }
 
+// ── Delete report ─────────────────────────────────────────────────────────────
+async function confirmDeleteReport(reportId) {
+    if (!confirm('Delete this report? This cannot be undone.')) return
+    const { error } = await sb.from('reports').delete().eq('id', reportId)
+    if (error) { alert('Error deleting: ' + error.message); return }
+    closeModal(null, 'reportModal')
+    await loadReports()
+}
+
+// ── Load voters (journalist-only) ─────────────────────────────────────────────
+async function loadVoters(reportId) {
+    const btn = document.getElementById('loadVotersBtn')
+    const el  = document.getElementById('votersList_' + reportId)
+    if (!el) return
+    if (btn) { btn.style.display = 'none' }
+    el.innerHTML = `<div style="color:var(--sub);font-size:13px;padding:4px 0;">Loading…</div>`
+
+    const { data, error } = await sb
+        .from('report_votes')
+        .select('user_name, user_email, vote_type, created_at')
+        .eq('report_id', reportId)
+        .order('created_at', { ascending: false })
+
+    if (error) { el.innerHTML = `<div style="color:#ef4444;font-size:12px;">${error.message}</div>`; return }
+    if (!data || !data.length) { el.innerHTML = `<div style="color:var(--sub);font-size:13px;">No votes yet</div>`; return }
+
+    const ups   = data.filter(v => v.vote_type === 'up')
+    const downs = data.filter(v => v.vote_type === 'down')
+
+    const renderGroup = (list, label, color, icon) => list.length === 0 ? '' : `
+        <div style="margin-bottom:10px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:${color};margin-bottom:6px;">${icon} ${label} (${list.length})</div>
+            ${list.map(v => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:8px;background:var(--hov);margin-bottom:4px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;">
+                        ${(v.user_name||'?').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:600;">${v.user_name || 'Anonymous'}</div>
+                        <div style="font-size:11px;color:var(--sub);">${v.user_email || ''}</div>
+                    </div>
+                </div>
+                <div style="font-size:11px;color:var(--sub);">${fmtDate(v.created_at)}</div>
+            </div>`).join('')}
+        </div>`
+
+    el.innerHTML = renderGroup(ups, 'Upvoted', '#10b981', '↑') + renderGroup(downs, 'Downvoted', '#ef4444', '↓')
+}
+
 // ── Submit report ─────────────────────────────────────────────────────────────
 function showSubmitForm() {
     if (!me) { showAuthModal(); return }
@@ -1508,7 +1604,16 @@ async function handleSubmitReport(e) {
     const txt = document.getElementById('reportText').value.trim()
     const btn = document.getElementById('submitFormBtn')
     btn.disabled=true; btn.textContent='Submitting...'
-    const {error} = await sb.from('reports').insert([{journalist:me.name,location:loc,text:txt,verified:true,upvotes:0,downvotes:0}])
+    const {error} = await sb.from('reports').insert([{
+        journalist:         me.name,
+        journalist_email:   me.email,
+        journalist_user_id: me.id,
+        location:           loc,
+        text:               txt,
+        verified:           true,
+        upvotes:            0,
+        downvotes:          0
+    }])
     btn.disabled=false; btn.textContent='Submit Report'
     if (error) { console.error(error); alert('Error. Try again.'); return }
     document.getElementById('reportLocation').value=''
