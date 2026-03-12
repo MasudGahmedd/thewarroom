@@ -32,7 +32,7 @@ padding:20px;
 
 <body>
 
-<!-- PASSWORD SCREEN -->
+<!-- LOGIN SCREEN -->
 
 <div id="loginScreen" class="flex items-center justify-center h-screen">
 
@@ -59,11 +59,16 @@ Wrong password
 
 </div>
 
+
 <!-- DASHBOARD -->
 
 <div id="dashboard" class="hidden p-8">
 
-<h1 class="text-3xl font-bold mb-8">WarRoom Intelligence Dashboard</h1>
+<h1 class="text-3xl font-bold mb-8">
+WarRoom Intelligence Dashboard
+</h1>
+
+<!-- STATS -->
 
 <div class="grid md:grid-cols-4 gap-6 mb-8">
 
@@ -89,19 +94,31 @@ Wrong password
 
 </div>
 
+
+<!-- COMMENTS + VOTES -->
+
 <div class="grid md:grid-cols-2 gap-6">
 
 <div class="card">
+
 <h2 class="text-xl mb-4">Recent Comments</h2>
+
 <div id="commentsList"></div>
+
 </div>
 
 <div class="card">
+
 <h2 class="text-xl mb-4">Recent Votes</h2>
+
 <div id="votesList"></div>
+
 </div>
 
 </div>
+
+
+<!-- REPORTS -->
 
 <div class="card mt-8">
 
@@ -113,47 +130,70 @@ Wrong password
 
 </div>
 
+
 <script>
 
-/* PASSWORD SYSTEM */
+/* PASSWORD CHECK */
 
 function checkPassword(){
 
-const pass=document.getElementById("passwordInput").value
+const password=document.getElementById("passwordInput").value
 
-if(pass==="75516905.warroom"){
+if(password==="75516905.warroom"){
 
 document.getElementById("loginScreen").style.display="none"
 document.getElementById("dashboard").style.display="block"
 
-init()
+initDashboard()
 
 }else{
 
-document.getElementById("errorText").style.display="block"
+document.getElementById("errorText").classList.remove("hidden")
 
 }
 
 }
 
-/* SUPABASE */
 
-const SUPABASE_URL  = "https://gmqnjseeefjkdzhkxwla.supabase.co"
-const SUPABASE_KEY  = "sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
+/* SUPABASE CLIENT */
 
-const supabase=window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+const supabaseClient = window.supabase.createClient(
+"https://gmqnjseeefjkdzhkxwla.supabase.co",
+"sb_publishable_dccyACJ-Hv1vt1x74pjglA_oj5cALg9"
 )
+
+
+/* DASHBOARD INIT */
+
+async function initDashboard(){
+
+loadStats()
+loadComments()
+loadVotes()
+loadReports()
+
+}
+
 
 /* STATS */
 
 async function loadStats(){
 
-let {count:reports}=await supabase.from("reports").select("*",{count:"exact",head:true})
-let {count:votes}=await supabase.from("report_votes").select("*",{count:"exact",head:true})
-let {count:comments}=await supabase.from("comments").select("*",{count:"exact",head:true})
-let {count:journalists}=await supabase.from("journalists").select("*",{count:"exact",head:true})
+let {count:reports}=await supabaseClient
+.from("reports")
+.select("*",{count:"exact",head:true})
+
+let {count:votes}=await supabaseClient
+.from("report_votes")
+.select("*",{count:"exact",head:true})
+
+let {count:comments}=await supabaseClient
+.from("comments")
+.select("*",{count:"exact",head:true})
+
+let {count:journalists}=await supabaseClient
+.from("journalists")
+.select("*",{count:"exact",head:true})
 
 document.getElementById("totalReports").innerText=reports||0
 document.getElementById("totalVotes").innerText=votes||0
@@ -162,17 +202,19 @@ document.getElementById("totalJournalists").innerText=journalists||0
 
 }
 
+
 /* COMMENTS */
 
 async function loadComments(){
 
-let {data}=await supabase
+let {data}=await supabaseClient
 .from("comments")
 .select("*")
 .order("created_at",{ascending:false})
 .limit(10)
 
 const container=document.getElementById("commentsList")
+
 container.innerHTML=""
 
 if(!data) return
@@ -197,17 +239,19 @@ Report: ${c.report_id}
 
 }
 
+
 /* VOTES */
 
 async function loadVotes(){
 
-let {data}=await supabase
+let {data}=await supabaseClient
 .from("report_votes")
 .select("*")
 .order("created_at",{ascending:false})
 .limit(10)
 
 const container=document.getElementById("votesList")
+
 container.innerHTML=""
 
 if(!data) return
@@ -232,17 +276,19 @@ Report: ${v.report_id}
 
 }
 
+
 /* REPORTS */
 
 async function loadReports(){
 
-let {data}=await supabase
+let {data}=await supabaseClient
 .from("reports")
 .select("*")
 .order("created_at",{ascending:false})
 .limit(10)
 
 const container=document.getElementById("reportsList")
+
 container.innerHTML=""
 
 if(!data) return
@@ -268,17 +314,6 @@ Upvotes: ${r.upvotes} | Downvotes: ${r.downvotes}
 `
 
 })
-
-}
-
-/* INIT */
-
-async function init(){
-
-await loadStats()
-await loadComments()
-await loadVotes()
-await loadReports()
 
 }
 
