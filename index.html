@@ -1498,7 +1498,8 @@ async function loadComments(reportId) {
 }
 
 async function saveComment(reportId, text) {
-    if (!me) return
+    if (!me) return null
+    if (me.id && me.id.startsWith('demo_')) { showLiveToast('Sign in with Google to comment'); return null }
     const { data, error } = await sb.from('report_comments').insert([{
         report_id:  reportId,
         user_id:    me.id,
@@ -1506,13 +1507,23 @@ async function saveComment(reportId, text) {
         user_photo: me.photo || null,
         text
     }]).select().single()
-    if (error) { console.error(error); return }
-    // Add to local cache immediately — realtime will also fire but we deduplicate
+    if (error) {
+        console.error('Comment error:', error)
+        if (error.code === '42501' || error.message?.includes('policy') || error.message?.includes('permission') || error.status === 403) {
+            showLiveToast('\u26A0\uFE0F Comment blocked \u2014 RLS policy needed')
+            console.warn('%c[WarRoom] Fix: run in Supabase SQL Editor:\nCREATE POLICY \"Users can insert comments\" ON report_comments FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);\nCREATE POLICY \"Anyone can read comments\" ON report_comments FOR SELECT USING (true);', 'color:#f59e0b;font-weight:bold')
+        } else {
+            showLiveToast('Could not post comment. Try again.')
+        }
+        return null
+    }
+    if (!data) return null
     if (!comments[reportId]) comments[reportId] = []
     const alreadyHave = comments[reportId].some(x => x.id === data.id)
     if (!alreadyHave) {
         comments[reportId].push({ id: data.id, uid: me.id, name: me.name, photo: me.photo, text, ts: data.created_at })
     }
+    return data
 }
 
 function renderComments(reportId, el) {
@@ -1538,13 +1549,19 @@ async function submitComment(reportId) {
     const txt = inp?.value.trim()
     if (!txt) return
     if (!me) { showAuthModal(); return }
+    const sendBtn = inp?.nextElementSibling
     inp.value = ''
     inp.disabled = true
-    await saveComment(reportId, txt)
+    if (sendBtn) { sendBtn.disabled = true; sendBtn.style.opacity = '.5' }
+    const result = await saveComment(reportId, txt)
     inp.disabled = false
-    const listEl = document.getElementById('commentList_'+reportId)
-    if (listEl) renderComments(reportId, listEl)
-    renderFeed() // refresh comment counts on cards
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.style.opacity = '1' }
+    if (result) {
+        const listEl = document.getElementById('commentList_'+reportId)
+        if (listEl) renderComments(reportId, listEl)
+        renderFeed()
+        showLiveToast('\u2713 Comment posted!')
+    }
 }
 
 // ── Journalist Profile ────────────────────────────────────────────────────────
