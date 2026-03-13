@@ -1793,9 +1793,21 @@ function openReportModal(reportId) {
 // ── Delete report ─────────────────────────────────────────────────────────────
 async function confirmDeleteReport(reportId) {
     if (!confirm('Delete this report? This cannot be undone.')) return
+
+    // Delete child rows first to avoid foreign key violations
+    await sb.from('report_votes').delete().eq('report_id', reportId)
+    await sb.from('report_comments').delete().eq('report_id', reportId)
+
     const { error } = await sb.from('reports').delete().eq('id', reportId)
     if (error) { alert('Error deleting: ' + error.message); return }
+
+    // Clean up local caches
+    delete myVotes[reportId]
+    delete comments[reportId]
+    localStorage.setItem('myVotes', JSON.stringify(myVotes))
+
     closeModal(null, 'reportModal')
+    showLiveToast('Report deleted')
     await loadReports()
 }
 
