@@ -159,17 +159,6 @@
         .ft { resize:vertical;min-height:90px; }
         .form-btn { width:100%;padding:12px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit; }
         .form-btn:active { transform:scale(.98); }
-        .warroom-dashboard-btn{ width:100%;padding:12px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit; }
-
-.warroom-dashboard-btn:hover{
-background:#141414;
-border-color:#3a3a3a; 
-transform:translateY(-1px);
-}
-
-.warroom-dashboard-btn:active{
-transform:scale(.98);
-}
         .form-btn:disabled { opacity:.5;cursor:not-allowed; }
 
         /* ── Auth toggle ── */
@@ -415,9 +404,6 @@ transform:scale(.98);
                 <form onsubmit="handleAdminLogin(event)">
                     <div class="fg"><label class="fl">Admin Password</label><input type="password" class="fi" id="adminPassword" placeholder="Enter password" required></div>
                     <button type="submit" class="form-btn">Login as Admin</button>
-                      <a href="/admindashboard.html" class="warroom-dashboard-btn">
-                    Go to Fullview Dashboard
-                        </a>
                 </form>
             </div>
         </div>
@@ -826,6 +812,7 @@ async function applySession(session, isNewLogin) {
         }
         localStorage.setItem('warroomUser', JSON.stringify(me))
         updateUI()
+        loadMyVotes()
         return
     }
 
@@ -866,6 +853,7 @@ async function applySession(session, isNewLogin) {
     }
     localStorage.setItem('warroomUser', JSON.stringify(me))
     updateUI()
+    loadMyVotes()
 }
 
 // ── UI Update ────────────────────────────────────────────────────────────────
@@ -1335,13 +1323,45 @@ function handleSearch(q) {
 }
 function clearSearch() { document.getElementById('searchInput').value=''; handleSearch('') }
 
+// ── Load user's existing votes from Supabase ─────────────────────────────────
+async function loadMyVotes() {
+    if (!me || me.id.startsWith('demo_')) return
+    try {
+        const { data, error } = await sb
+            .from('report_votes')
+            .select('report_id, vote_type')
+            .eq('user_id', me.id)
+        if (error || !data) return
+        data.forEach(v => { myVotes[v.report_id] = v.vote_type })
+        localStorage.setItem('myVotes', JSON.stringify(myVotes))
+        // Refresh feed so vote button styles reflect loaded state
+        renderFeed(); renderTop()
+    } catch(err) { console.warn('Could not load votes:', err) }
+}
+
 // ── Voting — writes to report_votes table ────────────────────────────────────
 async function handleVote(reportId, type, e) {
     e.stopPropagation()
     if (!me) { showAuthModal(); return }
-    if (myVotes[reportId]) { return } // silent — button already shows voted state
+
+    // Demo users can't vote (no valid UUID for Supabase)
+    if (me.id.startsWith('demo_')) {
+        showLiveToast('Sign in with Google to vote')
+        return
+    }
+
+    // Already voted — show a friendly nudge and bail
+    if (myVotes[reportId]) {
+        showLiveToast(myVotes[reportId] === type ? 'Already voted!' : 'You already voted on this report')
+        return
+    }
 
     const r = reports.find(x => x.id === reportId); if (!r) return
+
+    // Optimistic UI update
+    myVotes[reportId] = type
+    localStorage.setItem('myVotes', JSON.stringify(myVotes))
+    renderFeed(); renderTop()
 
     // 1. Insert into report_votes (unique constraint prevents double voting)
     const { error: vErr } = await sb.from('report_votes').insert([{
@@ -1353,21 +1373,25 @@ async function handleVote(reportId, type, e) {
     }])
 
     if (vErr) {
-        // code 23505 = unique violation = already voted
         if (vErr.code === '23505') {
-            myVotes[reportId] = type
+            // Already in DB — our optimistic update was correct, keep it
+            showLiveToast('Vote recorded!')
+        } else {
+            // Real error — roll back optimistic update
+            delete myVotes[reportId]
             localStorage.setItem('myVotes', JSON.stringify(myVotes))
+            renderFeed(); renderTop()
+            showLiveToast('Error saving vote. Try again.')
         }
         return
     }
 
-    // 2. Increment the counter on the report
+    // 2. Increment the counter on the report using RPC-safe arithmetic
     const up   = r.upvotes   + (type === 'up'   ? 1 : 0)
     const down = r.downvotes + (type === 'down' ? 1 : 0)
     await sb.from('reports').update({ upvotes: up, downvotes: down }).eq('id', reportId)
 
-    myVotes[reportId] = type
-    localStorage.setItem('myVotes', JSON.stringify(myVotes))
+    showLiveToast(type === 'up' ? '↑ Upvoted!' : '↓ Downvoted')
     await loadReports()
 }
 
