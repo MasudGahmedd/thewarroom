@@ -176,7 +176,7 @@
         .info-box strong { color:var(--txt); }
 
         /* ── Leaderboard tabs ── */
-        .tab-row { display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--brd); }
+        .tab-row { display:flex;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--brd); }
         .tab { padding:6px 16px;border-radius:9999px;background:transparent;color:var(--sub);border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s; }
         .tab.on { background:var(--acc);color:var(--bg);border-color:var(--acc); }
 
@@ -223,6 +223,42 @@
         /* ── Misc ── */
         .no-res { padding:48px 16px;text-align:center;color:var(--sub);font-size:15px; }
         .section-divider { height:1px;background:var(--brd);margin:20px 16px; }
+
+        /* ── Footer ── */
+        .site-footer { position:relative;overflow:hidden;background:var(--card);border-top:1px solid var(--brd);padding:48px 24px 36px;text-align:center;margin-top:32px; }
+        .footer-bg-word { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;user-select:none;overflow:hidden; }
+        .footer-bg-word span { font-size:clamp(80px,22vw,200px);font-weight:900;letter-spacing:-6px;color:var(--txt);opacity:.04;white-space:nowrap;line-height:1; }
+        .footer-logo { font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:12px;position:relative;z-index:1; }
+        .footer-desc { font-size:14px;color:var(--sub);line-height:1.7;max-width:400px;margin:0 auto 20px;position:relative;z-index:1; }
+        .footer-chips { display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;position:relative;z-index:1; }
+        .footer-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;border:1px solid var(--brd);font-size:11px;font-weight:500;color:var(--sub); }
+        .footer-copy { font-size:12px;color:var(--sub);opacity:.6;position:relative;z-index:1; }
+
+        /* ── Founder popup ── */
+        #founderPopup { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);z-index:9998;width:calc(100% - 32px);max-width:360px;opacity:0;transition:transform .5s cubic-bezier(.34,1.2,.64,1),opacity .4s ease;pointer-events:none; }
+        #founderPopup.show { transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto; }
+        .founder-card { background:var(--card);border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px;position:relative;
+            box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 1.5px rgba(99,179,237,.5),0 0 20px rgba(99,179,237,.18),0 0 60px rgba(99,179,237,.08);
+            animation:founderGlow 2.4s ease-in-out infinite alternate; }
+        @keyframes founderGlow {
+            from { box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 1.5px rgba(99,179,237,.45),0 0 18px rgba(99,179,237,.15),0 0 50px rgba(99,179,237,.06); }
+            to   { box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 2px rgba(139,92,246,.65),0 0 28px rgba(139,92,246,.28),0 0 70px rgba(139,92,246,.12); }
+        }
+        .founder-av { width:52px;height:52px;min-width:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(99,179,237,.4); }
+        .founder-av-fallback { width:52px;height:52px;min-width:52px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;flex-shrink:0; }
+        .founder-close { position:absolute;top:10px;right:12px;width:26px;height:26px;border-radius:50%;background:var(--hov);border:none;cursor:pointer;color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s; }
+        .founder-close:hover { background:var(--brd); }
+        .founder-follow-btn { display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s;margin-top:6px; }
+        .founder-follow-btn:hover { opacity:.85; }
+
+        /* ── Location suggestions ── */
+        .loc-suggestions { position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--card);border:1px solid var(--brd);border-radius:10px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.15);max-height:200px;overflow-y:auto; }
+        .loc-item { padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--brd); }
+        .loc-item:last-child { border-bottom:none; }
+        .loc-item:hover,.loc-item:focus { background:var(--hov); }
+        .loc-item-pin { font-size:14px;flex-shrink:0; }
+        .loc-item-main { font-weight:600;color:var(--txt); }
+        .loc-item-sub { font-size:11px;color:var(--sub);margin-top:1px; }
 
         /* ── Animations ── */
         @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
@@ -323,7 +359,36 @@
     </div>
 </main>
 
-<!-- ══ AUTH MODAL ══ -->
+<!-- ── Footer ── -->
+<footer class="site-footer">
+    <div class="footer-bg-word"><span>WARROOM</span></div>
+    <div class="footer-logo">The WarRoom</div>
+    <p class="footer-desc">Ground truth, in real time. The WarRoom aggregates firsthand reports from verified conflict journalists across the globe — community-ranked, credibility-first.</p>
+    <div class="footer-chips">
+        <span class="footer-chip">📡 Live conflict reporting</span>
+        <span class="footer-chip">✓ Verified journalists only</span>
+        <span class="footer-chip">↑ Community-ranked</span>
+        <span class="footer-chip">🌐 Global coverage</span>
+    </div>
+    <div class="footer-copy">© 2025 The WarRoom · All rights reserved</div>
+</footer>
+
+<!-- ── Founder Follow Popup ── -->
+<div id="founderPopup">
+    <div class="founder-card">
+        <button class="founder-close" onclick="closeFounderPopup()">×</button>
+        <div id="founderAv" class="founder-av-fallback">M</div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;">Built by the founder</div>
+            <div style="font-size:15px;font-weight:800;" id="founderName">Masud</div>
+            <div style="font-size:12px;color:var(--sub);margin-bottom:4px;" id="founderHandle">@masudview</div>
+            <a href="https://x.com/masudview" target="_blank" rel="noopener" class="founder-follow-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Follow on X
+            </a>
+        </div>
+    </div>
+</div>
 <div id="authModal" class="modal-overlay" onclick="closeModal(event,'authModal')">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-hdr">
@@ -497,7 +562,14 @@
         </div>
         <div class="modal-bdy">
             <form onsubmit="handleSubmitReport(event)">
-                <div class="fg"><label class="fl">Location <span>*</span></label><input class="fi" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required></div>
+                <div class="fg" style="position:relative;">
+                    <label class="fl">Location <span>*</span></label>
+                    <input class="fi" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required autocomplete="off"
+                        oninput="handleLocationInput(this.value)"
+                        onfocus="handleLocationInput(this.value)"
+                        onblur="setTimeout(()=>closeLocSuggestions(),200)">
+                    <div id="locSuggestions" class="loc-suggestions" style="display:none;"></div>
+                </div>
                 <div class="fg"><label class="fl">Report <span>*</span></label><textarea class="ft" id="reportText" placeholder="Describe the situation..." required></textarea></div>
                 <button type="submit" class="form-btn" id="submitFormBtn">Submit Report</button>
             </form>
@@ -700,9 +772,12 @@ async function saveProfile() {
     btn.disabled = true
     btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Saving…</span>`
 
+    const newName   = document.getElementById('editName').value.trim()
+    const newPhoto  = document.getElementById('editPhoto').value.trim()
     const updates = {
-        display_name:   document.getElementById('editName').value.trim(),
-        avatar_url:     document.getElementById('editPhoto').value.trim(),
+        display_name:   newName,
+        name:           newName,   // keep both columns in sync
+        avatar_url:     newPhoto,
         bio:            document.getElementById('editBio').value.trim(),
         employer:       document.getElementById('editEmployer').value.trim(),
         beat:           document.getElementById('editBeat').value.trim(),
@@ -731,10 +806,22 @@ async function saveProfile() {
         return
     }
 
-    // Update local state
-    me = { ...me, name: updates.display_name, photo: updates.avatar_url || me.photo, bio: updates.bio, employer: updates.employer, beat: updates.beat, twitter: updates.twitter, linkedin: updates.linkedin, instagram: updates.instagram, portfolio_link: updates.portfolio_link }
+    // Update local state fully so it persists across sign-outs
+    me = {
+        ...me,
+        name:           updates.display_name,
+        photo:          newPhoto || me.photo,
+        bio:            updates.bio,
+        employer:       updates.employer,
+        beat:           updates.beat,
+        twitter:        updates.twitter,
+        linkedin:       updates.linkedin,
+        instagram:      updates.instagram,
+        portfolio_link: updates.portfolio_link
+    }
     localStorage.setItem('warroomUser', JSON.stringify(me))
     updateUI()
+    showLiveToast('✓ Profile updated!')
     renderProfileView() // back to view mode
 }
 
@@ -801,14 +888,14 @@ async function applySession(session, isNewLogin) {
             role:       'journalist',
             verified:   true,
             journalistId: jRow.id,
-            // keep full profile for edit modal
-            bio:        jRow.bio,
-            employer:   jRow.employer,
-            beat:       jRow.beat,
-            twitter:    jRow.twitter,
-            linkedin:   jRow.linkedin,
-            instagram:  jRow.instagram,
-            portfolio_link: jRow.portfolio_link
+            // full profile for edit modal — always read fresh from DB
+            bio:        jRow.bio           || '',
+            employer:   jRow.employer      || '',
+            beat:       jRow.beat          || '',
+            twitter:    jRow.twitter       || '',
+            linkedin:   jRow.linkedin      || '',
+            instagram:  jRow.instagram     || '',
+            portfolio_link: jRow.portfolio_link || ''
         }
         localStorage.setItem('warroomUser', JSON.stringify(me))
         updateUI()
@@ -1826,8 +1913,74 @@ document.addEventListener('keydown', e => {
     if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); document.body.style.overflow='auto' }
 })
 
+// ── Location autocomplete (OpenStreetMap Nominatim — no API key needed) ──────
+let locDebounce = null
+async function handleLocationInput(val) {
+    const el = document.getElementById('locSuggestions')
+    clearTimeout(locDebounce)
+    if (!val || val.trim().length < 2) { el.style.display = 'none'; return }
+    locDebounce = setTimeout(async () => {
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&addressdetails=1&limit=5`,
+                { headers: { 'Accept-Language': 'en' } }
+            )
+            const data = await res.json()
+            if (!data.length) { el.style.display = 'none'; return }
+            el.innerHTML = data.map(item => {
+                const a = item.address || {}
+                const city    = a.city || a.town || a.village || a.county || ''
+                const country = a.country || ''
+                const label   = city && country ? `${city}, ${country}` : item.display_name.split(',').slice(0,2).join(',').trim()
+                const sub     = item.display_name
+                return `<div class="loc-item" onmousedown="pickLocation('${label.replace(/'/g,"\\'")}')">
+                    <span class="loc-item-pin">📍</span>
+                    <div>
+                        <div class="loc-item-main">${label}</div>
+                        <div class="loc-item-sub">${sub.length > 60 ? sub.slice(0,60)+'…' : sub}</div>
+                    </div>
+                </div>`
+            }).join('')
+            el.style.display = 'block'
+        } catch(e) { el.style.display = 'none' }
+    }, 350)
+}
+function pickLocation(label) {
+    document.getElementById('reportLocation').value = label
+    closeLocSuggestions()
+}
+function closeLocSuggestions() {
+    const el = document.getElementById('locSuggestions')
+    if (el) el.style.display = 'none'
+}
+
+// ── Founder popup ─────────────────────────────────────────────────────────────
+function initFounderPopup() {
+    if (sessionStorage.getItem('founderDismissed')) return
+    // Load X/Twitter profile via external oEmbed proxy-friendly fallback
+    // We use a known avatar CDN approach — load pic from unavatar.io which proxies X avatars
+    const avEl = document.getElementById('founderAv')
+    const img = document.createElement('img')
+    img.className = 'founder-av'
+    img.src = 'https://unavatar.io/twitter/masudview?fallback=false'
+    img.alt = 'Masud'
+    img.onload = () => { avEl.parentNode.replaceChild(img, avEl) }
+    img.onerror = () => { /* keep initials fallback */ }
+
+    // Show popup after 3s delay
+    setTimeout(() => {
+        const popup = document.getElementById('founderPopup')
+        popup.classList.add('show')
+    }, 3000)
+}
+function closeFounderPopup() {
+    document.getElementById('founderPopup').classList.remove('show')
+    sessionStorage.setItem('founderDismissed', '1')
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 init()
+initFounderPopup()
 
 </script>
 </body>
