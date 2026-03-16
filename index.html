@@ -96,6 +96,28 @@
         .hero-title { font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 12px; }
         @media(min-width:640px){.hero-title{font-size:40px;}}
         .hero-sub { font-size:15px;color:var(--sub);line-height:1.65;margin:0 0 22px;max-width:430px; }
+        .live-banner { position:relative;overflow:hidden;margin-bottom:22px;padding:16px 18px;border-radius:22px;border:1px solid rgba(59,130,246,.22);background:
+            radial-gradient(circle at top left,rgba(59,130,246,.22),transparent 42%),
+            linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,41,59,.9));box-shadow:0 18px 45px rgba(2,6,23,.24); }
+        [data-theme="light"] .live-banner { background:
+            radial-gradient(circle at top left,rgba(59,130,246,.14),transparent 42%),
+            linear-gradient(135deg,rgba(248,250,252,.98),rgba(241,245,249,.94));box-shadow:0 18px 45px rgba(15,23,42,.08); }
+        .live-banner::after { content:"";position:absolute;inset:auto -20% -55% auto;width:180px;height:180px;border-radius:50%;background:rgba(16,185,129,.12);filter:blur(8px); }
+        .live-banner-top { position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap; }
+        .live-banner-label { display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#f8fafc; }
+        [data-theme="light"] .live-banner-label { color:#0f172a; }
+        .live-banner-copy { position:relative;z-index:1;margin:14px 0 0;font-size:13px;line-height:1.6;color:rgba(226,232,240,.82);max-width:420px; }
+        [data-theme="light"] .live-banner-copy { color:#475569; }
+        .live-banner-grid { position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
+        .live-stat { padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px); }
+        [data-theme="light"] .live-stat { background:rgba(255,255,255,.6);border-color:rgba(148,163,184,.22); }
+        .live-stat-label { display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(226,232,240,.68);margin-bottom:6px; }
+        [data-theme="light"] .live-stat-label { color:#64748b; }
+        .live-stat-value { display:flex;align-items:baseline;gap:8px;font-size:28px;font-weight:800;letter-spacing:-1px;color:#fff;line-height:1; }
+        [data-theme="light"] .live-stat-value { color:#0f172a; }
+        .live-stat-meta { font-size:12px;font-weight:600;color:rgba(148,163,184,.9); }
+        [data-theme="light"] .live-stat-meta { color:#64748b; }
+        @media(max-width:520px){.live-banner-grid{grid-template-columns:1fr}.live-banner{padding:15px 14px 14px}}
         .chips { display:flex;gap:8px;flex-wrap:wrap; }
         .chip { display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub); }
 
@@ -340,6 +362,23 @@
         <div class="live-pill"><span class="live-dot"></span><span class="live-lbl">LIVE</span></div>
         <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
         <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
+        <div class="live-banner" id="liveBanner">
+            <div class="live-banner-top">
+                <span class="live-banner-label"><span class="live-dot"></span>Live room status</span>
+                <span class="live-stat-meta" id="liveBannerStamp">Syncing now</span>
+            </div>
+            <div class="live-banner-grid">
+                <div class="live-stat">
+                    <span class="live-stat-label">Online now</span>
+                    <div class="live-stat-value"><span id="onlineNowCount">1</span><span class="live-stat-meta">watching</span></div>
+                </div>
+                <div class="live-stat">
+                    <span class="live-stat-label">Reporting live</span>
+                    <div class="live-stat-value"><span id="reportingNowCount">0</span><span class="live-stat-meta">verified journalists</span></div>
+                </div>
+            </div>
+            <p class="live-banner-copy" id="liveBannerCopy">Tracking everyone currently in the room and every verified journalist connected right now.</p>
+        </div>
         <div class="chips">
             <span class="chip">📡 Live conflict reporting</span>
             <span class="chip">✓ Verified journalists only</span>
@@ -625,6 +664,16 @@ let isAdmin      = sessionStorage.getItem('isAdmin') === 'true'
 let myVotes      = JSON.parse(localStorage.getItem('myVotes') || '{}')   // {reportId: 'up'|'down'}
 let comments     = JSON.parse(localStorage.getItem('wrComments') || '{}') // {reportId: [...]}
 let jProfiles    = JSON.parse(localStorage.getItem('jProfiles') || '{}')  // {name: profile}
+let livePresenceChannel = null
+let livePresenceStampTimer = null
+let livePresenceState = { online:1, reporters:0, lastSync:null, connected:false }
+const livePresenceKey = (() => {
+    const existing = sessionStorage.getItem('wrPresenceKey')
+    if (existing) return existing
+    const created = window.crypto?.randomUUID?.() || ('wr_' + Math.random().toString(36).slice(2))
+    sessionStorage.setItem('wrPresenceKey', created)
+    return created
+})()
 
 // ── Loading bar ──────────────────────────────────────────────────────────────
 let barTimer = null
@@ -831,6 +880,7 @@ async function init() {
     initDots()
     await loadReports()
     initRealtime()
+    initLivePresence()
 
     // 1. Check for an existing Supabase session (handles page reload while logged in)
     try {
@@ -972,6 +1022,7 @@ function updateUI() {
         wrap.style.display   = 'none'
         sBtn.style.display   = 'none'
     }
+    refreshLivePresence()
 }
 
 // ── Profile Dropdown ─────────────────────────────────────────────────────────
@@ -1315,6 +1366,90 @@ function updateMeta() { document.querySelector('meta[name="theme-color"]').setAt
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 function score(r) { return r.upvotes - r.downvotes }
+function countRecentReports(minutes=60) {
+    const cutoff = Date.now() - minutes * 60 * 1000
+    return reports.filter(r => new Date(r.created_at).getTime() >= cutoff).length
+}
+function livePresencePayload() {
+    return {
+        sessionId: livePresenceKey,
+        role: me?.role || 'guest',
+        verified: !!me?.verified,
+        name: me?.name || 'Guest',
+        joinedAt: new Date().toISOString()
+    }
+}
+function formatLiveStamp() {
+    if (!livePresenceState.lastSync) return livePresenceState.connected ? 'Live now' : 'Connecting live'
+    const diffMs = Date.now() - livePresenceState.lastSync
+    const diffSec = Math.max(0, Math.floor(diffMs / 1000))
+    if (diffSec < 5) return 'Updated just now'
+    if (diffSec < 60) return `Updated ${diffSec}s ago`
+    return `Updated ${Math.floor(diffSec / 60)}m ago`
+}
+function renderLiveBanner() {
+    const onlineEl = document.getElementById('onlineNowCount')
+    const reportingEl = document.getElementById('reportingNowCount')
+    const stampEl = document.getElementById('liveBannerStamp')
+    const copyEl = document.getElementById('liveBannerCopy')
+    if (!onlineEl || !reportingEl || !stampEl || !copyEl) return
+
+    const recentReports = countRecentReports(60)
+    onlineEl.textContent = String(Math.max(1, livePresenceState.online))
+    reportingEl.textContent = String(Math.max(0, livePresenceState.reporters))
+    stampEl.textContent = formatLiveStamp()
+
+    if (!livePresenceState.connected) {
+        copyEl.textContent = 'Connecting the live room so readers can see who is online and which verified journalists are in-session.'
+    } else if (livePresenceState.reporters > 0) {
+        copyEl.textContent = recentReports > 0
+            ? `${recentReports} reports landed in the last hour while ${livePresenceState.reporters} verified journalist${livePresenceState.reporters === 1 ? '' : 's'} stay live in the room.`
+            : `${livePresenceState.reporters} verified journalist${livePresenceState.reporters === 1 ? ' is' : 's are'} live in the room right now.`
+    } else {
+        copyEl.textContent = recentReports > 0
+            ? `${recentReports} fresh report${recentReports === 1 ? '' : 's'} arrived in the last hour, and the room is still actively watching live.`
+            : 'Readers are online now and waiting for the next verified update to break.'
+    }
+}
+function syncLivePresenceState() {
+    if (!livePresenceChannel) return
+    const metas = Object.values(livePresenceChannel.presenceState()).flat()
+    livePresenceState.online = Math.max(1, metas.length || 1)
+    livePresenceState.reporters = metas.filter(meta => meta.role === 'journalist' && meta.verified).length
+    livePresenceState.lastSync = Date.now()
+    livePresenceState.connected = true
+    renderLiveBanner()
+}
+async function refreshLivePresence() {
+    renderLiveBanner()
+    if (!livePresenceChannel) return
+    try {
+        await livePresenceChannel.track(livePresencePayload())
+    } catch (error) {
+        console.warn('Presence track failed', error)
+    }
+}
+function initLivePresence() {
+    renderLiveBanner()
+    if (livePresenceStampTimer) clearInterval(livePresenceStampTimer)
+    livePresenceStampTimer = setInterval(renderLiveBanner, 10000)
+    if (livePresenceChannel) return
+
+    livePresenceChannel = sb.channel('warroom-presence', {
+        config: { presence: { key: livePresenceKey } }
+    })
+
+    livePresenceChannel
+        .on('presence', { event: 'sync' }, syncLivePresenceState)
+        .on('presence', { event: 'join' }, syncLivePresenceState)
+        .on('presence', { event: 'leave' }, syncLivePresenceState)
+        .subscribe(async status => {
+            if (status !== 'SUBSCRIBED') return
+            livePresenceState.connected = true
+            await refreshLivePresence()
+            syncLivePresenceState()
+        })
+}
 
 async function loadReports() {
     const {data,error} = await sb.from('reports').select('*').order('created_at',{ascending:false})
@@ -1328,7 +1463,7 @@ async function loadReports() {
     } else {
         filtered = data
     }
-    renderFeed(); renderTop()
+    renderFeed(); renderTop(); renderLiveBanner()
 }
 
 // ── Realtime subscriptions ────────────────────────────────────────────────────
@@ -1339,14 +1474,14 @@ function initRealtime() {
             if (payload.eventType === 'INSERT') {
                 reports.unshift(payload.new)
                 filtered = [...reports]
-                renderFeed(); renderTop()
+                renderFeed(); renderTop(); renderLiveBanner()
                 showLiveToast('📡 New report just came in')
             } else if (payload.eventType === 'UPDATE') {
                 const idx = reports.findIndex(r => r.id === payload.new.id)
                 if (idx !== -1) {
                     reports[idx] = payload.new
                     filtered = filtered.map(r => r.id === payload.new.id ? payload.new : r)
-                    renderFeed(); renderTop()
+                    renderFeed(); renderTop(); renderLiveBanner()
                     // Refresh open report modal if it's the same report
                     const modal = document.getElementById('reportModal')
                     if (modal?.classList.contains('active')) {
@@ -1359,7 +1494,7 @@ function initRealtime() {
             } else if (payload.eventType === 'DELETE') {
                 reports  = reports.filter(r => r.id !== payload.old.id)
                 filtered = filtered.filter(r => r.id !== payload.old.id)
-                renderFeed(); renderTop()
+                renderFeed(); renderTop(); renderLiveBanner()
             }
         })
         .subscribe()
@@ -2010,6 +2145,7 @@ function closeFounderPopup() {
 // ── Boot ──────────────────────────────────────────────────────────────────────
 init()
 initFounderPopup()
+window.addEventListener('beforeunload', () => { try { livePresenceChannel?.untrack() } catch(e) {} })
 
 </script>
 </body>
