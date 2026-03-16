@@ -816,17 +816,18 @@ function renderProfileEdit() {
 }
 
 async function saveProfile() {
-    if (!me?.journalistId) return
+    if (!me?.journalistId && !me?.email) return
     const btn = document.getElementById('saveProfileBtn')
+    const err = document.getElementById('profileSaveErr')
     btn.disabled = true
     btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Saving…</span>`
 
+    if (err) err.style.display = 'none'
     const newName   = document.getElementById('editName').value.trim()
-    const newPhoto  = document.getElementById('editPhoto').value.trim()
     const updates = {
         display_name:   newName,
         name:           newName,   // keep both columns in sync
-        avatar_url:     newPhoto,
+        avatar_url:     document.getElementById('editPhoto').value.trim(),
         bio:            document.getElementById('editBio').value.trim(),
         employer:       document.getElementById('editEmployer').value.trim(),
         beat:           document.getElementById('editBeat').value.trim(),
@@ -837,36 +838,61 @@ async function saveProfile() {
     }
 
     if (!updates.display_name) {
-        const err = document.getElementById('profileSaveErr')
         err.textContent = 'Display name is required.'; err.style.display = 'block'
         btn.disabled = false; btn.textContent = 'Save Changes'; return
     }
 
-    const { error } = await sb
+    let savedRow = null
+    let saveError = null
+
+    const primarySave = await sb
         .from('journalists')
         .update(updates)
         .eq('id', me.journalistId)
+        .select('*')
+        .maybeSingle()
+
+    if (primarySave.error) saveError = primarySave.error
+    else savedRow = primarySave.data
+
+    if (!savedRow && !saveError && me.email) {
+        const fallbackSave = await sb
+            .from('journalists')
+            .update(updates)
+            .eq('email', me.email)
+            .select('*')
+            .maybeSingle()
+
+        if (fallbackSave.error) saveError = fallbackSave.error
+        else savedRow = fallbackSave.data
+    }
 
     btn.disabled = false; btn.textContent = 'Save Changes'
 
-    if (error) {
-        const err = document.getElementById('profileSaveErr')
-        err.textContent = 'Error saving: ' + error.message; err.style.display = 'block'
+    if (saveError) {
+        err.textContent = 'Error saving: ' + saveError.message; err.style.display = 'block'
         return
     }
 
-    // Update local state fully so it persists across sign-outs
+    if (!savedRow) {
+        err.textContent = 'Profile was not saved to Supabase. No matching journalist record was updated.'
+        err.style.display = 'block'
+        return
+    }
+
+    // Update local state from the exact row Supabase saved.
     me = {
         ...me,
-        name:           updates.display_name,
-        photo:          newPhoto || me.photo,
-        bio:            updates.bio,
-        employer:       updates.employer,
-        beat:           updates.beat,
-        twitter:        updates.twitter,
-        linkedin:       updates.linkedin,
-        instagram:      updates.instagram,
-        portfolio_link: updates.portfolio_link
+        journalistId:   savedRow.id,
+        name:           savedRow.display_name || savedRow.name || updates.display_name,
+        photo:          savedRow.avatar_url || null,
+        bio:            savedRow.bio || '',
+        employer:       savedRow.employer || '',
+        beat:           savedRow.beat || '',
+        twitter:        savedRow.twitter || '',
+        linkedin:       savedRow.linkedin || '',
+        instagram:      savedRow.instagram || '',
+        portfolio_link: savedRow.portfolio_link || ''
     }
     localStorage.setItem('warroomUser', JSON.stringify(me))
     updateUI()
