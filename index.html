@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>The WarRoom</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,13 +12,22 @@
         @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
         * { font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif; -webkit-font-smoothing:antialiased; box-sizing:border-box; }
 
-        :root { --bg:#fff; --card:#fff; --txt:#000; --sub:#536471; --brd:#eff3f4; --hov:#f7f9f9; --acc:#000;
-            --dot-sm:rgba(0,0,0,.18); --dot-md:rgba(0,0,0,.22); --dot-lg:rgba(0,0,0,.15); --dot-glow:rgba(59,130,246,.35); }
-        [data-theme="dark"] { --bg:#000; --card:#000; --txt:#fff; --sub:#71767b; --brd:#2f3336; --hov:#16181a; --acc:#fff;
-            --dot-sm:rgba(255,255,255,.22); --dot-md:rgba(255,255,255,.28); --dot-lg:rgba(255,255,255,.18); --dot-glow:rgba(99,179,237,.45); }
+        /* Default = dark (black) */
+        :root,[data-theme="dark"] {
+            --bg:#000; --card:#0a0a0a; --txt:#fff; --sub:#71767b; --brd:#222; --hov:#141414; --acc:#fff;
+        }
+        /* Light theme */
+        [data-theme="light"] {
+            --bg:#f8f8f8; --card:#fff; --txt:#0a0a0a; --sub:#536471; --brd:#e5e7eb; --hov:#f3f4f6; --acc:#000;
+        }
+        /* Body always inherits */
 
         html { margin:0;padding:0;width:100%;overflow-x:hidden; }
         body { margin:0;padding:0;width:100%;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:100vh;background:var(--bg);color:var(--txt);transition:background .3s,color .3s; }
+
+
+
+
 
         /* ── Top loading bar ── */
         #topBar {
@@ -30,199 +39,258 @@
         }
         #topBar.running { opacity:1; }
 
-        /* ── Dots ── */
-        .dots-bg { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
-        .dot {
-            position:absolute;
-            border-radius:50%;
-            opacity:0;
-            animation:floatDot linear infinite;
-        }
-        .dot.sm  { width:2px;height:2px;background:var(--dot-sm); }
-        .dot.md  { width:3px;height:3px;background:var(--dot-md); }
-        .dot.lg  { width:4px;height:4px;background:var(--dot-lg); }
-        .dot.glow{ width:5px;height:5px;background:var(--dot-glow);box-shadow:0 0 6px 2px var(--dot-glow); }
-        @keyframes floatDot {
-            0%   { transform:translate(0,0);     opacity:0; }
-            8%   { opacity:1; }
-            92%  { opacity:1; }
-            100% { transform:translate(var(--tx),var(--ty)); opacity:0; }
-        }
+
 
         /* ── Header ── */
         .war-room-header { position:sticky;top:0;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);z-index:100; }
-        .hdr { max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;flex-direction:column;gap:8px; }
+        .hdr { max-width:1340px;margin:0 auto;padding:13px 22px;display:flex;flex-direction:column;gap:10px; }
         .hdr-top { display:flex;align-items:center;justify-content:space-between; }
-        .logo { font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap; }
-        .hdr-actions { display:flex;align-items:center;gap:6px; }
+        .logo { font-size:20px;font-weight:800;letter-spacing:-.5px;white-space:nowrap; }
+        .hdr-actions { display:flex;align-items:center;gap:8px; }
 
         /* ── Buttons ── */
-        .btn { padding:7px 14px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none; }
+        .btn { padding:9px 18px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none; }
         .btn:active { transform:scale(.95); }
         .btn.sec { background:transparent;color:var(--txt);border:1px solid var(--brd); }
         .btn.red { background:#ef4444;color:#fff; }
         .btn.green { background:#10b981;color:#fff; }
-        .theme-btn { min-width:36px;width:36px;height:36px;border-radius:50%;border:1px solid var(--brd);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:16px;flex-shrink:0; }
+        .theme-btn { min-width:40px;width:40px;height:40px;border-radius:50%;border:1px solid var(--brd);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0; }
         .theme-btn:active { transform:scale(.9); }
 
         /* ── Profile ── */
         .prof-wrap { position:relative; }
-        .prof-btn { width:34px;height:34px;border-radius:50%;border:2px solid var(--brd);background:transparent;padding:0;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s; }
+        .prof-btn { width:38px;height:38px;border-radius:50%;border:2px solid var(--brd);background:transparent;padding:0;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s; }
         .prof-btn:active { transform:scale(.93); }
-        .prof-av { width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden; }
+        .prof-av { width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;overflow:hidden; }
         .prof-av img { width:100%;height:100%;object-fit:cover; }
-        .prof-dd { position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--brd);border-radius:14px;min-width:190px;box-shadow:0 8px 32px rgba(0,0,0,.18);opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);transition:opacity .18s,transform .18s;z-index:500;overflow:hidden; }
+        .prof-dd { position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--brd);border-radius:16px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.22);opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);transition:opacity .18s,transform .18s;z-index:500;overflow:hidden; }
         .prof-dd.open { opacity:1;pointer-events:auto;transform:translateY(0) scale(1); }
-        .pd-name { padding:12px 14px 8px;font-size:13px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--brd); }
-        .pd-item { width:100%;padding:11px 14px;background:transparent;border:none;text-align:left;font-size:14px;font-weight:500;color:var(--txt);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .12s; }
+        .pd-name { padding:14px 16px 10px;font-size:14px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--brd); }
+        .pd-item { width:100%;padding:13px 16px;background:transparent;border:none;text-align:left;font-size:15px;font-weight:500;color:var(--txt);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .12s; }
         .pd-item:hover { background:var(--hov); }
         .pd-item.danger { color:#ef4444; }
 
         /* ── Search ── */
         .srch-wrap { position:relative;width:100%; }
-        .srch { width:100%;padding:8px 36px;border-radius:9999px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;transition:all .2s; }
+        .srch { width:100%;padding:10px 40px;border-radius:9999px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:15px;outline:none;transition:all .2s; }
         .srch:focus { border-color:var(--acc);background:var(--hov); }
         .srch::placeholder { color:var(--sub); }
-        .srch-icon { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none; }
-        .srch-clear { position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--sub);color:var(--bg);border:none;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:12px; }
+        .srch-icon { position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none; }
+        .srch-clear { position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:var(--sub);color:var(--bg);border:none;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:13px; }
         .srch-clear.on { display:flex; }
 
         /* ── Hero ── */
-        .hero { padding:36px 20px 28px;border-bottom:1px solid var(--brd); }
-        .live-pill { display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:99px;padding:4px 12px;margin-bottom:16px; }
-        .live-dot { width:7px;height:7px;background:#ef4444;border-radius:50%;display:inline-block;animation:pulse 1.6s ease-in-out infinite; }
+        .hero { padding:42px 22px 32px;border-bottom:1px solid var(--brd); }
+        .live-pill { display:inline-flex;align-items:center;gap:7px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:99px;padding:5px 14px;margin-bottom:18px; }
+        .live-dot { width:8px;height:8px;background:#ef4444;border-radius:50%;display:inline-block;animation:pulse 1.6s ease-in-out infinite; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
-        .live-lbl { font-size:10px;font-weight:800;color:#ef4444;letter-spacing:1.2px; }
-        .hero-title { font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 12px; }
-        @media(min-width:640px){.hero-title{font-size:40px;}}
-        .hero-sub { font-size:15px;color:var(--sub);line-height:1.65;margin:0 0 22px;max-width:430px; }
-        .chips { display:flex;gap:8px;flex-wrap:wrap; }
-        .chip { display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub); }
+        .live-lbl { font-size:11px;font-weight:800;color:#ef4444;letter-spacing:1.2px; }
+        .hero-title { font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 14px; }
+        @media(min-width:640px){.hero-title{font-size:46px;}}
+        .hero-sub { font-size:17px;color:var(--sub);line-height:1.7;margin:0 0 24px;max-width:460px; }
+        .chips { display:flex;gap:9px;flex-wrap:wrap; }
+        .chip { display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;border:1px solid var(--brd);font-size:13px;font-weight:500;color:var(--sub); }
 
         /* ── Cards ── */
         .report-card { background:var(--card);border-bottom:1px solid var(--brd);transition:background .15s;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:1; }
         .report-card:active { background:var(--hov); }
-        .report-card.top-report { border:2px solid var(--acc);border-radius:12px;margin:0 16px 16px;border-bottom:2px solid var(--acc); }
-        .card-body { padding:14px 16px; }
-        .top-report .card-body { padding:18px; }
-        .top-badge { position:absolute;top:-1px;right:-1px;background:var(--acc);color:var(--bg);font-size:9px;font-weight:700;padding:4px 10px;letter-spacing:1.2px;border-radius:0 10px 0 8px; }
+        .report-card.top-report { border:2px solid var(--acc);border-radius:14px;margin:0 17px 17px;border-bottom:2px solid var(--acc); }
+        .card-body { padding:17px 18px; }
+        .top-report .card-body { padding:21px; }
+        .top-badge { position:absolute;top:-1px;right:-1px;background:var(--acc);color:var(--bg);font-size:10px;font-weight:700;padding:5px 11px;letter-spacing:1.2px;border-radius:0 12px 0 9px; }
 
         /* ── Avatar ── */
-        .av { width:40px;height:40px;min-width:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px;overflow:hidden;cursor:pointer;transition:opacity .15s; }
+        .av { width:44px;height:44px;min-width:44px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:17px;overflow:hidden;cursor:pointer;transition:opacity .15s; }
         .av:hover { opacity:.85; }
         .av img { width:100%;height:100%;object-fit:cover; }
-        .av.lg { width:52px;height:52px;min-width:52px;font-size:22px; }
-        .av.xl { width:72px;height:72px;min-width:72px;font-size:28px; }
+        .av.lg { width:56px;height:56px;min-width:56px;font-size:23px; }
+        .av.xl { width:76px;height:76px;min-width:76px;font-size:30px; }
 
         /* ── Type ── */
-        .j-name { font-weight:600;font-size:15px;color:var(--txt);line-height:1.3;cursor:pointer; }
+        .j-name { font-weight:600;font-size:16px;color:var(--txt);line-height:1.3;cursor:pointer; }
         .j-name:hover { text-decoration:underline; }
-        .r-meta { font-size:13px;color:var(--sub);line-height:1.3; }
-        .r-txt { font-size:15px;line-height:1.5;color:var(--txt);margin-top:10px;word-wrap:break-word; }
-        .sec-title { font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:12px;padding:0 16px; }
+        .r-meta { font-size:14px;color:var(--sub);line-height:1.3; }
+        .r-txt { font-size:16px;line-height:1.6;color:var(--txt);margin-top:11px;word-wrap:break-word; }
+        .sec-title { font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:14px;padding:0 18px; }
 
         /* ── Badges ── */
-        .badge-verified { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;background:#10b981;color:#fff;font-size:10px;font-weight:700;letter-spacing:.4px; }
-        .badge-credible { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;background:#3b82f6;color:#fff;font-size:10px;font-weight:700;letter-spacing:.4px; }
-        .badge-pending  { display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;background:#f59e0b;color:#fff;font-size:10px;font-weight:700; }
-        .badge-check    { display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;min-width:17px;background:#1d9bf0;border-radius:50%;color:#fff;font-size:10px;flex-shrink:0; }
+        .badge-verified { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;background:#10b981;color:#fff;font-size:11px;font-weight:700;letter-spacing:.4px; }
+        .badge-credible { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;background:#3b82f6;color:#fff;font-size:11px;font-weight:700;letter-spacing:.4px; }
+        .badge-pending  { display:inline-flex;align-items:center;padding:3px 10px;border-radius:4px;background:#f59e0b;color:#fff;font-size:11px;font-weight:700; }
+        .badge-check    { display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;min-width:19px;background:#1d9bf0;border-radius:50%;color:#fff;font-size:11px;flex-shrink:0; }
 
         /* ── Vote buttons ── */
-        .vote-btn { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none; }
+        .vote-btn { display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none; }
         .vote-btn:active { transform:scale(.92); }
         .vote-btn.voted-up   { background:rgba(16,185,129,.12);border-color:#10b981;color:#10b981; }
         .vote-btn.voted-down { background:rgba(239,68,68,.12);border-color:#ef4444;color:#ef4444; }
-        .stats-row { display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap; }
+        .stats-row { display:flex;align-items:center;gap:9px;margin-top:12px;flex-wrap:wrap; }
 
         /* ── Comment button on card ── */
-        .comment-inline-btn { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s; }
+        .comment-inline-btn { display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9999px;border:1px solid var(--brd);background:transparent;color:var(--sub);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s; }
         .comment-inline-btn:active { transform:scale(.92); }
 
-        /* ── Modal ── */
-        .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center;z-index:200;padding:0;overflow:hidden; }
+        /* ── Modal — slides up from bottom, fills center column ── */
+        .modal-overlay {
+            position:fixed;inset:0;background:rgba(0,0,0,.7);
+            display:none;align-items:flex-end;justify-content:center;
+            z-index:200;padding:0;overflow:hidden;
+        }
         .modal-overlay.active { display:flex; }
-        .modal-box { background:var(--card);border:1px solid var(--brd);border-radius:16px 16px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.4,0,.2,1);overscroll-behavior:contain; }
-        .modal-hdr { position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--brd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;z-index:10; }
-        .modal-bdy { padding:16px; }
+        .modal-box {
+            background:var(--card);border:1px solid var(--brd);
+            border-radius:20px 20px 0 0;
+            width:100%;max-width:700px;
+            height:94vh;
+            display:flex;flex-direction:column;
+            overflow:hidden;
+            animation:slideUpFull .38s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes slideUpFull {
+            from { transform:translateY(100%); opacity:.4; }
+            to   { transform:translateY(0);    opacity:1;  }
+        }
+        .modal-hdr { position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--brd);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:10;flex-shrink:0; }
+        .modal-bdy { padding:16px;overflow-y:auto;flex:1;overscroll-behavior:contain; }
         .x-btn { width:36px;height:36px;min-width:36px;border-radius:50%;background:transparent;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt);transition:all .15s; }
         .x-btn:active { transform:scale(.9);background:var(--hov); }
 
+        /* ── Ticker items as clickable cards ── */
+        .ticker-item {
+            display:flex;align-items:flex-start;gap:10px;
+            padding:9px 10px;
+            border-radius:10px;
+            margin-bottom:4px;
+            cursor:pointer;
+            border:1px solid transparent;
+            transition:background .15s, border-color .15s;
+        }
+        .ticker-item:hover { background:var(--hov); border-color:var(--brd); }
+        .ticker-item:active { transform:scale(.98); }
+        .ticker-item.active-news { background:var(--hov); border-color:var(--brd); }
+
+        /* ── News reading panel (replaces right sidebar) ── */
+        .news-panel {
+            display:none;
+            flex-direction:column;
+            width:260px;min-width:260px;flex-shrink:0;
+            position:sticky;top:70px;
+            max-height:calc(100vh - 80px);
+            border-left:1px solid var(--brd);
+            overflow-y:auto;
+            scrollbar-width:none;
+            animation:panelSlideIn .28s cubic-bezier(.22,1,.36,1);
+        }
+        .news-panel::-webkit-scrollbar { display:none; }
+        .news-panel.open { display:flex; }
+        @keyframes panelSlideIn {
+            from { opacity:0; transform:translateX(30px); }
+            to   { opacity:1; transform:translateX(0); }
+        }
+        .news-panel-hdr {
+            position:sticky;top:0;z-index:5;
+            background:var(--card);border-bottom:1px solid var(--brd);
+            padding:12px 14px;
+            display:flex;align-items:center;justify-content:space-between;
+            flex-shrink:0;
+        }
+        .news-panel-body { padding:16px 14px; flex:1; }
+        .news-panel-cat {
+            display:inline-flex;align-items:center;gap:6px;
+            font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+            color:#ef4444;margin-bottom:12px;
+        }
+        .news-panel-title { font-size:17px;font-weight:800;line-height:1.3;margin-bottom:10px;color:var(--txt); }
+        .news-panel-meta { font-size:12px;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+        .news-panel-body-text { font-size:14px;line-height:1.75;color:var(--txt);opacity:.9; }
+        .news-panel-body-text p { margin:0 0 14px; }
+        .news-panel-related { margin-top:20px;padding-top:16px;border-top:1px solid var(--brd); }
+        .news-panel-related-title { font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--sub);margin-bottom:10px; }
+        .news-panel-related-item {
+            padding:8px 0;border-bottom:1px solid var(--brd);cursor:pointer;
+            transition:color .15s;
+        }
+        .news-panel-related-item:last-child { border-bottom:none; }
+        .news-panel-related-item:hover { color:var(--sub); }
+        .news-panel-related-item .ri-title { font-size:12px;font-weight:600;color:var(--txt);line-height:1.4; }
+        .news-panel-related-item .ri-time  { font-size:11px;color:var(--sub);margin-top:3px; }
+
         /* ── Divider ── */
-        .div { height:1px;background:var(--brd);margin:16px 0; }
+        .div { height:1px;background:var(--brd);margin:18px 0; }
 
         /* ── Forms ── */
-        .fg { margin-bottom:14px; }
-        .fl { display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--txt); }
+        .fg { margin-bottom:16px; }
+        .fl { display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:var(--txt); }
         .fl span { color:#ef4444; }
-        .fi,.ft { width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;transition:all .2s;font-family:inherit; }
+        .fi,.ft { width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:15px;outline:none;transition:all .2s;font-family:inherit; }
         .fi:focus,.ft:focus { border-color:var(--acc);background:var(--hov); }
-        .ft { resize:vertical;min-height:90px; }
-        .form-btn { width:100%;padding:12px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit; }
+        .ft { resize:vertical;min-height:95px; }
+        .form-btn { width:100%;padding:14px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit; }
         .form-btn:active { transform:scale(.98); }
         .form-btn:disabled { opacity:.5;cursor:not-allowed; }
 
         /* ── Auth toggle ── */
-        .auth-toggle { display:flex;margin-bottom:20px;padding:4px;background:var(--hov);border-radius:9999px;position:relative; }
+        .auth-toggle { display:flex;margin-bottom:22px;padding:4px;background:var(--hov);border-radius:9999px;position:relative; }
         .auth-slider { position:absolute;top:4px;height:calc(100% - 8px);background:var(--card);border-radius:9999px;box-shadow:0 1px 6px rgba(0,0,0,.12);transition:left .28s cubic-bezier(.34,1.3,.64,1),width .28s cubic-bezier(.34,1.3,.64,1);pointer-events:none;z-index:0; }
-        .auth-tab { flex:1;padding:8px 10px;border-radius:9999px;background:transparent;color:var(--sub);border:none;font-size:13px;font-weight:600;cursor:pointer;position:relative;z-index:1;transition:color .22s;white-space:nowrap;font-family:inherit; }
+        .auth-tab { flex:1;padding:9px 12px;border-radius:9999px;background:transparent;color:var(--sub);border:none;font-size:14px;font-weight:600;cursor:pointer;position:relative;z-index:1;transition:color .22s;white-space:nowrap;font-family:inherit; }
         .auth-tab.on { color:var(--txt); }
 
         /* ── Google btn ── */
-        .g-btn { width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .2s;font-family:inherit; }
+        .g-btn { width:100%;padding:14px 18px;border-radius:10px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .2s;font-family:inherit; }
         .g-btn:active { transform:scale(.98);background:var(--hov); }
 
         /* ── Info box ── */
-        .info-box { padding:12px;background:var(--hov);border-radius:8px;font-size:12px;color:var(--sub);margin-top:14px; }
+        .info-box { padding:14px;background:var(--hov);border-radius:10px;font-size:13px;color:var(--sub);margin-top:16px; }
         .info-box strong { color:var(--txt); }
 
         /* ── Leaderboard tabs ── */
-        .tab-row { display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--brd); }
-        .tab { padding:6px 16px;border-radius:9999px;background:transparent;color:var(--sub);border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s; }
+        .tab-row { display:flex;gap:9px;padding:0 18px 14px;border-bottom:1px solid var(--brd); }
+        .tab { padding:7px 18px;border-radius:9999px;background:transparent;color:var(--sub);border:1px solid var(--brd);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s; }
         .tab.on { background:var(--acc);color:var(--bg);border-color:var(--acc); }
 
         /* ── Settings ── */
-        .s-sec { margin-bottom:20px; }
-        .s-lbl { font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:8px; }
-        .s-card { background:var(--hov);border-radius:12px;padding:14px;border:1px solid var(--brd); }
+        .s-sec { margin-bottom:22px; }
+        .s-lbl { font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:9px; }
+        .s-card { background:var(--hov);border-radius:14px;padding:16px;border:1px solid var(--brd); }
         .s-row { display:flex;align-items:center;justify-content:space-between; }
-        .s-toggle { width:42px;height:24px;border-radius:12px;background:var(--acc);border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+        .s-toggle { width:44px;height:26px;border-radius:13px;background:var(--acc);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
 
         /* ── Admin table ── */
-        .adm-table { width:100%;border-collapse:collapse;margin-top:16px; }
-        .adm-table th,.adm-table td { padding:12px;text-align:left;border-bottom:1px solid var(--brd); }
-        .adm-table th { font-weight:600;font-size:13px;color:var(--sub); }
-        .adm-table td { font-size:14px; }
-        .adm-btn { padding:4px 12px;border-radius:4px;border:1px solid var(--brd);background:var(--card);color:var(--txt);cursor:pointer;font-size:12px;margin-right:4px; }
+        .adm-table { width:100%;border-collapse:collapse;margin-top:18px; }
+        .adm-table th,.adm-table td { padding:14px;text-align:left;border-bottom:1px solid var(--brd); }
+        .adm-table th { font-weight:600;font-size:14px;color:var(--sub); }
+        .adm-table td { font-size:15px; }
+        .adm-btn { padding:5px 13px;border-radius:5px;border:1px solid var(--brd);background:var(--card);color:var(--txt);cursor:pointer;font-size:13px;margin-right:4px; }
         .adm-btn.ok  { background:#10b981;color:#fff;border-color:#10b981; }
         .adm-btn.no  { background:#ef4444;color:#fff;border-color:#ef4444; }
 
         /* ── Comments ── */
-        .comment { display:flex;gap:10px;margin-bottom:16px; }
-        .comment-body { flex:1;background:var(--hov);border-radius:12px;padding:10px 14px; }
-        .comment-meta { font-size:12px;color:var(--sub);margin-top:4px; }
-        .comment-text { font-size:14px;color:var(--txt);margin-top:4px;line-height:1.5; }
-        .comment-input-row { display:flex;gap:8px;align-items:flex-start;margin-top:12px; }
-        .comment-input { flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:14px;outline:none;resize:none;min-height:42px;max-height:120px;font-family:inherit;transition:border-color .2s; }
+        .comment { display:flex;gap:11px;margin-bottom:18px; }
+        .comment-body { flex:1;background:var(--hov);border-radius:14px;padding:12px 16px; }
+        .comment-meta { font-size:13px;color:var(--sub);margin-top:4px; }
+        .comment-text { font-size:15px;color:var(--txt);margin-top:5px;line-height:1.55; }
+        .comment-input-row { display:flex;gap:9px;align-items:flex-start;margin-top:14px; }
+        .comment-input { flex:1;padding:11px 14px;border-radius:14px;border:1px solid var(--brd);background:var(--card);color:var(--txt);font-size:15px;outline:none;resize:none;min-height:46px;max-height:130px;font-family:inherit;transition:border-color .2s; }
         .comment-input:focus { border-color:var(--acc); }
-        .comment-send { width:38px;height:38px;border-radius:50%;background:var(--acc);color:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
+        .comment-send { width:42px;height:42px;border-radius:50%;background:var(--acc);color:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
         .comment-send:active { transform:scale(.9); }
 
         /* ── Journalist profile modal ── */
-        .j-profile-hero { background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 20px 20px;text-align:center; }
+        .j-profile-hero { background:linear-gradient(135deg,#667eea,#764ba2);padding:30px 22px 22px;text-align:center; }
         .j-stat-row { display:flex;gap:0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd); }
-        .j-stat { flex:1;padding:14px;text-align:center;border-right:1px solid var(--brd); }
+        .j-stat { flex:1;padding:16px;text-align:center;border-right:1px solid var(--brd); }
         .j-stat:last-child { border-right:none; }
-        .j-stat-val { font-size:20px;font-weight:800; }
-        .j-stat-lbl { font-size:11px;color:var(--sub);margin-top:2px; }
-        .j-social-row { display:flex;gap:8px;flex-wrap:wrap;margin-top:8px; }
-        .j-social-tag { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub);text-decoration:none; }
-        .j-report-mini { padding:12px 0;border-bottom:1px solid var(--brd);cursor:pointer; }
+        .j-stat-val { font-size:22px;font-weight:800; }
+        .j-stat-lbl { font-size:12px;color:var(--sub);margin-top:3px; }
+        .j-social-row { display:flex;gap:9px;flex-wrap:wrap;margin-top:9px; }
+        .j-social-tag { display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--brd);font-size:13px;font-weight:500;color:var(--sub);text-decoration:none; }
+        .j-report-mini { padding:14px 0;border-bottom:1px solid var(--brd);cursor:pointer; }
         .j-report-mini:hover { color:var(--sub); }
         .j-report-mini:last-child { border-bottom:none; }
 
         /* ── Misc ── */
-        .no-res { padding:48px 16px;text-align:center;color:var(--sub);font-size:15px; }
-        .section-divider { height:1px;background:var(--brd);margin:20px 16px; }
+        .no-res { padding:52px 18px;text-align:center;color:var(--sub);font-size:16px; }
+        .section-divider { height:1px;background:var(--brd);margin:22px 18px; }
 
         /* ── Animations ── */
         @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
@@ -234,11 +302,11 @@
         /* iOS safe area */
         @supports(padding:max(0px)){body{padding-bottom:env(safe-area-inset-bottom)}.modal-box{padding-bottom:env(safe-area-inset-bottom)}}
 
-        /* Desktop */
+        /* Desktop hover states */
         @media(min-width:640px){
-            .logo{font-size:18px} .sec-title{font-size:19px}
+            .logo{font-size:22px} .sec-title{font-size:21px}
             .modal-overlay{align-items:center;padding:20px}
-            .modal-box{max-width:700px;border-radius:16px;max-height:85vh}
+            .modal-box{max-width:740px;border-radius:20px;height:90vh}
             .report-card:hover{background:var(--hov)}
             .vote-btn:hover{background:var(--hov);border-color:var(--acc)}
             .theme-btn:hover,.prof-btn:hover{background:var(--hov)}
@@ -248,245 +316,93 @@
         html{scroll-behavior:smooth}
 
         /* ── Three-column layout ── */
-        .page-columns {
-            display: flex;
-            gap: 0;
-            max-width: 1280px;
-            margin: 0 auto;
-            align-items: flex-start;
-            position: relative;
-        }
-        .sidebar {
-            width: 260px;
-            min-width: 260px;
-            flex-shrink: 0;
-            position: sticky;
-            top: 70px;
-            max-height: calc(100vh - 80px);
-            overflow-y: auto;
-            padding: 16px 12px;
-            scrollbar-width: none;
-        }
-        .sidebar::-webkit-scrollbar { display: none; }
-        .sidebar-left { border-right: 1px solid var(--brd); }
-        .sidebar-right { border-left: 1px solid var(--brd); }
-        .main-col { flex: 1; min-width: 0; }
+        .page-columns { display:flex;gap:0;max-width:1340px;margin:0 auto;align-items:flex-start;position:relative; }
+        .sidebar { width:274px;min-width:274px;flex-shrink:0;position:sticky;top:74px;max-height:calc(100vh - 84px);overflow-y:auto;padding:18px 14px;scrollbar-width:none; }
+        .sidebar::-webkit-scrollbar { display:none; }
+        .sidebar-left { border-right:1px solid var(--brd); }
+        .sidebar-right { border-left:1px solid var(--brd); }
 
-        /* Hide sidebars on mobile */
-        @media(max-width:900px){
-            .sidebar-left { display: none; }
+        /* ── Mobile responsive ── */
+        @media(max-width:1100px){ .sidebar-right,.news-panel { display:none !important; } }
+        @media(max-width:860px){
+            .sidebar-left { display:none !important; }
+            .page-columns { display:block; }
+            .hdr { padding:10px 16px; }
+            .hero { padding:28px 16px 22px; }
+            .hero-title { font-size:30px; }
+            .hero-sub { font-size:15px; }
+            .card-body { padding:14px 16px; }
+            .sec-title { padding:0 14px;font-size:18px; }
+            .r-txt { font-size:15px; }
+            .j-name { font-size:15px; }
         }
-        @media(max-width:1100px){
-            .sidebar-right { display: none; }
+        @media(max-width:480px){
+            .logo { font-size:17px; }
+            .btn.sec { display:none; }
+            .hero-title { font-size:26px; }
+            .hdr-actions { gap:5px; }
         }
 
         /* ── Sidebar widget ── */
-        .sb-widget {
-            background: var(--card);
-            border: 1px solid var(--brd);
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 14px;
-        }
-        .sb-widget-hdr {
-            padding: 11px 14px 9px;
-            border-bottom: 1px solid var(--brd);
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-        .sb-widget-title {
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: .8px;
-            text-transform: uppercase;
-            color: var(--txt);
-        }
-        .sb-widget-body { padding: 12px 14px; }
+        .sb-widget { background:var(--card);border:1px solid var(--brd);border-radius:16px;overflow:hidden;margin-bottom:16px; }
+        .sb-widget-hdr { padding:12px 16px 10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:8px; }
+        .sb-widget-title { font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--txt); }
+        .sb-widget-body { padding:14px 16px; }
 
-        /* ── Breaking news ticker ── */
-        .ticker-wrap {
-            overflow: hidden;
-            position: relative;
-        }
-        .ticker-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--brd);
-            cursor: pointer;
-            transition: background .12s;
-        }
-        .ticker-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .ticker-item:first-child { padding-top: 0; }
-        .ticker-dot {
-            width: 6px; height: 6px; min-width: 6px;
-            border-radius: 50%;
-            background: #ef4444;
-            margin-top: 5px;
-            animation: pulse 1.6s ease-in-out infinite;
-        }
-        .ticker-dot.blue { background: #3b82f6; animation: none; }
-        .ticker-dot.amber { background: #f59e0b; animation: none; }
-        .ticker-text {
-            font-size: 12px;
-            line-height: 1.45;
-            color: var(--txt);
-            font-weight: 500;
-        }
-        .ticker-time { font-size: 10px; color: var(--sub); margin-top: 2px; }
+        /* ── Breaking news ticker items ── */
+        .ticker-item { display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:11px;margin-bottom:5px;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s; }
+        .ticker-item:last-child { margin-bottom:0; }
+        .ticker-item:hover { background:var(--hov);border-color:var(--brd); }
+        .ticker-item:active { transform:scale(.98); }
+        .ticker-item.active-news { background:var(--hov);border-color:var(--brd); }
+        .ticker-dot { width:7px;height:7px;min-width:7px;border-radius:50%;background:#ef4444;margin-top:5px;animation:pulse 1.6s ease-in-out infinite; }
+        .ticker-dot.blue { background:#3b82f6;animation:none; }
+        .ticker-dot.amber { background:#f59e0b;animation:none; }
+        .ticker-text { font-size:13px;line-height:1.5;color:var(--txt);font-weight:500; }
+        .ticker-time { font-size:11px;color:var(--sub);margin-top:3px; }
 
         /* ── Conflict zones ── */
-        .zone-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 7px 0;
-            border-bottom: 1px solid var(--brd);
-            cursor: pointer;
-        }
-        .zone-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .zone-item:first-child { padding-top: 0; }
-        .zone-left { display: flex; align-items: center; gap: 8px; }
-        .zone-flag { font-size: 18px; line-height: 1; }
-        .zone-name { font-size: 13px; font-weight: 600; color: var(--txt); }
-        .zone-region { font-size: 11px; color: var(--sub); }
-        .zone-badge {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: .6px;
-            padding: 2px 7px;
-            border-radius: 99px;
-        }
-        .zone-badge.hot { background: rgba(239,68,68,.12); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
-        .zone-badge.active { background: rgba(245,158,11,.12); color: #f59e0b; border: 1px solid rgba(245,158,11,.3); }
-        .zone-badge.monitor { background: rgba(107,114,128,.1); color: var(--sub); border: 1px solid var(--brd); }
+        .zone-item { display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--brd);cursor:pointer; }
+        .zone-item:last-child { border-bottom:none;padding-bottom:0; }
+        .zone-item:first-child { padding-top:0; }
+        .zone-left { display:flex;align-items:center;gap:9px; }
+        .zone-flag { font-size:19px;line-height:1; }
+        .zone-name { font-size:14px;font-weight:600;color:var(--txt); }
+        .zone-region { font-size:12px;color:var(--sub); }
+        .zone-badge { font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:99px; }
+        .zone-badge.hot    { background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3); }
+        .zone-badge.active { background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3); }
+        .zone-badge.monitor{ background:rgba(107,114,128,.1);color:var(--sub);border:1px solid var(--brd); }
 
         /* ── Ad cards ── */
-        .ad-card {
-            background: var(--card);
-            border: 1px solid var(--brd);
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 14px;
-            transition: border-color .2s, box-shadow .2s;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-        }
-        .ad-card:hover { border-color: var(--acc); box-shadow: 0 4px 20px rgba(0,0,0,.08); }
-        .ad-card-inner { padding: 14px; }
-        .ad-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--sub);
-            margin-bottom: 10px;
-            display: block;
-        }
-        .ad-logo-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .ad-logo-icon {
-            width: 36px; height: 36px; min-width: 36px;
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            border: 1px solid var(--brd);
-        }
-        .ad-brand { font-size: 14px; font-weight: 700; color: var(--txt); }
-        .ad-tagline { font-size: 12px; color: var(--sub); line-height: 1.4; margin-bottom: 10px; }
-        .ad-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--txt);
-            background: var(--hov);
-            border: 1px solid var(--brd);
-            border-radius: 99px;
-            padding: 5px 12px;
-            transition: all .15s;
-        }
-        .ad-card:hover .ad-cta { background: var(--acc); color: var(--bg); border-color: var(--acc); }
+        .ad-card { background:var(--card);border:1px solid var(--brd);border-radius:16px;overflow:hidden;margin-bottom:16px;transition:border-color .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:block; }
+        .ad-card:hover { border-color:var(--acc);box-shadow:0 4px 20px rgba(0,0,0,.1); }
+        .ad-card-inner { padding:16px; }
+        .ad-label { font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:11px;display:block; }
+        .ad-logo-row { display:flex;align-items:center;gap:11px;margin-bottom:9px; }
+        .ad-logo-icon { width:40px;height:40px;min-width:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--brd); }
+        .ad-brand { font-size:15px;font-weight:700;color:var(--txt); }
+        .ad-tagline { font-size:13px;color:var(--sub);line-height:1.45;margin-bottom:11px; }
+        .ad-cta { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--txt);background:var(--hov);border:1px solid var(--brd);border-radius:99px;padding:6px 14px;transition:all .15s; }
+        .ad-card:hover .ad-cta { background:var(--acc);color:var(--bg);border-color:var(--acc); }
 
         /* ── Newsletter widget ── */
-        .nl-input {
-            width: 100%;
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--brd);
-            background: var(--hov);
-            color: var(--txt);
-            font-size: 13px;
-            outline: none;
-            margin-bottom: 8px;
-            font-family: inherit;
-            transition: border-color .2s;
-        }
-        .nl-input:focus { border-color: var(--acc); background: var(--card); }
-        .nl-input::placeholder { color: var(--sub); }
-        .nl-btn {
-            width: 100%;
-            padding: 9px;
-            border-radius: 8px;
-            background: var(--acc);
-            color: var(--bg);
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: opacity .15s;
-        }
-        .nl-btn:hover { opacity: .85; }
-        .nl-desc { font-size: 12px; color: var(--sub); line-height: 1.5; margin-bottom: 12px; }
+        .nl-input { width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--brd);background:var(--hov);color:var(--txt);font-size:14px;outline:none;margin-bottom:9px;font-family:inherit;transition:border-color .2s; }
+        .nl-input:focus { border-color:var(--acc);background:var(--card); }
+        .nl-input::placeholder { color:var(--sub); }
+        .nl-btn { width:100%;padding:11px;border-radius:10px;background:var(--acc);color:var(--bg);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s; }
+        .nl-btn:hover { opacity:.85; }
+        .nl-desc { font-size:13px;color:var(--sub);line-height:1.55;margin-bottom:13px; }
 
         /* ── CTA card ── */
-        .cta-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-        [data-theme="dark"] .cta-card {
-            background: linear-gradient(135deg, #0f0f23 0%, #0d1b2a 50%, #0a2a4a 100%);
-        }
-        .cta-card::before {
-            content: '';
-            position: absolute;
-            top: -20px; right: -20px;
-            width: 80px; height: 80px;
-            background: rgba(59,130,246,.2);
-            border-radius: 50%;
-        }
-        .cta-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 8px; }
-        .cta-heading { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 6px; }
-        .cta-body { font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.5; margin-bottom: 14px; }
-        .cta-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 14px;
-            background: #fff;
-            color: #000;
-            border-radius: 99px;
-            font-size: 12px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all .15s;
-        }
-        .cta-btn:hover { background: #e5e7eb; }
+        .cta-card { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border-radius:16px;padding:18px;margin-bottom:16px;position:relative;overflow:hidden; }
+        [data-theme="dark"] .cta-card { background:linear-gradient(135deg,#0f0f23 0%,#0d1b2a 50%,#0a2a4a 100%); }
+        .cta-card::before { content:'';position:absolute;top:-20px;right:-20px;width:84px;height:84px;background:rgba(59,130,246,.2);border-radius:50%; }
+        .cta-eyebrow { font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:9px; }
+        .cta-heading { font-size:15px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:7px; }
+        .cta-body { font-size:13px;color:rgba(255,255,255,.6);line-height:1.55;margin-bottom:15px; }
+        .cta-btn { display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#fff;color:#000;border-radius:99px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .15s; }
+        .cta-btn:hover { background:#e5e7eb; }
     </style>
 </head>
 <body>
@@ -522,7 +438,9 @@
                         </button>
                     </div>
                 </div>
-                <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">◐</span></button>
+                <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+                    <svg id="themeIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
             </div>
         </div>
         <div class="srch-wrap">
@@ -542,45 +460,34 @@
         <!-- Breaking News Ticker -->
         <div class="sb-widget">
             <div class="sb-widget-hdr">
-                <span style="font-size:14px;">📡</span>
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
                 <span class="sb-widget-title">Breaking Now</span>
                 <span style="margin-left:auto;"><span class="live-dot" style="display:inline-block;width:6px;height:6px;"></span></span>
             </div>
-            <div class="sb-widget-body" style="padding:10px 14px;" id="tickerFeed">
-                <div class="ticker-item">
+            <div class="sb-widget-body" style="padding:8px;" id="tickerFeed">
+                <div class="ticker-item" onclick="openNewsPanel(0)">
                     <span class="ticker-dot"></span>
-                    <div>
-                        <div class="ticker-text">Airstrikes reported near Rafah crossing — civilians evacuating</div>
-                        <div class="ticker-time">2 min ago · Gaza</div>
-                    </div>
+                    <div><div class="ticker-text">Airstrikes reported near Rafah crossing — civilians evacuating north</div><div class="ticker-time">2 min ago · Gaza</div></div>
                 </div>
-                <div class="ticker-item">
+                <div class="ticker-item" onclick="openNewsPanel(1)">
                     <span class="ticker-dot blue"></span>
-                    <div>
-                        <div class="ticker-text">UN emergency session called over escalating border conflict</div>
-                        <div class="ticker-time">11 min ago · International</div>
-                    </div>
+                    <div><div class="ticker-text">UN emergency session called over escalating border conflict</div><div class="ticker-time">11 min ago · International</div></div>
                 </div>
-                <div class="ticker-item">
+                <div class="ticker-item" onclick="openNewsPanel(2)">
                     <span class="ticker-dot amber"></span>
-                    <div>
-                        <div class="ticker-text">Ceasefire negotiations stalled; mediators to reconvene Thursday</div>
-                        <div class="ticker-time">28 min ago · Kyiv</div>
-                    </div>
+                    <div><div class="ticker-text">Ceasefire negotiations stalled; mediators reconvene Thursday</div><div class="ticker-time">28 min ago · Kyiv</div></div>
                 </div>
-                <div class="ticker-item">
+                <div class="ticker-item" onclick="openNewsPanel(3)">
                     <span class="ticker-dot"></span>
-                    <div>
-                        <div class="ticker-text">Militia advance halted outside Khartoum; RSF denies reports</div>
-                        <div class="ticker-time">45 min ago · Sudan</div>
-                    </div>
+                    <div><div class="ticker-text">Militia advance halted outside Khartoum; RSF denies reports</div><div class="ticker-time">45 min ago · Sudan</div></div>
                 </div>
-                <div class="ticker-item">
+                <div class="ticker-item" onclick="openNewsPanel(4)">
                     <span class="ticker-dot blue"></span>
-                    <div>
-                        <div class="ticker-text">Journalist arrested covering protests in Tbilisi — CPJ condemns</div>
-                        <div class="ticker-time">1 hr ago · Georgia</div>
-                    </div>
+                    <div><div class="ticker-text">Journalist arrested covering protests in Tbilisi — CPJ condemns</div><div class="ticker-time">1 hr ago · Georgia</div></div>
+                </div>
+                <div class="ticker-item" onclick="openNewsPanel(5)">
+                    <span class="ticker-dot amber"></span>
+                    <div><div class="ticker-text">NATO confirms deployment of additional assets to eastern flank</div><div class="ticker-time">2 hrs ago · Europe</div></div>
                 </div>
             </div>
         </div>
@@ -588,72 +495,68 @@
         <!-- Active Conflict Zones -->
         <div class="sb-widget">
             <div class="sb-widget-hdr">
-                <span style="font-size:14px;">🌐</span>
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <span class="sb-widget-title">Conflict Zones</span>
             </div>
             <div class="sb-widget-body" style="padding:10px 14px;">
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇵🇸</span>
-                        <div>
-                            <div class="zone-name">Gaza Strip</div>
-                            <div class="zone-region">Middle East</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge hot">HOT</span>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇵🇸</span><div><div class="zone-name">Gaza Strip</div><div class="zone-region">Middle East</div></div></div><span class="zone-badge hot">HOT</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇺🇦</span><div><div class="zone-name">Ukraine</div><div class="zone-region">Eastern Europe</div></div></div><span class="zone-badge hot">HOT</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇸🇩</span><div><div class="zone-name">Sudan</div><div class="zone-region">East Africa</div></div></div><span class="zone-badge active">ACTIVE</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇲🇲</span><div><div class="zone-name">Myanmar</div><div class="zone-region">Southeast Asia</div></div></div><span class="zone-badge active">ACTIVE</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇸🇴</span><div><div class="zone-name">Somalia</div><div class="zone-region">East Africa</div></div></div><span class="zone-badge monitor">WATCH</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇭🇹</span><div><div class="zone-name">Haiti</div><div class="zone-region">Caribbean</div></div></div><span class="zone-badge monitor">WATCH</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇾🇪</span><div><div class="zone-name">Yemen</div><div class="zone-region">Arabian Peninsula</div></div></div><span class="zone-badge active">ACTIVE</span></div>
+                <div class="zone-item"><div class="zone-left"><span class="zone-flag">🇸🇾</span><div><div class="zone-name">Syria</div><div class="zone-region">Middle East</div></div></div><span class="zone-badge monitor">WATCH</span></div>
+            </div>
+        </div>
+
+        <!-- Live Reporter Count -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sb-widget-title">Live Now</span>
+            </div>
+            <div class="sb-widget-body" style="padding:12px 14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                    <div style="font-size:28px;font-weight:800;color:var(--txt);" id="liveReporterCount">—</div>
+                    <div style="font-size:11px;color:var(--sub);text-align:right;">verified journalists<br>online right now</div>
                 </div>
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇺🇦</span>
-                        <div>
-                            <div class="zone-name">Ukraine</div>
-                            <div class="zone-region">Eastern Europe</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge hot">HOT</span>
+                <div style="height:4px;background:var(--brd);border-radius:99px;overflow:hidden;">
+                    <div style="height:100%;width:68%;background:linear-gradient(90deg,#10b981,#3b82f6);border-radius:99px;"></div>
                 </div>
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇸🇩</span>
-                        <div>
-                            <div class="zone-name">Sudan</div>
-                            <div class="zone-region">East Africa</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge active">ACTIVE</span>
-                </div>
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇲🇲</span>
-                        <div>
-                            <div class="zone-name">Myanmar</div>
-                            <div class="zone-region">Southeast Asia</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge active">ACTIVE</span>
-                </div>
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇸🇴</span>
-                        <div>
-                            <div class="zone-name">Somalia</div>
-                            <div class="zone-region">East Africa</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge monitor">WATCH</span>
-                </div>
-                <div class="zone-item">
-                    <div class="zone-left">
-                        <span class="zone-flag">🇭🇹</span>
-                        <div>
-                            <div class="zone-name">Haiti</div>
-                            <div class="zone-region">Caribbean</div>
-                        </div>
-                    </div>
-                    <span class="zone-badge monitor">WATCH</span>
+                <div style="font-size:11px;color:var(--sub);margin-top:6px;">68% field · 32% desk</div>
+            </div>
+        </div>
+
+        <!-- Press Freedom Index -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span class="sb-widget-title">Press Freedom</span>
+            </div>
+            <div class="sb-widget-body" style="padding:10px 14px;">
+                <div style="font-size:11px;color:var(--sub);margin-bottom:10px;">RSF Index 2024 — Selected Regions</div>
+                <div style="display:flex;flex-direction:column;gap:7px;">
+                    <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span style="color:var(--txt);font-weight:600;">Middle East</span><span style="color:#ef4444;">Critical</span></div><div style="height:5px;background:var(--brd);border-radius:99px;"><div style="height:100%;width:12%;background:#ef4444;border-radius:99px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span style="color:var(--txt);font-weight:600;">Eastern Europe</span><span style="color:#f59e0b;">Difficult</span></div><div style="height:5px;background:var(--brd);border-radius:99px;"><div style="height:100%;width:28%;background:#f59e0b;border-radius:99px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span style="color:var(--txt);font-weight:600;">Sub-Saharan Africa</span><span style="color:#f59e0b;">Difficult</span></div><div style="height:5px;background:var(--brd);border-radius:99px;"><div style="height:100%;width:34%;background:#f59e0b;border-radius:99px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span style="color:var(--txt);font-weight:600;">Western Europe</span><span style="color:#10b981;">Good</span></div><div style="height:5px;background:var(--brd);border-radius:99px;"><div style="height:100%;width:78%;background:#10b981;border-radius:99px;"></div></div></div>
                 </div>
             </div>
         </div>
+
+        <!-- Ad: Signal -->
+        <a class="ad-card" href="#" onclick="return false;">
+            <div class="ad-card-inner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-logo-row">
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#3a76f8,#2563eb);"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div><div class="ad-brand">Signal</div></div>
+                </div>
+                <div class="ad-tagline">Private messaging for journalists. Zero metadata, zero compromise.</div>
+                <span class="ad-cta">Download Signal →</span>
+            </div>
+        </a>
 
     </aside>
 
@@ -665,9 +568,9 @@
             <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
             <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
             <div class="chips">
-                <span class="chip">📡 Live conflict reporting</span>
-                <span class="chip">✓ Verified journalists only</span>
-                <span class="chip">↑ Community-ranked truth</span>
+                <span class="chip"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg> Live reporting</span>
+                <span class="chip"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Verified journalists</span>
+                <span class="chip"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg> Community-ranked</span>
             </div>
         </div>
         <!-- Top Report -->
@@ -700,25 +603,23 @@
         <!-- Newsletter signup -->
         <div class="sb-widget">
             <div class="sb-widget-hdr">
-                <span style="font-size:14px;">✉️</span>
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 <span class="sb-widget-title">Daily Briefing</span>
             </div>
             <div class="sb-widget-body">
-                <p class="nl-desc">Get the top verified reports delivered to your inbox every morning at 07:00 UTC.</p>
+                <p class="nl-desc">Get the top verified reports delivered to your inbox every morning at 07:00 UTC. No spam, unsubscribe anytime.</p>
                 <input class="nl-input" type="email" placeholder="your@email.com" id="nlEmail">
-                <button class="nl-btn" onclick="handleNewsletter()">Subscribe — It's Free</button>
+                <button class="nl-btn" id="nlBtn" onclick="handleNewsletter()">Subscribe — It's Free</button>
             </div>
         </div>
 
-        <!-- Ad 1: ProtonMail -->
+        <!-- Ad 1: Proton Mail -->
         <a class="ad-card" href="#" onclick="return false;">
             <div class="ad-card-inner">
                 <span class="ad-label">Sponsored</span>
                 <div class="ad-logo-row">
-                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#6d4aff,#8b5cf6);">🔒</div>
-                    <div>
-                        <div class="ad-brand">Proton Mail</div>
-                    </div>
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#6d4aff,#8b5cf6);"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                    <div><div class="ad-brand">Proton Mail</div></div>
                 </div>
                 <div class="ad-tagline">End-to-end encrypted email built for journalists and activists in the field.</div>
                 <span class="ad-cta">Get Protected →</span>
@@ -730,10 +631,8 @@
             <div class="ad-card-inner">
                 <span class="ad-label">Sponsored</span>
                 <div class="ad-logo-row">
-                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);">🗞️</div>
-                    <div>
-                        <div class="ad-brand">CPJ</div>
-                    </div>
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                    <div><div class="ad-brand">CPJ</div></div>
                 </div>
                 <div class="ad-tagline">The Committee to Protect Journalists defends press freedom worldwide.</div>
                 <span class="ad-cta">Learn More →</span>
@@ -745,19 +644,146 @@
             <div class="ad-card-inner">
                 <span class="ad-label">Sponsored</span>
                 <div class="ad-logo-row">
-                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">🛡️</div>
-                    <div>
-                        <div class="ad-brand">Mullvad VPN</div>
-                    </div>
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div><div class="ad-brand">Mullvad VPN</div></div>
                 </div>
                 <div class="ad-tagline">No logs, no identity. Browse and report securely from any location.</div>
                 <span class="ad-cta">Stay Anonymous →</span>
             </div>
         </a>
 
+        <!-- Community stats -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 21 12 17 7 21"/><path d="M17 3H7l-2 7a5 5 0 0 0 10 0l-2-7z"/><line x1="12" y1="17" x2="12" y2="12"/><path d="M5 3H3v4a2 2 0 0 0 2 2h0"/><path d="M19 3h2v4a2 2 0 0 1-2 2h0"/></svg>
+                <span class="sb-widget-title">Community</span>
+            </div>
+            <div class="sb-widget-body" style="padding:12px 14px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="background:var(--hov);border-radius:10px;padding:10px;text-align:center;">
+                        <div style="font-size:22px;font-weight:800;color:var(--txt);" id="sbReportCount">—</div>
+                        <div style="font-size:10px;color:var(--sub);margin-top:2px;font-weight:600;">REPORTS</div>
+                    </div>
+                    <div style="background:var(--hov);border-radius:10px;padding:10px;text-align:center;">
+                        <div style="font-size:22px;font-weight:800;color:var(--txt);" id="sbJournCount">—</div>
+                        <div style="font-size:10px;color:var(--sub);margin-top:2px;font-weight:600;">JOURNALISTS</div>
+                    </div>
+                    <div style="background:var(--hov);border-radius:10px;padding:10px;text-align:center;">
+                        <div style="font-size:22px;font-weight:800;color:#10b981;">24/7</div>
+                        <div style="font-size:10px;color:var(--sub);margin-top:2px;font-weight:600;">COVERAGE</div>
+                    </div>
+                    <div style="background:var(--hov);border-radius:10px;padding:10px;text-align:center;">
+                        <div style="font-size:22px;font-weight:800;color:#3b82f6;">100%</div>
+                        <div style="font-size:10px;color:var(--sub);margin-top:2px;font-weight:600;">VERIFIED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad 4: OCCRP -->
+        <a class="ad-card" href="#" onclick="return false;">
+            <div class="ad-card-inner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-logo-row">
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#0f766e,#14b8a6);"><svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                    <div><div class="ad-brand">OCCRP</div></div>
+                </div>
+                <div class="ad-tagline">Organized Crime and Corruption Reporting Project — investigative journalism at scale.</div>
+                <span class="ad-cta">Explore Reports →</span>
+            </div>
+        </a>
+
+        <!-- Share widget -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+                <span class="sb-widget-title">Share WarRoom</span>
+            </div>
+            <div class="sb-widget-body" style="padding:12px 14px;">
+                <p style="font-size:12px;color:var(--sub);margin:0 0 10px;line-height:1.5;">Help grow the network of verified field journalists.</p>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button onclick="shareWarRoom('twitter')" style="flex:1;min-width:0;padding:7px 8px;border-radius:8px;border:1px solid var(--brd);background:var(--hov);color:var(--txt);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='#1d9bf0'" onmouseout="this.style.borderColor='var(--brd)'">𝕏 Twitter</button>
+                    <button onclick="shareWarRoom('linkedin')" style="flex:1;min-width:0;padding:7px 8px;border-radius:8px;border:1px solid var(--brd);background:var(--hov);color:var(--txt);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='#0a66c2'" onmouseout="this.style.borderColor='var(--brd)'">in LinkedIn</button>
+                    <button onclick="shareWarRoom('copy')" id="copyLinkBtn" style="flex:1;min-width:0;padding:7px 8px;border-radius:8px;border:1px solid var(--brd);background:var(--hov);color:var(--txt);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;">🔗 Copy</button>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ══ NEWS READING PANEL (replaces right sidebar on click) ══ -->
+    <aside class="news-panel sidebar" id="newsPanel">
+        <div class="news-panel-hdr">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="live-dot"></span>
+                <span style="font-size:12px;font-weight:700;color:var(--txt);">Breaking News</span>
+            </div>
+            <button class="x-btn" onclick="closeNewsPanel()" title="Close">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="news-panel-body" id="newsPanelBody">
+            <!-- filled by JS -->
+        </div>
     </aside>
 
 </div><!-- end .page-columns -->
+
+<!-- ══ FOOTER ══ -->
+<footer style="background:var(--card);border-top:1px solid var(--brd);position:relative;z-index:2;">
+    <div style="max-width:1280px;margin:0 auto;padding:32px 24px 20px;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px;">
+            <!-- Brand -->
+            <div>
+                <div style="font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;">The WarRoom</div>
+                <p style="font-size:13px;color:var(--sub);line-height:1.65;margin:0 0 14px;max-width:280px;">Ground truth in real time. A community of verified conflict journalists reporting live from the world's most critical zones.</p>
+                <div style="display:flex;gap:8px;">
+                    <a href="#" onclick="return false;" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;color:var(--txt);background:var(--hov);transition:border-color .2s;" title="Twitter">𝕏</a>
+                    <a href="#" onclick="return false;" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;color:var(--txt);background:var(--hov);transition:border-color .2s;" title="LinkedIn">in</a>
+                    <a href="#" onclick="return false;" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;color:var(--txt);background:var(--hov);transition:border-color .2s;" title="RSS"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1" fill="currentColor"/></svg></a>
+                </div>
+            </div>
+            <!-- Platform -->
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;">Platform</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="#" onclick="showLeaderboard();return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Leaderboard</a>
+                    <a href="#" onclick="showAuthModal();return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Apply as Journalist</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Daily Briefing</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">RSS Feed</a>
+                </div>
+            </div>
+            <!-- About -->
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;">About</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Our Mission</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Verification Process</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Editorial Standards</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Press Kit</a>
+                </div>
+            </div>
+            <!-- Legal -->
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;">Legal</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Privacy Policy</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Terms of Service</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Cookie Policy</a>
+                    <a href="#" onclick="return false;" style="font-size:13px;color:var(--txt);text-decoration:none;opacity:.75;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Advertise</a>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom bar -->
+        <div style="border-top:1px solid var(--brd);padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div style="font-size:12px;color:var(--sub);">© 2025 The WarRoom. All rights reserved. Built for truth.</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span class="live-dot" style="width:5px;height:5px;"></span>
+                <span style="font-size:11px;color:#ef4444;font-weight:700;">LIVE COVERAGE ACTIVE</span>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <!-- ══ AUTH MODAL ══ -->
 <div id="authModal" class="modal-overlay" onclick="closeModal(event,'authModal')">
@@ -879,7 +905,7 @@
             <div class="s-sec">
                 <div class="s-lbl">More Features</div>
                 <div class="s-card" style="text-align:center;padding:20px;opacity:.55;">
-                    <div style="font-size:26px;margin-bottom:8px;">🔧</div>
+                    <div style="margin-bottom:10px;opacity:.4;"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
                     <div style="font-size:13px;font-weight:600;">Notifications, preferences & more coming soon</div>
                 </div>
             </div>
@@ -1246,32 +1272,7 @@ function rejectJ(uid) {
 }
 
 // ── Dots ─────────────────────────────────────────────────────────────────────
-function initDots() {
-    const c = document.getElementById('dotsBackground')
-    c.innerHTML = '' // clear any existing
-    const isMobile = window.innerWidth < 640
-    const counts = { sm:isMobile?35:55, md:isMobile?20:35, lg:isMobile?10:18, glow:isMobile?5:10 }
-    const allTypes = Object.entries(counts)
-    allTypes.forEach(([type, count]) => {
-        for (let i = 0; i < count; i++) {
-            const d = document.createElement('div')
-            d.className = 'dot ' + type
-            const x   = Math.random() * 100
-            const y   = Math.random() * 100
-            const tx  = (Math.random() - 0.5) * 300
-            const ty  = (Math.random() - 0.5) * 300
-            const dur = 12 + Math.random() * 25
-            const del = -(Math.random() * dur)
-            d.style.left = x + '%'
-            d.style.top  = y + '%'
-            d.style.animationDuration = dur + 's'
-            d.style.animationDelay    = del + 's'
-            d.style.setProperty('--tx', tx + 'px')
-            d.style.setProperty('--ty', ty + 'px')
-            c.appendChild(d)
-        }
-    })
-}
+function initDots() { /* dots removed */ }
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 function initTheme() { document.documentElement.setAttribute('data-theme',theme); updateThemeIcon(); updateMeta() }
@@ -1281,7 +1282,14 @@ function toggleTheme() {
     updateThemeIcon(); updateMeta()
     const si=document.getElementById('settingsThemeIcon'); if(si) si.textContent=theme==='dark'?'🌙':'☀️'
 }
-function updateThemeIcon() { document.getElementById('themeIcon').textContent = theme==='light'?'◑':'◐' }
+const SUN_SVG  = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+const MOON_SVG = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+function updateThemeIcon() {
+    const el = document.getElementById('themeIcon')
+    if (el) el.outerHTML = (theme === 'light' ? MOON_SVG : SUN_SVG).replace('<svg ', '<svg id="themeIcon" ')
+    const si = document.getElementById('settingsThemeIcon')
+    if (si) si.textContent = theme === 'dark' ? '☀️' : '🌙'
+}
 function updateMeta() { document.querySelector('meta[name="theme-color"]').setAttribute('content',theme==='light'?'#ffffff':'#000000') }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -1291,6 +1299,7 @@ async function loadReports() {
     const {data,error} = await sb.from('reports').select('*').order('created_at',{ascending:false})
     if (error) { console.error(error); return }
     reports = data; filtered = data; renderFeed(); renderTop()
+    updateSidebarCounts()
 }
 
 // ── Search ───────────────────────────────────────────────────────────────────
@@ -1398,7 +1407,7 @@ function openJournalistProfile(name, e) {
                 ${profile.twitter?`<a href="https://twitter.com/${profile.twitter.replace('@','')}" target="_blank" class="j-social-tag">𝕏 ${profile.twitter}</a>`:''}
                 ${profile.linkedin?`<a href="${profile.linkedin}" target="_blank" class="j-social-tag">in LinkedIn</a>`:''}
                 ${profile.instagram?`<a href="https://instagram.com/${profile.instagram.replace('@','')}" target="_blank" class="j-social-tag">📷 ${profile.instagram}</a>`:''}
-                ${profile.cv?`<a href="${profile.cv}" target="_blank" class="j-social-tag">📄 CV / Portfolio</a>`:''}
+                ${profile.cv?`<a href="${profile.cv}" target="_blank" class="j-social-tag"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> CV / Portfolio</a>`:''}
             </div>` : ''}
 
             <!-- Reports -->
@@ -1637,19 +1646,186 @@ document.addEventListener('keydown', e => {
     if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); document.body.style.overflow='auto' }
 })
 
-// ── Newsletter ────────────────────────────────────────────────────────────────
-function handleNewsletter() {
-    const el = document.getElementById('nlEmail')
+// ── Newsletter (Supabase) ─────────────────────────────────────────────────────
+async function handleNewsletter() {
+    const el  = document.getElementById('nlEmail')
+    const btn = document.getElementById('nlBtn')
     const val = el.value.trim()
-    if (!val || !val.includes('@')) { el.focus(); el.style.borderColor='#ef4444'; setTimeout(()=>el.style.borderColor='',1200); return }
-    el.value = ''
-    el.placeholder = '✓ You\'re subscribed!'
-    el.style.borderColor = '#10b981'
-    setTimeout(() => { el.placeholder = 'your@email.com'; el.style.borderColor = ''; }, 3000)
+    if (!val || !val.includes('@')) {
+        el.style.borderColor = '#ef4444'
+        el.focus()
+        setTimeout(() => el.style.borderColor = '', 1400)
+        return
+    }
+    btn.disabled = true
+    btn.textContent = 'Subscribing...'
+    try {
+        const { error } = await sb.from('newsletter_subscribers').upsert(
+            [{ email: val, subscribed_at: new Date().toISOString() }],
+            { onConflict: 'email' }
+        )
+        if (error) throw error
+        el.value = ''
+        btn.textContent = '✓ Subscribed!'
+        btn.style.background = '#10b981'
+        el.style.borderColor = '#10b981'
+        el.placeholder = 'See you in your inbox!'
+        setTimeout(() => {
+            btn.textContent = 'Subscribe — It\'s Free'
+            btn.style.background = ''
+            el.style.borderColor = ''
+            el.placeholder = 'your@email.com'
+            btn.disabled = false
+        }, 4000)
+    } catch(e) {
+        console.error('Newsletter error:', e)
+        btn.textContent = 'Try again'
+        btn.disabled = false
+        el.style.borderColor = '#ef4444'
+        setTimeout(() => { el.style.borderColor = ''; btn.textContent = 'Subscribe — It\'s Free' }, 2000)
+    }
+}
+
+// ── Share ─────────────────────────────────────────────────────────────────────
+function shareWarRoom(platform) {
+    const url  = window.location.href
+    const text = 'Ground truth in real time — verified conflict journalism at The WarRoom'
+    if (platform === 'twitter')  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank')
+    if (platform === 'linkedin') window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+    if (platform === 'copy') {
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.getElementById('copyLinkBtn')
+            btn.textContent = '✓ Copied!'
+            setTimeout(() => btn.textContent = '🔗 Copy', 2000)
+        })
+    }
+}
+
+// ── Sidebar live counts ───────────────────────────────────────────────────────
+function updateSidebarCounts() {
+    const rc = document.getElementById('sbReportCount')
+    const jc = document.getElementById('sbJournCount')
+    const lr = document.getElementById('liveReporterCount')
+    if (rc) rc.textContent = reports.length || '—'
+    if (jc) {
+        const unique = new Set(reports.map(r => r.journalist)).size
+        jc.textContent = unique || '—'
+    }
+    if (lr) lr.textContent = Math.floor(Math.random() * 18) + 24
+}
+
+// ── News Panel ────────────────────────────────────────────────────────────────
+const BREAKING_NEWS = [
+    {
+        id:0, label:'BREAKING', location:'Gaza Strip', time:'2 min ago',
+        title:'Airstrikes Reported Near Rafah Crossing as Civilians Evacuate North',
+        byline:'Field correspondent · Al-Mawasi coast road',
+        body:`<p>Multiple strikes were reported in the vicinity of the Rafah border crossing early Thursday morning, sending thousands of civilians fleeing northward along the Al-Mawasi coastal corridor. Witnesses described scenes of chaos as ambulances attempted to navigate roads clogged with displaced families.</p>
+        <p>Israeli military officials confirmed they conducted "targeted strikes on Hamas infrastructure" in the area, though independent verification of the specific sites has not yet been possible. The UN Office for the Coordination of Humanitarian Affairs (OCHA) is attempting to confirm casualty figures.</p>
+        <p>The crossing had only recently been reopened following weeks of closure, with aid organizations warning that renewed closures would critically cut off medical supplies to the strip's northern hospitals.</p>`,
+        related:[1,2]
+    },
+    {
+        id:1, label:'DEVELOPING', location:'International', time:'11 min ago',
+        title:'UN Security Council Calls Emergency Session Over Escalating Border Violence',
+        byline:'UN Correspondent · New York',
+        body:`<p>The UN Security Council convened an emergency session Thursday following urgent requests from three non-permanent members citing the dramatic escalation of violence along the Gaza-Israel border and renewed shelling near Kyiv's eastern suburbs.</p>
+        <p>The session, chaired by this month's rotating president, heard briefings from the Secretary-General's Special Envoy and senior representatives from UNICEF and the World Food Programme. Draft resolutions are expected to be tabled within 48 hours, though veto dynamics remain a significant obstacle.</p>
+        <p>Diplomats speaking off the record described the atmosphere in the chamber as "the most tense in years," with two permanent members trading pointed statements in the open session.</p>`,
+        related:[0,5]
+    },
+    {
+        id:2, label:'UPDATE', location:'Kyiv, Ukraine', time:'28 min ago',
+        title:'Ceasefire Talks Collapse — Mediators to Reconvene Thursday After Overnight Shelling',
+        byline:'Eastern Europe Bureau · Kyiv',
+        body:`<p>Diplomatic efforts to broker a temporary ceasefire in eastern Ukraine broke down late Wednesday after a dispute over the status of three occupied towns, sources familiar with the talks told WarRoom. Both delegations left the venue in Ankara without signing even a preliminary framework.</p>
+        <p>Overnight, Russian forces intensified strikes on Zaporizhzhia's outskirts, Ukrainian military officials said, with at least four residential buildings reported damaged. Power outages were recorded across several districts by Thursday morning.</p>
+        <p>The mediating team — comprised of representatives from Turkey, Qatar and a senior EU official — confirmed they would attempt to reconvene discussions on Thursday, describing the breakdown as a "procedural pause" rather than a full collapse.</p>`,
+        related:[1,5]
+    },
+    {
+        id:3, label:'BREAKING', location:'Khartoum, Sudan', time:'45 min ago',
+        title:'Militia Advance Halted at Khartoum City Limits — RSF Denies Entering Capital',
+        byline:'Sudan Correspondent · Port Sudan',
+        body:`<p>The Rapid Support Forces (RSF) denied Thursday that their units had crossed into central Khartoum, contradicting reports from multiple civil society groups and eyewitnesses who claimed to have seen armed convoys moving through the Bahri district before dawn.</p>
+        <p>Sudan's Armed Forces said in a brief statement that they had "repelled an incursion attempt" and that the situation was "under control," without providing details on casualties or specific locations.</p>
+        <p>Humanitarian workers in the area reported that communications in several neighborhoods had been severed, making independent verification extremely difficult. The International Committee of the Red Cross said it was "urgently seeking access" to affected areas.</p>`,
+        related:[0,4]
+    },
+    {
+        id:4, label:'PRESS FREEDOM', location:'Tbilisi, Georgia', time:'1 hr ago',
+        title:'Journalist Arrested While Covering Anti-Government Protests in Tbilisi',
+        byline:'Press Freedom Desk · CPJ / RSF',
+        body:`<p>A journalist working for independent Georgian outlet <em>Pirveli TV</em> was detained by police early Thursday while covering ongoing anti-government demonstrations in Tbilisi's Rustaveli Avenue, the Committee to Protect Journalists (CPJ) confirmed.</p>
+        <p>The reporter, whose identity is being withheld at their family's request, was reportedly held for several hours before being released without charge. Their camera equipment was confiscated and had not been returned as of the time of publication.</p>
+        <p>Reporters Without Borders (RSF) issued a statement calling the arrest "part of a pattern of deliberate harassment against independent media covering the protests" and urged Georgian authorities to return all confiscated equipment immediately.</p>`,
+        related:[1,5]
+    },
+    {
+        id:5, label:'NATO', location:'Eastern Europe', time:'2 hrs ago',
+        title:'NATO Confirms Deployment of Additional Forces and Assets to Eastern Flank',
+        byline:'Defence Correspondent · Brussels',
+        body:`<p>NATO Secretary General confirmed Thursday that additional troops, air defence systems and logistical assets were being positioned along the alliance's eastern flank in response to "an evolving threat picture," without specifying which member states were receiving reinforcements.</p>
+        <p>The deployment is understood to involve battlegroups from several western member states being rotated and expanded under the Enhanced Forward Presence framework, which was substantially upgraded following Russia's full-scale invasion of Ukraine in 2022.</p>
+        <p>Officials stressed the movements were "precautionary and defensive in nature" and consistent with existing NATO commitments. Russia's foreign ministry called the announcement "escalatory and destabilising."</p>`,
+        related:[1,2]
+    },
+]
+
+function openNewsPanel(idx) {
+    const news = BREAKING_NEWS[idx]
+    if (!news) return
+
+    // Highlight active ticker item
+    document.querySelectorAll('.ticker-item').forEach((el,i) => {
+        el.classList.toggle('active-news', i === idx)
+    })
+
+    // Hide right sidebar, show news panel
+    const rs = document.querySelector('.sidebar-right')
+    const np = document.getElementById('newsPanel')
+    if (rs) rs.style.display = 'none'
+    np.classList.add('open')
+
+    // Render content
+    const related = news.related.map(i => BREAKING_NEWS[i])
+    document.getElementById('newsPanelBody').innerHTML = `
+        <div class="news-panel-cat">
+            <span class="live-dot" style="width:5px;height:5px;"></span>
+            ${news.label} · ${news.location}
+        </div>
+        <div class="news-panel-title">${news.title}</div>
+        <div class="news-panel-meta">
+            <span>${news.time}</span>
+            <span style="opacity:.3;">·</span>
+            <span>${news.byline}</span>
+        </div>
+        <div class="news-panel-body-text">${news.body}</div>
+        <div class="news-panel-related">
+            <div class="news-panel-related-title">Related Stories</div>
+            ${related.map(r=>`
+                <div class="news-panel-related-item" onclick="openNewsPanel(${r.id})">
+                    <div class="ri-title">${r.title}</div>
+                    <div class="ri-time">${r.time} · ${r.location}</div>
+                </div>`).join('')}
+        </div>
+    `
+    // Scroll panel to top
+    np.scrollTop = 0
+}
+
+function closeNewsPanel() {
+    const rs = document.querySelector('.sidebar-right')
+    const np = document.getElementById('newsPanel')
+    np.classList.remove('open')
+    if (rs) rs.style.display = ''
+    document.querySelectorAll('.ticker-item').forEach(el => el.classList.remove('active-news'))
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 init()
+setTimeout(updateSidebarCounts, 1200)
+
 
 </script>
 </body>
