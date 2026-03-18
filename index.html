@@ -51,7 +51,7 @@
 
         /* ── Header ── */
         .war-room-header { position:sticky;top:0;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);z-index:100; }
-        .hdr { max-width:700px;margin:0 auto;padding:10px 20px;display:flex;flex-direction:column;gap:8px; }
+        .hdr { max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;flex-direction:column;gap:8px; }
         .hdr-top { display:flex;align-items:center;justify-content:space-between; }
         .logo { font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap; }
         .hdr-actions { display:flex;align-items:center;gap:6px; }
@@ -96,28 +96,6 @@
         .hero-title { font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 12px; }
         @media(min-width:640px){.hero-title{font-size:40px;}}
         .hero-sub { font-size:15px;color:var(--sub);line-height:1.65;margin:0 0 22px;max-width:430px; }
-        .live-banner { position:relative;overflow:hidden;margin-bottom:22px;padding:16px 18px;border-radius:22px;border:1px solid rgba(59,130,246,.22);background:
-            radial-gradient(circle at top left,rgba(59,130,246,.22),transparent 42%),
-            linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,41,59,.9));box-shadow:0 18px 45px rgba(2,6,23,.24); }
-        [data-theme="light"] .live-banner { background:
-            radial-gradient(circle at top left,rgba(59,130,246,.14),transparent 42%),
-            linear-gradient(135deg,rgba(248,250,252,.98),rgba(241,245,249,.94));box-shadow:0 18px 45px rgba(15,23,42,.08); }
-        .live-banner::after { content:"";position:absolute;inset:auto -20% -55% auto;width:180px;height:180px;border-radius:50%;background:rgba(16,185,129,.12);filter:blur(8px); }
-        .live-banner-top { position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap; }
-        .live-banner-label { display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#f8fafc; }
-        [data-theme="light"] .live-banner-label { color:#0f172a; }
-        .live-banner-copy { position:relative;z-index:1;margin:14px 0 0;font-size:13px;line-height:1.6;color:rgba(226,232,240,.82);max-width:420px; }
-        [data-theme="light"] .live-banner-copy { color:#475569; }
-        .live-banner-grid { position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
-        .live-stat { padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px); }
-        [data-theme="light"] .live-stat { background:rgba(255,255,255,.6);border-color:rgba(148,163,184,.22); }
-        .live-stat-label { display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(226,232,240,.68);margin-bottom:6px; }
-        [data-theme="light"] .live-stat-label { color:#64748b; }
-        .live-stat-value { display:flex;align-items:baseline;gap:8px;font-size:28px;font-weight:800;letter-spacing:-1px;color:#fff;line-height:1; }
-        [data-theme="light"] .live-stat-value { color:#0f172a; }
-        .live-stat-meta { font-size:12px;font-weight:600;color:rgba(148,163,184,.9); }
-        [data-theme="light"] .live-stat-meta { color:#64748b; }
-        @media(max-width:520px){.live-banner-grid{grid-template-columns:1fr}.live-banner{padding:15px 14px 14px}}
         .chips { display:flex;gap:8px;flex-wrap:wrap; }
         .chip { display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--brd);font-size:12px;font-weight:500;color:var(--sub); }
 
@@ -198,7 +176,7 @@
         .info-box strong { color:var(--txt); }
 
         /* ── Leaderboard tabs ── */
-        .tab-row { display:flex;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--brd); }
+        .tab-row { display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--brd); }
         .tab { padding:6px 16px;border-radius:9999px;background:transparent;color:var(--sub);border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s; }
         .tab.on { background:var(--acc);color:var(--bg);border-color:var(--acc); }
 
@@ -246,46 +224,9 @@
         .no-res { padding:48px 16px;text-align:center;color:var(--sub);font-size:15px; }
         .section-divider { height:1px;background:var(--brd);margin:20px 16px; }
 
-        /* ── Footer ── */
-        .site-footer { position:relative;overflow:hidden;background:var(--card);border-top:1px solid var(--brd);padding:48px 24px 36px;text-align:center;margin-top:32px; }
-        .footer-bg-word { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;user-select:none;overflow:hidden; }
-        .footer-bg-word span { font-size:clamp(80px,22vw,200px);font-weight:900;letter-spacing:-6px;color:var(--txt);opacity:.04;white-space:nowrap;line-height:1; }
-        .footer-logo { font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:12px;position:relative;z-index:1; }
-        .footer-desc { font-size:14px;color:var(--sub);line-height:1.7;max-width:400px;margin:0 auto 20px;position:relative;z-index:1; }
-        .footer-chips { display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;position:relative;z-index:1; }
-        .footer-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;border:1px solid var(--brd);font-size:11px;font-weight:500;color:var(--sub); }
-        .footer-copy { font-size:12px;color:var(--sub);opacity:.6;position:relative;z-index:1; }
-
-        /* ── Founder popup ── */
-        #founderPopup { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);z-index:9998;width:calc(100% - 32px);max-width:360px;opacity:0;transition:transform .5s cubic-bezier(.34,1.2,.64,1),opacity .4s ease;pointer-events:none; }
-        #founderPopup.show { transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto; }
-        .founder-card { background:var(--card);border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px;position:relative;
-            box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 1.5px rgba(99,179,237,.5),0 0 20px rgba(99,179,237,.18),0 0 60px rgba(99,179,237,.08);
-            animation:founderGlow 2.4s ease-in-out infinite alternate; }
-        @keyframes founderGlow {
-            from { box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 1.5px rgba(99,179,237,.45),0 0 18px rgba(99,179,237,.15),0 0 50px rgba(99,179,237,.06); }
-            to   { box-shadow:0 8px 40px rgba(0,0,0,.25),0 0 0 2px rgba(139,92,246,.65),0 0 28px rgba(139,92,246,.28),0 0 70px rgba(139,92,246,.12); }
-        }
-        .founder-av { width:52px;height:52px;min-width:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(99,179,237,.4); }
-        .founder-av-fallback { width:52px;height:52px;min-width:52px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;flex-shrink:0; }
-        .founder-close { position:absolute;top:10px;right:12px;width:26px;height:26px;border-radius:50%;background:var(--hov);border:none;cursor:pointer;color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s; }
-        .founder-close:hover { background:var(--brd); }
-        .founder-follow-btn { display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9999px;background:var(--acc);color:var(--bg);border:none;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s;margin-top:6px; }
-        .founder-follow-btn:hover { opacity:.85; }
-
-        /* ── Location suggestions ── */
-        .loc-suggestions { position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--card);border:1px solid var(--brd);border-radius:10px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.15);max-height:200px;overflow-y:auto; }
-        .loc-item { padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--brd); }
-        .loc-item:last-child { border-bottom:none; }
-        .loc-item:hover,.loc-item:focus { background:var(--hov); }
-        .loc-item-pin { font-size:14px;flex-shrink:0; }
-        .loc-item-main { font-weight:600;color:var(--txt); }
-        .loc-item-sub { font-size:11px;color:var(--sub);margin-top:1px; }
-
         /* ── Animations ── */
         @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
         @keyframes slideUp { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
         /* ── Scrollbar ── */
         ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
@@ -305,6 +246,247 @@
             .g-btn:hover{background:var(--hov)}
         }
         html{scroll-behavior:smooth}
+
+        /* ── Three-column layout ── */
+        .page-columns {
+            display: flex;
+            gap: 0;
+            max-width: 1280px;
+            margin: 0 auto;
+            align-items: flex-start;
+            position: relative;
+        }
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 70px;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding: 16px 12px;
+            scrollbar-width: none;
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .sidebar-left { border-right: 1px solid var(--brd); }
+        .sidebar-right { border-left: 1px solid var(--brd); }
+        .main-col { flex: 1; min-width: 0; }
+
+        /* Hide sidebars on mobile */
+        @media(max-width:900px){
+            .sidebar-left { display: none; }
+        }
+        @media(max-width:1100px){
+            .sidebar-right { display: none; }
+        }
+
+        /* ── Sidebar widget ── */
+        .sb-widget {
+            background: var(--card);
+            border: 1px solid var(--brd);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .sb-widget-hdr {
+            padding: 11px 14px 9px;
+            border-bottom: 1px solid var(--brd);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .sb-widget-title {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--txt);
+        }
+        .sb-widget-body { padding: 12px 14px; }
+
+        /* ── Breaking news ticker ── */
+        .ticker-wrap {
+            overflow: hidden;
+            position: relative;
+        }
+        .ticker-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--brd);
+            cursor: pointer;
+            transition: background .12s;
+        }
+        .ticker-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .ticker-item:first-child { padding-top: 0; }
+        .ticker-dot {
+            width: 6px; height: 6px; min-width: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            margin-top: 5px;
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+        .ticker-dot.blue { background: #3b82f6; animation: none; }
+        .ticker-dot.amber { background: #f59e0b; animation: none; }
+        .ticker-text {
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--txt);
+            font-weight: 500;
+        }
+        .ticker-time { font-size: 10px; color: var(--sub); margin-top: 2px; }
+
+        /* ── Conflict zones ── */
+        .zone-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--brd);
+            cursor: pointer;
+        }
+        .zone-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .zone-item:first-child { padding-top: 0; }
+        .zone-left { display: flex; align-items: center; gap: 8px; }
+        .zone-flag { font-size: 18px; line-height: 1; }
+        .zone-name { font-size: 13px; font-weight: 600; color: var(--txt); }
+        .zone-region { font-size: 11px; color: var(--sub); }
+        .zone-badge {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            padding: 2px 7px;
+            border-radius: 99px;
+        }
+        .zone-badge.hot { background: rgba(239,68,68,.12); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
+        .zone-badge.active { background: rgba(245,158,11,.12); color: #f59e0b; border: 1px solid rgba(245,158,11,.3); }
+        .zone-badge.monitor { background: rgba(107,114,128,.1); color: var(--sub); border: 1px solid var(--brd); }
+
+        /* ── Ad cards ── */
+        .ad-card {
+            background: var(--card);
+            border: 1px solid var(--brd);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            transition: border-color .2s, box-shadow .2s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .ad-card:hover { border-color: var(--acc); box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+        .ad-card-inner { padding: 14px; }
+        .ad-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--sub);
+            margin-bottom: 10px;
+            display: block;
+        }
+        .ad-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .ad-logo-icon {
+            width: 36px; height: 36px; min-width: 36px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            border: 1px solid var(--brd);
+        }
+        .ad-brand { font-size: 14px; font-weight: 700; color: var(--txt); }
+        .ad-tagline { font-size: 12px; color: var(--sub); line-height: 1.4; margin-bottom: 10px; }
+        .ad-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--txt);
+            background: var(--hov);
+            border: 1px solid var(--brd);
+            border-radius: 99px;
+            padding: 5px 12px;
+            transition: all .15s;
+        }
+        .ad-card:hover .ad-cta { background: var(--acc); color: var(--bg); border-color: var(--acc); }
+
+        /* ── Newsletter widget ── */
+        .nl-input {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--brd);
+            background: var(--hov);
+            color: var(--txt);
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 8px;
+            font-family: inherit;
+            transition: border-color .2s;
+        }
+        .nl-input:focus { border-color: var(--acc); background: var(--card); }
+        .nl-input::placeholder { color: var(--sub); }
+        .nl-btn {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            background: var(--acc);
+            color: var(--bg);
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity .15s;
+        }
+        .nl-btn:hover { opacity: .85; }
+        .nl-desc { font-size: 12px; color: var(--sub); line-height: 1.5; margin-bottom: 12px; }
+
+        /* ── CTA card ── */
+        .cta-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .cta-card {
+            background: linear-gradient(135deg, #0f0f23 0%, #0d1b2a 50%, #0a2a4a 100%);
+        }
+        .cta-card::before {
+            content: '';
+            position: absolute;
+            top: -20px; right: -20px;
+            width: 80px; height: 80px;
+            background: rgba(59,130,246,.2);
+            border-radius: 50%;
+        }
+        .cta-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 8px; }
+        .cta-heading { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 6px; }
+        .cta-body { font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.5; margin-bottom: 14px; }
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 14px;
+            background: #fff;
+            color: #000;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .15s;
+        }
+        .cta-btn:hover { background: #e5e7eb; }
     </style>
 </head>
 <body>
@@ -330,10 +512,6 @@
                     </button>
                     <div class="prof-dd" id="profDD">
                         <div class="pd-name" id="pdName">—</div>
-                        <button class="pd-item" id="pdMyProfile" onclick="openMyProfile();closeDD()" style="display:none;">
-                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            My Profile
-                        </button>
                         <button class="pd-item" onclick="openSettings();closeDD()">
                             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             Settings
@@ -355,79 +533,233 @@
     </div>
 </header>
 
-<!-- ── Main ── -->
-<main style="max-width:700px;margin:0 auto;position:relative;z-index:1;">
-    <!-- Hero -->
-    <div class="hero" id="heroSection">
-        <div class="live-pill"><span class="live-dot"></span><span class="live-lbl">LIVE</span></div>
-        <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
-        <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
-        <div class="live-banner" id="liveBanner">
-            <div class="live-banner-top">
-                <span class="live-banner-label"><span class="live-dot"></span>Live room status</span>
-                <span class="live-stat-meta" id="liveBannerStamp">Syncing now</span>
-            </div>
-            <div class="live-banner-grid">
-                <div class="live-stat">
-                    <span class="live-stat-label">Online now</span>
-                    <div class="live-stat-value"><span id="onlineNowCount">1</span><span class="live-stat-meta">watching</span></div>
-                </div>
-                <div class="live-stat">
-                    <span class="live-stat-label">Reporting live</span>
-                    <div class="live-stat-value"><span id="reportingNowCount">0</span><span class="live-stat-meta">verified journalists</span></div>
-                </div>
-            </div>
-            <p class="live-banner-copy" id="liveBannerCopy">Tracking everyone currently in the room and every verified journalist connected right now.</p>
-        </div>
-        <div class="chips">
-            <span class="chip">📡 Live conflict reporting</span>
-            <span class="chip">✓ Verified journalists only</span>
-            <span class="chip">↑ Community-ranked truth</span>
-        </div>
-    </div>
-    <!-- Top Report -->
-    <div style="padding:20px 0 0;" id="topReportSection">
-        <h2 class="sec-title">Top Report</h2>
-        <div id="topReport"></div>
-    </div>
-    <div class="section-divider" id="mainDivider"></div>
-    <!-- Feed -->
-    <div style="padding-bottom:24px;">
-        <h2 class="sec-title" id="feedTitle">Live Feed</h2>
-        <div id="storyFeed"></div>
-    </div>
-</main>
+<!-- ── Three-Column Layout ── -->
+<div class="page-columns" style="position:relative;z-index:1;">
 
-<!-- ── Footer ── -->
-<footer class="site-footer">
-    <div class="footer-bg-word"><span>WARROOM</span></div>
-    <div class="footer-logo">The WarRoom</div>
-    <p class="footer-desc">Ground truth, in real time. The WarRoom aggregates firsthand reports from verified conflict journalists across the globe — community-ranked, credibility-first.</p>
-    <div class="footer-chips">
-        <span class="footer-chip">📡 Live conflict reporting</span>
-        <span class="footer-chip">✓ Verified journalists only</span>
-        <span class="footer-chip">↑ Community-ranked</span>
-        <span class="footer-chip">🌐 Global coverage</span>
-    </div>
-    <div class="footer-copy">© 2025 The WarRoom · All rights reserved</div>
-</footer>
+    <!-- ══ LEFT SIDEBAR ══ -->
+    <aside class="sidebar sidebar-left">
 
-<!-- ── Founder Follow Popup ── -->
-<div id="founderPopup">
-    <div class="founder-card">
-        <button class="founder-close" onclick="closeFounderPopup()">×</button>
-        <div id="founderAv" class="founder-av-fallback">M</div>
-        <div style="flex:1;min-width:0;">
-            <div style="font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;">Built by the founder</div>
-            <div style="font-size:15px;font-weight:800;" id="founderName">Masud</div>
-            <div style="font-size:12px;color:var(--sub);margin-bottom:4px;" id="founderHandle">@masudview</div>
-            <a href="https://x.com/masudview" target="_blank" rel="noopener" class="founder-follow-btn">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                Follow on X
-            </a>
+        <!-- Breaking News Ticker -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <span style="font-size:14px;">📡</span>
+                <span class="sb-widget-title">Breaking Now</span>
+                <span style="margin-left:auto;"><span class="live-dot" style="display:inline-block;width:6px;height:6px;"></span></span>
+            </div>
+            <div class="sb-widget-body" style="padding:10px 14px;" id="tickerFeed">
+                <div class="ticker-item">
+                    <span class="ticker-dot"></span>
+                    <div>
+                        <div class="ticker-text">Airstrikes reported near Rafah crossing — civilians evacuating</div>
+                        <div class="ticker-time">2 min ago · Gaza</div>
+                    </div>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-dot blue"></span>
+                    <div>
+                        <div class="ticker-text">UN emergency session called over escalating border conflict</div>
+                        <div class="ticker-time">11 min ago · International</div>
+                    </div>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-dot amber"></span>
+                    <div>
+                        <div class="ticker-text">Ceasefire negotiations stalled; mediators to reconvene Thursday</div>
+                        <div class="ticker-time">28 min ago · Kyiv</div>
+                    </div>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-dot"></span>
+                    <div>
+                        <div class="ticker-text">Militia advance halted outside Khartoum; RSF denies reports</div>
+                        <div class="ticker-time">45 min ago · Sudan</div>
+                    </div>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-dot blue"></span>
+                    <div>
+                        <div class="ticker-text">Journalist arrested covering protests in Tbilisi — CPJ condemns</div>
+                        <div class="ticker-time">1 hr ago · Georgia</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+
+        <!-- Active Conflict Zones -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <span style="font-size:14px;">🌐</span>
+                <span class="sb-widget-title">Conflict Zones</span>
+            </div>
+            <div class="sb-widget-body" style="padding:10px 14px;">
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇵🇸</span>
+                        <div>
+                            <div class="zone-name">Gaza Strip</div>
+                            <div class="zone-region">Middle East</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge hot">HOT</span>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇺🇦</span>
+                        <div>
+                            <div class="zone-name">Ukraine</div>
+                            <div class="zone-region">Eastern Europe</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge hot">HOT</span>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇸🇩</span>
+                        <div>
+                            <div class="zone-name">Sudan</div>
+                            <div class="zone-region">East Africa</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge active">ACTIVE</span>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇲🇲</span>
+                        <div>
+                            <div class="zone-name">Myanmar</div>
+                            <div class="zone-region">Southeast Asia</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge active">ACTIVE</span>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇸🇴</span>
+                        <div>
+                            <div class="zone-name">Somalia</div>
+                            <div class="zone-region">East Africa</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge monitor">WATCH</span>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-left">
+                        <span class="zone-flag">🇭🇹</span>
+                        <div>
+                            <div class="zone-name">Haiti</div>
+                            <div class="zone-region">Caribbean</div>
+                        </div>
+                    </div>
+                    <span class="zone-badge monitor">WATCH</span>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ══ MAIN FEED ══ -->
+    <main style="min-width:0;flex:1;position:relative;">
+        <!-- Hero -->
+        <div class="hero" id="heroSection">
+            <div class="live-pill"><span class="live-dot"></span><span class="live-lbl">LIVE</span></div>
+            <h2 class="hero-title">Ground Truth.<br>In Real Time.</h2>
+            <p class="hero-sub">The WarRoom aggregates firsthand reports from verified conflict journalists across the globe. Read, vote, and let credibility rise to the top.</p>
+            <div class="chips">
+                <span class="chip">📡 Live conflict reporting</span>
+                <span class="chip">✓ Verified journalists only</span>
+                <span class="chip">↑ Community-ranked truth</span>
+            </div>
+        </div>
+        <!-- Top Report -->
+        <div style="padding:20px 0 0;" id="topReportSection">
+            <h2 class="sec-title">Top Report</h2>
+            <div id="topReport"></div>
+        </div>
+        <div class="section-divider" id="mainDivider"></div>
+        <!-- Feed -->
+        <div style="padding-bottom:24px;">
+            <h2 class="sec-title" id="feedTitle">Live Feed</h2>
+            <div id="storyFeed"></div>
+        </div>
+    </main>
+
+    <!-- ══ RIGHT SIDEBAR ══ -->
+    <aside class="sidebar sidebar-right">
+
+        <!-- Become a Journalist CTA -->
+        <div class="cta-card">
+            <div class="cta-eyebrow">Join The Network</div>
+            <div class="cta-heading">Report from the Front Lines</div>
+            <div class="cta-body">Apply to become a verified WarRoom journalist. Your reports reach thousands of readers in real time.</div>
+            <button class="cta-btn" onclick="showAuthModal()">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+                Apply Now
+            </button>
+        </div>
+
+        <!-- Newsletter signup -->
+        <div class="sb-widget">
+            <div class="sb-widget-hdr">
+                <span style="font-size:14px;">✉️</span>
+                <span class="sb-widget-title">Daily Briefing</span>
+            </div>
+            <div class="sb-widget-body">
+                <p class="nl-desc">Get the top verified reports delivered to your inbox every morning at 07:00 UTC.</p>
+                <input class="nl-input" type="email" placeholder="your@email.com" id="nlEmail">
+                <button class="nl-btn" onclick="handleNewsletter()">Subscribe — It's Free</button>
+            </div>
+        </div>
+
+        <!-- Ad 1: ProtonMail -->
+        <a class="ad-card" href="#" onclick="return false;">
+            <div class="ad-card-inner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-logo-row">
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#6d4aff,#8b5cf6);">🔒</div>
+                    <div>
+                        <div class="ad-brand">Proton Mail</div>
+                    </div>
+                </div>
+                <div class="ad-tagline">End-to-end encrypted email built for journalists and activists in the field.</div>
+                <span class="ad-cta">Get Protected →</span>
+            </div>
+        </a>
+
+        <!-- Ad 2: CPJ -->
+        <a class="ad-card" href="#" onclick="return false;">
+            <div class="ad-card-inner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-logo-row">
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);">🗞️</div>
+                    <div>
+                        <div class="ad-brand">CPJ</div>
+                    </div>
+                </div>
+                <div class="ad-tagline">The Committee to Protect Journalists defends press freedom worldwide.</div>
+                <span class="ad-cta">Learn More →</span>
+            </div>
+        </a>
+
+        <!-- Ad 3: Mullvad VPN -->
+        <a class="ad-card" href="#" onclick="return false;">
+            <div class="ad-card-inner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-logo-row">
+                    <div class="ad-logo-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">🛡️</div>
+                    <div>
+                        <div class="ad-brand">Mullvad VPN</div>
+                    </div>
+                </div>
+                <div class="ad-tagline">No logs, no identity. Browse and report securely from any location.</div>
+                <span class="ad-cta">Stay Anonymous →</span>
+            </div>
+        </a>
+
+    </aside>
+
+</div><!-- end .page-columns -->
+
+<!-- ══ AUTH MODAL ══ -->
 <div id="authModal" class="modal-overlay" onclick="closeModal(event,'authModal')">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-hdr">
@@ -601,14 +933,7 @@
         </div>
         <div class="modal-bdy">
             <form onsubmit="handleSubmitReport(event)">
-                <div class="fg" style="position:relative;">
-                    <label class="fl">Location <span>*</span></label>
-                    <input class="fi" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required autocomplete="off"
-                        oninput="handleLocationInput(this.value)"
-                        onfocus="handleLocationInput(this.value)"
-                        onblur="setTimeout(()=>closeLocSuggestions(),200)">
-                    <div id="locSuggestions" class="loc-suggestions" style="display:none;"></div>
-                </div>
+                <div class="fg"><label class="fl">Location <span>*</span></label><input class="fi" id="reportLocation" placeholder="e.g., Kyiv, Ukraine" required></div>
                 <div class="fg"><label class="fl">Report <span>*</span></label><textarea class="ft" id="reportText" placeholder="Describe the situation..." required></textarea></div>
                 <button type="submit" class="form-btn" id="submitFormBtn">Submit Report</button>
             </form>
@@ -632,17 +957,6 @@
 </div>
 
 <!-- ══ SCRIPTS ══ -->
-<!-- ══ MY JOURNALIST PROFILE MODAL ══ -->
-<div id="myProfileModal" class="modal-overlay" onclick="closeModal(event,'myProfileModal')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <div class="modal-hdr">
-            <h3 style="font-size:16px;font-weight:700;margin:0;">My Journalist Profile</h3>
-            <button class="x-btn" onclick="closeModal(null,'myProfileModal')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-        </div>
-        <div class="modal-bdy" id="myProfileContent"></div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 
@@ -664,16 +978,6 @@ let isAdmin      = sessionStorage.getItem('isAdmin') === 'true'
 let myVotes      = JSON.parse(localStorage.getItem('myVotes') || '{}')   // {reportId: 'up'|'down'}
 let comments     = JSON.parse(localStorage.getItem('wrComments') || '{}') // {reportId: [...]}
 let jProfiles    = JSON.parse(localStorage.getItem('jProfiles') || '{}')  // {name: profile}
-let livePresenceChannel = null
-let livePresenceStampTimer = null
-let livePresenceState = { online:1, reporters:0, lastSync:null, connected:false }
-const livePresenceKey = (() => {
-    const existing = sessionStorage.getItem('wrPresenceKey')
-    if (existing) return existing
-    const created = window.crypto?.randomUUID?.() || ('wr_' + Math.random().toString(36).slice(2))
-    sessionStorage.setItem('wrPresenceKey', created)
-    return created
-})()
 
 // ── Loading bar ──────────────────────────────────────────────────────────────
 let barTimer = null
@@ -694,219 +998,11 @@ function barDone() {
     setTimeout(() => { b.classList.remove('running'); b.style.width = '0%' }, 600)
 }
 
-// ── My Journalist Profile ─────────────────────────────────────────────────────
-function openMyProfile() {
-    if (!me) return
-    renderProfileView()
-    openModal('myProfileModal')
-}
-
-function renderProfileView() {
-    const el = document.getElementById('myProfileContent')
-    const isVerified = me.role === 'journalist' && me.verified
-    const isPending  = me.role === 'journalist' && !me.verified
-
-    el.innerHTML = `
-        <!-- Hero -->
-        <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 20px 20px;border-radius:12px;text-align:center;margin-bottom:20px;">
-            <div style="position:relative;display:inline-block;margin-bottom:12px;">
-                <div class="av xl" style="margin:0 auto;cursor:default;">
-                    ${me.photo ? `<img src="${me.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : me.name.charAt(0).toUpperCase()}
-                </div>
-            </div>
-            <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${me.name}</div>
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
-                ${isVerified  ? '<span class="badge-verified">✓ VERIFIED JOURNALIST</span>' : ''}
-                ${isPending   ? '<span class="badge-pending">⏳ PENDING REVIEW</span>' : ''}
-                ${me.employer ? `<span style="font-size:12px;color:rgba(255,255,255,.7);">${me.employer}</span>` : ''}
-            </div>
-            ${me.beat ? `<div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${me.beat}</div>` : ''}
-        </div>
-
-        ${isPending ? `
-        <div style="padding:12px 14px;border-radius:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:13px;margin-bottom:16px;line-height:1.55;">
-            <strong>Application under review</strong><br>
-            Your journalist application is being reviewed by our team. You'll receive an email at <strong>${me.email}</strong> once approved.
-        </div>` : ''}
-
-        ${me.bio ? `
-        <div style="margin-bottom:16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub);margin-bottom:6px;">Bio</div>
-            <div style="font-size:14px;color:var(--sub);line-height:1.65;">${me.bio}</div>
-        </div>` : ''}
-
-        <!-- Socials -->
-        ${(me.twitter||me.linkedin||me.instagram||me.portfolio_link) ? `
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-            ${me.twitter       ? `<a href="https://twitter.com/${me.twitter.replace('@','')}" target="_blank" class="j-social-tag">𝕏 ${me.twitter}</a>` : ''}
-            ${me.linkedin      ? `<a href="${me.linkedin}" target="_blank" class="j-social-tag">in LinkedIn</a>` : ''}
-            ${me.instagram     ? `<a href="https://instagram.com/${me.instagram.replace('@','')}" target="_blank" class="j-social-tag">📷 ${me.instagram}</a>` : ''}
-            ${me.portfolio_link? `<a href="${me.portfolio_link}" target="_blank" class="j-social-tag">📄 Portfolio</a>` : ''}
-        </div>` : ''}
-
-        ${isVerified ? `<button class="form-btn" onclick="renderProfileEdit()" style="margin-bottom:8px;">✏️ Edit Profile</button>` : ''}
-    `
-}
-
-function renderProfileEdit() {
-    const el = document.getElementById('myProfileContent')
-    el.innerHTML = `
-        <div style="margin-bottom:16px;">
-            <button onclick="renderProfileView()" style="background:transparent;border:none;color:var(--sub);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back
-            </button>
-        </div>
-
-        <!-- Avatar URL -->
-        <div class="fg">
-            <label class="fl">Profile Photo URL</label>
-            <input class="fi" id="editPhoto" value="${me.photo||''}" placeholder="https://example.com/photo.jpg">
-            <div style="font-size:11px;color:var(--sub);margin-top:4px;">Paste a direct image URL (from Google profile, Gravatar, etc.)</div>
-        </div>
-
-        <!-- Name -->
-        <div class="fg">
-            <label class="fl">Display Name <span>*</span></label>
-            <input class="fi" id="editName" value="${me.name||''}" required placeholder="Your full name">
-        </div>
-
-        <!-- Bio -->
-        <div class="fg">
-            <label class="fl">Bio</label>
-            <textarea class="ft" id="editBio" rows="3" placeholder="Tell readers about yourself...">${me.bio||''}</textarea>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div class="fg">
-                <label class="fl">Employer</label>
-                <input class="fi" id="editEmployer" value="${me.employer||''}" placeholder="Reuters, BBC…">
-            </div>
-            <div class="fg">
-                <label class="fl">Beat / Coverage Area</label>
-                <input class="fi" id="editBeat" value="${me.beat||''}" placeholder="Middle East, Ukraine…">
-            </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div class="fg">
-                <label class="fl">Twitter / X</label>
-                <input class="fi" id="editTwitter" value="${me.twitter||''}" placeholder="@handle">
-            </div>
-            <div class="fg">
-                <label class="fl">LinkedIn</label>
-                <input class="fi" id="editLinkedin" value="${me.linkedin||''}" placeholder="linkedin.com/in/…">
-            </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div class="fg">
-                <label class="fl">Instagram</label>
-                <input class="fi" id="editInstagram" value="${me.instagram||''}" placeholder="@handle">
-            </div>
-            <div class="fg">
-                <label class="fl">Portfolio / CV URL</label>
-                <input class="fi" id="editPortfolio" value="${me.portfolio_link||''}" placeholder="https://…">
-            </div>
-        </div>
-
-        <div id="profileSaveErr" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;"></div>
-
-        <button class="form-btn" id="saveProfileBtn" onclick="saveProfile()">Save Changes</button>
-    `
-}
-
-async function saveProfile() {
-    if (!me?.journalistId && !me?.email) return
-    const btn = document.getElementById('saveProfileBtn')
-    const err = document.getElementById('profileSaveErr')
-    btn.disabled = true
-    btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Saving…</span>`
-
-    if (err) err.style.display = 'none'
-    const newName   = document.getElementById('editName').value.trim()
-    const updates = {
-        display_name:   newName,
-        name:           newName,   // keep both columns in sync
-        avatar_url:     document.getElementById('editPhoto').value.trim(),
-        bio:            document.getElementById('editBio').value.trim(),
-        employer:       document.getElementById('editEmployer').value.trim(),
-        beat:           document.getElementById('editBeat').value.trim(),
-        twitter:        document.getElementById('editTwitter').value.trim(),
-        linkedin:       document.getElementById('editLinkedin').value.trim(),
-        instagram:      document.getElementById('editInstagram').value.trim(),
-        portfolio_link: document.getElementById('editPortfolio').value.trim()
-    }
-
-    if (!updates.display_name) {
-        err.textContent = 'Display name is required.'; err.style.display = 'block'
-        btn.disabled = false; btn.textContent = 'Save Changes'; return
-    }
-
-    let savedRow = null
-    let saveError = null
-
-    const primarySave = await sb
-        .from('journalists')
-        .update(updates)
-        .eq('id', me.journalistId)
-        .select('*')
-        .maybeSingle()
-
-    if (primarySave.error) saveError = primarySave.error
-    else savedRow = primarySave.data
-
-    if (!savedRow && !saveError && me.email) {
-        const fallbackSave = await sb
-            .from('journalists')
-            .update(updates)
-            .eq('email', me.email)
-            .select('*')
-            .maybeSingle()
-
-        if (fallbackSave.error) saveError = fallbackSave.error
-        else savedRow = fallbackSave.data
-    }
-
-    btn.disabled = false; btn.textContent = 'Save Changes'
-
-    if (saveError) {
-        err.textContent = 'Error saving: ' + saveError.message; err.style.display = 'block'
-        return
-    }
-
-    if (!savedRow) {
-        err.textContent = 'Profile was not saved to Supabase. No matching journalist record was updated.'
-        err.style.display = 'block'
-        return
-    }
-
-    // Update local state from the exact row Supabase saved.
-    me = {
-        ...me,
-        journalistId:   savedRow.id,
-        name:           savedRow.display_name || savedRow.name || updates.display_name,
-        photo:          savedRow.avatar_url || null,
-        bio:            savedRow.bio || '',
-        employer:       savedRow.employer || '',
-        beat:           savedRow.beat || '',
-        twitter:        savedRow.twitter || '',
-        linkedin:       savedRow.linkedin || '',
-        instagram:      savedRow.instagram || '',
-        portfolio_link: savedRow.portfolio_link || ''
-    }
-    localStorage.setItem('warroomUser', JSON.stringify(me))
-    updateUI()
-    showLiveToast('✓ Profile updated!')
-    renderProfileView() // back to view mode
-}
-
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
     initTheme()
     initDots()
-    await loadReports()
-    initRealtime()
-    initLivePresence()
+    loadReports()
 
     // 1. Check for an existing Supabase session (handles page reload while logged in)
     try {
@@ -939,84 +1035,27 @@ async function init() {
     })
 }
 
-// Apply Supabase session — always checks DB to resolve journalist/reader status
-async function applySession(session, isNewLogin) {
-    const u     = session.user
-    const email = u.email
+// Apply Supabase session to app state
+function applySession(session, isNewLogin) {
+    const u = session.user
+    // Preserve existing role/verified status on page refresh (don't reset to 'user')
+    const stored = JSON.parse(localStorage.getItem('warroomUser') || 'null')
+    const pendingRole = isNewLogin ? localStorage.getItem('pendingRole') : null
+    if (isNewLogin && pendingRole) localStorage.removeItem('pendingRole')
 
-    // Clear pendingRole regardless (it's only for directing the OAuth flow)
-    if (isNewLogin) localStorage.removeItem('pendingRole')
+    const role     = pendingRole || stored?.role || 'user'
+    const verified = stored?.id === u.id ? stored.verified : (role === 'user')
 
-    // 1. Check if this email is an APPROVED journalist
-    const { data: jRow } = await sb
-        .from('journalists')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle()
-
-    if (jRow) {
-        // ── Approved journalist ──────────────────────────────────────────
-        me = {
-            id:         u.id,
-            name:       jRow.display_name || jRow.name || u.user_metadata?.full_name || email.split('@')[0],
-            email,
-            photo:      jRow.avatar_url   || u.user_metadata?.avatar_url || null,
-            role:       'journalist',
-            verified:   true,
-            journalistId: jRow.id,
-            // full profile for edit modal — always read fresh from DB
-            bio:        jRow.bio           || '',
-            employer:   jRow.employer      || '',
-            beat:       jRow.beat          || '',
-            twitter:    jRow.twitter       || '',
-            linkedin:   jRow.linkedin      || '',
-            instagram:  jRow.instagram     || '',
-            portfolio_link: jRow.portfolio_link || ''
-        }
-        localStorage.setItem('warroomUser', JSON.stringify(me))
-        updateUI()
-        loadMyVotes()
-        return
-    }
-
-    // 2. Check if this email has a PENDING application
-    const { data: appRow } = await sb
-        .from('journalist_applications')
-        .select('id, name, status')
-        .eq('email', email)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-    if (appRow) {
-        const isPending  = appRow.status === 'pending'
-        const isRejected = appRow.status === 'rejected'
-        me = {
-            id:       u.id,
-            name:     appRow.name || u.user_metadata?.full_name || email.split('@')[0],
-            email,
-            photo:    u.user_metadata?.avatar_url || null,
-            role:     isPending ? 'journalist' : 'user',
-            verified: false,
-            applicationStatus: appRow.status
-        }
-        localStorage.setItem('warroomUser', JSON.stringify(me))
-        updateUI()
-        return
-    }
-
-    // 3. Regular reader — no application on record
     me = {
         id:       u.id,
-        name:     u.user_metadata?.full_name || email.split('@')[0],
-        email,
+        name:     u.user_metadata?.full_name || u.email.split('@')[0],
+        email:    u.email,
         photo:    u.user_metadata?.avatar_url || null,
-        role:     'user',
-        verified: false
+        role,
+        verified
     }
     localStorage.setItem('warroomUser', JSON.stringify(me))
     updateUI()
-    loadMyVotes()
 }
 
 // ── UI Update ────────────────────────────────────────────────────────────────
@@ -1025,30 +1064,18 @@ function updateUI() {
     const lBtn = document.getElementById('loginBtn')
     const sBtn = document.getElementById('submitBtn')
     if (me) {
-        lBtn.style.display   = 'none'
-        wrap.style.display   = 'block'
+        lBtn.style.display  = 'none'
+        wrap.style.display  = 'block'
         const av = document.getElementById('profAv')
         av.innerHTML = me.photo ? `<img src="${me.photo}" alt="">` : me.name.charAt(0).toUpperCase()
-
-        let tag = ''
-        if (me.role === 'journalist' && me.verified) tag = ' ✓'
-        else if (me.role === 'journalist') {
-            const st = me.applicationStatus
-            tag = st === 'rejected' ? ' (Rejected)' : ' (Pending Review)'
-        }
+        let tag = me.role === 'journalist' && me.verified ? ' ✓' : me.role === 'journalist' ? ' (Pending)' : ''
         document.getElementById('pdName').textContent = me.name + tag
-
-        // Show My Profile link for journalists (approved or pending)
-        const myProfileBtn = document.getElementById('pdMyProfile')
-        if (myProfileBtn) myProfileBtn.style.display = me.role === 'journalist' ? 'flex' : 'none'
-
         sBtn.style.display = (me.role === 'journalist' && me.verified) ? 'inline-block' : 'none'
     } else {
-        lBtn.style.display   = 'inline-block'
-        wrap.style.display   = 'none'
-        sBtn.style.display   = 'none'
+        lBtn.style.display  = 'inline-block'
+        wrap.style.display  = 'none'
+        sBtn.style.display  = 'none'
     }
-    refreshLivePresence()
 }
 
 // ── Profile Dropdown ─────────────────────────────────────────────────────────
@@ -1063,18 +1090,10 @@ function openSettings() {
     av.innerHTML = me.photo ? `<img src="${me.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">` : me.name.charAt(0).toUpperCase()
     document.getElementById('settingsName').textContent  = me.name
     document.getElementById('settingsEmail').textContent = me.email || ''
-
     const rd = document.getElementById('settingsRole')
-    if (me.role === 'journalist' && me.verified) {
-        rd.innerHTML = '<span class="badge-verified">✓ VERIFIED JOURNALIST</span>'
-    } else if (me.role === 'journalist' && me.applicationStatus === 'rejected') {
-        rd.innerHTML = '<span class="badge-pending" style="background:#ef4444;">✕ APPLICATION REJECTED</span>'
-    } else if (me.role === 'journalist') {
-        rd.innerHTML = `<span class="badge-pending">⏳ PENDING REVIEW</span>
-            <div style="font-size:11px;color:var(--sub);margin-top:5px;">Your application is under review. We'll contact you at ${me.email}.</div>`
-    } else {
-        rd.innerHTML = '<span style="font-size:12px;color:var(--sub);">Reader</span>'
-    }
+    if (me.role === 'journalist' && me.verified) rd.innerHTML = '<span class="badge-verified">✓ VERIFIED</span>'
+    else if (me.role === 'journalist') rd.innerHTML = '<span class="badge-pending">PENDING REVIEW</span>'
+    else rd.innerHTML = '<span style="font-size:12px;color:var(--sub);">Reader</span>'
     document.getElementById('settingsThemeIcon').textContent = theme === 'dark' ? '🌙' : '☀️'
     openModal('settingsModal')
 }
@@ -1130,81 +1149,42 @@ async function signInWithGoogle(type) {
     // If no error, Supabase is redirecting the page — do nothing, onAuthStateChange will handle it
 }
 
-// Journalist application form — writes directly to Supabase
-async function submitJournalistApp(e) {
+// Journalist application form
+function submitJournalistApp(e) {
     e.preventDefault()
     const btn = document.getElementById('jSubmitBtn')
-    btn.disabled = true
-    btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Submitting...</span>`
-
-    const payload = {
-        name:           document.getElementById('jName').value.trim(),
-        email:          document.getElementById('jEmail').value.trim(),
-        employer:       document.getElementById('jEmployer').value.trim(),
-        beat:           document.getElementById('jBeat').value.trim(),
-        bio:            document.getElementById('jBio').value.trim(),
-        twitter:        document.getElementById('jTwitter').value.trim(),
-        linkedin:       document.getElementById('jLinkedin').value.trim(),
-        instagram:      document.getElementById('jInstagram').value.trim(),
-        portfolio_link: document.getElementById('jCV').value.trim(),
-        notes:          document.getElementById('jNotes').value.trim(),
-        status:         'pending'
+    btn.disabled = true; btn.textContent = 'Submitting...'
+    const profile = {
+        name:     document.getElementById('jName').value.trim(),
+        email:    document.getElementById('jEmail').value.trim(),
+        employer: document.getElementById('jEmployer').value.trim(),
+        beat:     document.getElementById('jBeat').value.trim(),
+        bio:      document.getElementById('jBio').value.trim(),
+        twitter:  document.getElementById('jTwitter').value.trim(),
+        linkedin: document.getElementById('jLinkedin').value.trim(),
+        instagram:document.getElementById('jInstagram').value.trim(),
+        cv:       document.getElementById('jCV').value.trim(),
+        notes:    document.getElementById('jNotes').value.trim(),
+        status:   'pending',
+        created_at: new Date().toISOString(),
+        user_id: 'app_'+Date.now()
     }
-
-    const { data, error } = await sb
-        .from('journalist_applications')
-        .insert([payload])
-        .select()
-        .single()
-
-    btn.disabled = false
-    btn.textContent = 'Submit Application'
-
-    if (error) {
-        console.error('Supabase insert error:', error)
-        // Friendly message based on error type
-        if (error.code === '42P01') {
-            showJournalistSuccess(payload) // table not yet created — still show success for UX
-        } else if (error.code === '23505') {
-            showFormError('An application with this email already exists.')
-        } else {
-            showFormError('Something went wrong. Please try again.')
-        }
-        return
-    }
-
-    // Also cache profile locally for journalist cards
-    jProfiles[payload.name] = { ...payload, id: data?.id }
+    // Save profile data
+    jProfiles[profile.name] = profile
     localStorage.setItem('jProfiles', JSON.stringify(jProfiles))
 
-    showJournalistSuccess(payload)
-}
+    // Store in applications
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    apps.push(profile); localStorage.setItem('journalistApplications', JSON.stringify(apps))
 
-function showJournalistSuccess(profile) {
-    // Replace form with success state
-    const sec = document.getElementById('secJournalist')
-    sec.innerHTML = `
-        <div style="text-align:center;padding:24px 8px;">
-            <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,.12);border:2px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                <svg width="26" height="26" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Application Submitted!</div>
-            <div style="font-size:14px;color:var(--sub);line-height:1.6;max-width:280px;margin:0 auto;">
-                Thanks <strong>${profile.name}</strong>. Our team will review your application and get back to you within 24–48 hours.
-            </div>
-            <button class="btn sec" style="margin-top:20px;" onclick="closeModal(null,'authModal')">Close</button>
-        </div>`
-}
+    // Email admin
+    const subj = encodeURIComponent(`Journalist Application: ${profile.name}`)
+    const body = encodeURIComponent(`New application from ${profile.name}\nEmail: ${profile.email}\nEmployer: ${profile.employer}\nBeat: ${profile.beat}\nCV: ${profile.cv}\nTwitter: ${profile.twitter}\nLinkedIn: ${profile.linkedin}\n\nBio: ${profile.bio}\n\nNotes: ${profile.notes}`)
+    window.open(`mailto:${ADMIN_EMAIL}?subject=${subj}&body=${body}`, '_blank')
 
-function showFormError(msg) {
-    let el = document.getElementById('jFormError')
-    if (!el) {
-        el = document.createElement('div')
-        el.id = 'jFormError'
-        el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;'
-        document.getElementById('jSubmitBtn').before(el)
-    }
-    el.textContent = msg
+    btn.disabled = false; btn.textContent = 'Submit Application'
+    alert('Application submitted! We\'ll review it within 24–48 hours.')
+    closeModal(null, 'authModal')
 }
 
 // Logout with loading bar
@@ -1234,121 +1214,35 @@ function handleAdminLogin(e) {
     } else { alert('Invalid admin password') }
 }
 function openAdminPanel() { openModal('adminPanelModal'); loadPendingApps() }
-
-async function loadPendingApps() {
+function loadPendingApps() {
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]').filter(a=>a.status==='pending')
     const el = document.getElementById('pendingApplications')
-    el.innerHTML = `<div style="padding:32px;text-align:center;color:var(--sub);font-size:14px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite;margin-bottom:8px;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><br>Loading...</div>`
-
-    const { data, error } = await sb
-        .from('journalist_applications')
-        .select('*')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        el.innerHTML = `<div style="padding:24px;color:#ef4444;font-size:13px;">Error loading applications: ${error.message}</div>`
-        return
-    }
-
-    if (!data || !data.length) {
-        el.innerHTML = `<div style="padding:40px 16px;text-align:center;color:var(--sub);">
-            <div style="font-size:32px;margin-bottom:8px;">📭</div>
-            <div style="font-weight:600;">No pending applications</div>
-        </div>`
-        return
-    }
-
-    el.innerHTML = data.map(a => `
-        <div style="border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--hov);">
-            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-                <div>
-                    <div style="font-size:16px;font-weight:700;">${a.name}</div>
-                    <div style="font-size:13px;color:var(--sub);">${a.email}</div>
-                    ${a.employer ? `<div style="font-size:12px;color:var(--sub);margin-top:2px;">${a.employer}${a.beat?' · '+a.beat:''}</div>` : ''}
-                </div>
-                <div style="font-size:11px;color:var(--sub);">${new Date(a.created_at).toLocaleDateString()}</div>
-            </div>
-            ${a.bio ? `<div style="font-size:13px;color:var(--sub);margin-bottom:10px;line-height:1.55;">${a.bio}</div>` : ''}
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-                ${a.portfolio_link ? `<a href="${a.portfolio_link}" target="_blank" style="font-size:12px;color:#3b82f6;text-decoration:none;border:1px solid rgba(59,130,246,.3);border-radius:99px;padding:3px 10px;">📄 Portfolio</a>` : ''}
-                ${a.twitter ? `<span style="font-size:12px;color:var(--sub);border:1px solid var(--brd);border-radius:99px;padding:3px 10px;">𝕏 ${a.twitter}</span>` : ''}
-                ${a.linkedin ? `<a href="${a.linkedin}" target="_blank" style="font-size:12px;color:#3b82f6;text-decoration:none;border:1px solid rgba(59,130,246,.3);border-radius:99px;padding:3px 10px;">in LinkedIn</a>` : ''}
-            </div>
-            <div id="appActions_${a.id}" style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button class="adm-btn ok" onclick="approveJ('${a.id}','${a.name}','${a.email}')">✓ Approve</button>
-                <button class="adm-btn no" onclick="rejectJ('${a.id}','${a.name}')">✕ Reject</button>
-            </div>
-        </div>`).join('')
+    if (!apps.length) { el.innerHTML='<p class="no-res">No pending applications</p>'; return }
+    el.innerHTML = `<table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Employer</th><th>Beat</th><th>CV</th><th>Actions</th></tr></thead><tbody>
+        ${apps.map(a=>`<tr>
+            <td><strong>${a.name}</strong></td>
+            <td>${a.email}</td>
+            <td>${a.employer||'—'}</td>
+            <td>${a.beat||'—'}</td>
+            <td>${a.cv?`<a href="${a.cv}" target="_blank" style="color:#3b82f6;">View</a>`:'—'}</td>
+            <td>
+                <button class="adm-btn ok" onclick="approveJ('${a.user_id}')">Approve</button>
+                <button class="adm-btn no" onclick="rejectJ('${a.user_id}')">Reject</button>
+            </td>
+        </tr>`).join('')}
+    </tbody></table>`
 }
-
-async function approveJ(id, name, email) {
-    if (!confirm(`Approve ${name}?`)) return
-    const btn = document.querySelector(`#appActions_${id} .ok`)
-    if (btn) { btn.disabled=true; btn.textContent='Approving...' }
-
-    // 1. Update status in journalist_applications
-    const { error: e1 } = await sb
-        .from('journalist_applications')
-        .update({ status: 'approved' })
-        .eq('id', id)
-
-    if (e1) { alert('Error approving: ' + e1.message); if(btn){btn.disabled=false;btn.textContent='✓ Approve'} return }
-
-    // 2. Insert into journalists table
-    const { data: appData } = await sb.from('journalist_applications').select('*').eq('id', id).single()
-    if (appData) {
-        await sb.from('journalists').insert([{
-            name:           appData.name,
-            email:          appData.email,
-            bio:            appData.bio,
-            portfolio_link: appData.portfolio_link,
-            employer:       appData.employer,
-            beat:           appData.beat,
-            twitter:        appData.twitter,
-            linkedin:       appData.linkedin,
-            instagram:      appData.instagram,
-            application_id: id,
-            approved_at:    new Date().toISOString()
-        }])
-    }
-
-    // 3. Replace action buttons with email shortcut
-    const actionsEl = document.getElementById('appActions_' + id)
-    if (actionsEl) {
-        const subj = encodeURIComponent('Your WarRoom Journalist Application — Approved!')
-        const body = encodeURIComponent(`Hi ${name},\n\nGreat news! Your application to become a verified journalist on The WarRoom has been approved.\n\nYou can now log in to The WarRoom and start publishing verified conflict reports. Your name will appear with a Verified badge on all your reports.\n\nWelcome to the team.\n\n— The WarRoom Editorial Team`)
-        actionsEl.innerHTML = `
-            <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;font-size:13px;font-weight:600;margin-bottom:8px;">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                Approved
-            </div>
-            <a href="mailto:${email}?subject=${subj}&body=${body}" target="_blank"
-               style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:#3b82f6;color:#fff;font-size:13px;font-weight:600;text-decoration:none;margin-left:8px;">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                Send Approval Email
-            </a>`
-    }
+function approveJ(uid) {
+    if (!confirm('Approve?')) return
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    const a = apps.find(x=>x.user_id===uid)
+    if (a) { a.status='approved'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Approved ${a.name}`); loadPendingApps() }
 }
-
-async function rejectJ(id, name) {
-    if (!confirm(`Reject ${name}'s application?`)) return
-    const btn = document.querySelector(`#appActions_${id} .no`)
-    if (btn) { btn.disabled=true; btn.textContent='Rejecting...' }
-
-    const { error } = await sb
-        .from('journalist_applications')
-        .update({ status: 'rejected' })
-        .eq('id', id)
-
-    if (error) { alert('Error: ' + error.message); if(btn){btn.disabled=false;btn.textContent='✕ Reject'} return }
-
-    const actionsEl = document.getElementById('appActions_' + id)
-    if (actionsEl) {
-        actionsEl.innerHTML = `<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;font-weight:600;">
-            ✕ Rejected
-        </div>`
-    }
+function rejectJ(uid) {
+    if (!confirm('Reject?')) return
+    const apps = JSON.parse(localStorage.getItem('journalistApplications') || '[]')
+    const a = apps.find(x=>x.user_id===uid)
+    if (a) { a.status='rejected'; localStorage.setItem('journalistApplications',JSON.stringify(apps)); alert(`Rejected ${a.name}`); loadPendingApps() }
 }
 
 // ── Dots ─────────────────────────────────────────────────────────────────────
@@ -1392,166 +1286,11 @@ function updateMeta() { document.querySelector('meta[name="theme-color"]').setAt
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 function score(r) { return r.upvotes - r.downvotes }
-function countRecentReports(minutes=60) {
-    const cutoff = Date.now() - minutes * 60 * 1000
-    return reports.filter(r => new Date(r.created_at).getTime() >= cutoff).length
-}
-function livePresencePayload() {
-    return {
-        sessionId: livePresenceKey,
-        role: me?.role || 'guest',
-        verified: !!me?.verified,
-        name: me?.name || 'Guest',
-        joinedAt: new Date().toISOString()
-    }
-}
-function formatLiveStamp() {
-    if (!livePresenceState.lastSync) return livePresenceState.connected ? 'Live now' : 'Connecting live'
-    const diffMs = Date.now() - livePresenceState.lastSync
-    const diffSec = Math.max(0, Math.floor(diffMs / 1000))
-    if (diffSec < 5) return 'Updated just now'
-    if (diffSec < 60) return `Updated ${diffSec}s ago`
-    return `Updated ${Math.floor(diffSec / 60)}m ago`
-}
-function renderLiveBanner() {
-    const onlineEl = document.getElementById('onlineNowCount')
-    const reportingEl = document.getElementById('reportingNowCount')
-    const stampEl = document.getElementById('liveBannerStamp')
-    const copyEl = document.getElementById('liveBannerCopy')
-    if (!onlineEl || !reportingEl || !stampEl || !copyEl) return
-
-    const recentReports = countRecentReports(60)
-    onlineEl.textContent = String(Math.max(1, livePresenceState.online))
-    reportingEl.textContent = String(Math.max(0, livePresenceState.reporters))
-    stampEl.textContent = formatLiveStamp()
-
-    if (!livePresenceState.connected) {
-        copyEl.textContent = 'Connecting the live room so readers can see who is online and which verified journalists are in-session.'
-    } else if (livePresenceState.reporters > 0) {
-        copyEl.textContent = recentReports > 0
-            ? `${recentReports} reports landed in the last hour while ${livePresenceState.reporters} verified journalist${livePresenceState.reporters === 1 ? '' : 's'} stay live in the room.`
-            : `${livePresenceState.reporters} verified journalist${livePresenceState.reporters === 1 ? ' is' : 's are'} live in the room right now.`
-    } else {
-        copyEl.textContent = recentReports > 0
-            ? `${recentReports} fresh report${recentReports === 1 ? '' : 's'} arrived in the last hour, and the room is still actively watching live.`
-            : 'Readers are online now and waiting for the next verified update to break.'
-    }
-}
-function syncLivePresenceState() {
-    if (!livePresenceChannel) return
-    const metas = Object.values(livePresenceChannel.presenceState()).flat()
-    livePresenceState.online = Math.max(1, metas.length || 1)
-    livePresenceState.reporters = metas.filter(meta => meta.role === 'journalist' && meta.verified).length
-    livePresenceState.lastSync = Date.now()
-    livePresenceState.connected = true
-    renderLiveBanner()
-}
-async function refreshLivePresence() {
-    renderLiveBanner()
-    if (!livePresenceChannel) return
-    try {
-        await livePresenceChannel.track(livePresencePayload())
-    } catch (error) {
-        console.warn('Presence track failed', error)
-    }
-}
-function initLivePresence() {
-    renderLiveBanner()
-    if (livePresenceStampTimer) clearInterval(livePresenceStampTimer)
-    livePresenceStampTimer = setInterval(renderLiveBanner, 10000)
-    if (livePresenceChannel) return
-
-    livePresenceChannel = sb.channel('warroom-presence', {
-        config: { presence: { key: livePresenceKey } }
-    })
-
-    livePresenceChannel
-        .on('presence', { event: 'sync' }, syncLivePresenceState)
-        .on('presence', { event: 'join' }, syncLivePresenceState)
-        .on('presence', { event: 'leave' }, syncLivePresenceState)
-        .subscribe(async status => {
-            if (status !== 'SUBSCRIBED') return
-            livePresenceState.connected = true
-            await refreshLivePresence()
-            syncLivePresenceState()
-        })
-}
 
 async function loadReports() {
     const {data,error} = await sb.from('reports').select('*').order('created_at',{ascending:false})
     if (error) { console.error(error); return }
-    reports = data
-    // preserve any active search filter
-    const q = document.getElementById('searchInput')?.value?.trim()
-    if (q) {
-        const lq = q.toLowerCase()
-        filtered = reports.filter(r => r.text.toLowerCase().includes(lq) || r.location.toLowerCase().includes(lq) || r.journalist.toLowerCase().includes(lq))
-    } else {
-        filtered = data
-    }
-    renderFeed(); renderTop(); renderLiveBanner()
-}
-
-// ── Realtime subscriptions ────────────────────────────────────────────────────
-function initRealtime() {
-    // Reports channel — fires on any insert, update or delete
-    sb.channel('reports-live')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, payload => {
-            if (payload.eventType === 'INSERT') {
-                reports.unshift(payload.new)
-                filtered = [...reports]
-                renderFeed(); renderTop(); renderLiveBanner()
-                showLiveToast('📡 New report just came in')
-            } else if (payload.eventType === 'UPDATE') {
-                const idx = reports.findIndex(r => r.id === payload.new.id)
-                if (idx !== -1) {
-                    reports[idx] = payload.new
-                    filtered = filtered.map(r => r.id === payload.new.id ? payload.new : r)
-                    renderFeed(); renderTop(); renderLiveBanner()
-                    // Refresh open report modal if it's the same report
-                    const modal = document.getElementById('reportModal')
-                    if (modal?.classList.contains('active')) {
-                        const content = document.getElementById('modalContent')
-                        if (content?.innerHTML.includes(payload.new.id)) {
-                            openReportModal(payload.new.id)
-                        }
-                    }
-                }
-            } else if (payload.eventType === 'DELETE') {
-                reports  = reports.filter(r => r.id !== payload.old.id)
-                filtered = filtered.filter(r => r.id !== payload.old.id)
-                renderFeed(); renderTop(); renderLiveBanner()
-            }
-        })
-        .subscribe()
-
-    // Comments channel — fires when anyone posts a comment
-    sb.channel('comments-live')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'report_comments' }, payload => {
-            const c = payload.new
-            // Update local cache
-            if (!comments[c.report_id]) comments[c.report_id] = []
-            // Don't add duplicate (our own submit already added it locally)
-            const alreadyHave = comments[c.report_id].some(x => x.id === c.id)
-            if (!alreadyHave) {
-                comments[c.report_id].push({ id: c.id, uid: c.user_id, name: c.user_name, photo: c.user_photo, text: c.text, ts: c.created_at })
-            }
-            // Re-render comment list if this report's modal is open
-            const listEl = document.getElementById('commentList_' + c.report_id)
-            if (listEl) renderComments(c.report_id, listEl)
-            // Update comment count on card
-            renderFeed()
-        })
-        .subscribe()
-}
-
-// ── Live toast (non-blocking, bottom of screen) ───────────────────────────────
-function showLiveToast(msg) {
-    const t = document.createElement('div')
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:99px;background:var(--card);border:1px solid var(--brd);color:var(--txt);font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .3s;white-space:nowrap;'
-    t.textContent = msg
-    document.body.appendChild(t)
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300) }, 3000)
+    reports = data; filtered = data; renderFeed(); renderTop()
 }
 
 // ── Search ───────────────────────────────────────────────────────────────────
@@ -1571,122 +1310,28 @@ function handleSearch(q) {
 }
 function clearSearch() { document.getElementById('searchInput').value=''; handleSearch('') }
 
-// ── Load user's existing votes from Supabase ─────────────────────────────────
-async function loadMyVotes() {
-    if (!me || me.id.startsWith('demo_')) return
-    try {
-        const { data, error } = await sb
-            .from('report_votes')
-            .select('report_id, vote_type')
-            .eq('user_id', me.id)
-        if (error || !data) return
-        data.forEach(v => { myVotes[v.report_id] = v.vote_type })
-        localStorage.setItem('myVotes', JSON.stringify(myVotes))
-        // Refresh feed so vote button styles reflect loaded state
-        renderFeed(); renderTop()
-    } catch(err) { console.warn('Could not load votes:', err) }
-}
-
-// ── Voting — writes to report_votes table ────────────────────────────────────
+// ── Voting ───────────────────────────────────────────────────────────────────
 async function handleVote(reportId, type, e) {
     e.stopPropagation()
     if (!me) { showAuthModal(); return }
-
-    // Demo users can't vote (no valid UUID for Supabase)
-    if (me.id.startsWith('demo_')) {
-        showLiveToast('Sign in with Google to vote')
-        return
-    }
-
-    // Already voted — show a friendly nudge and bail
-    if (myVotes[reportId]) {
-        showLiveToast(myVotes[reportId] === type ? 'Already voted!' : 'You already voted on this report')
-        return
-    }
-
-    const r = reports.find(x => x.id === reportId); if (!r) return
-
-    // Optimistic UI update
-    myVotes[reportId] = type
-    localStorage.setItem('myVotes', JSON.stringify(myVotes))
-    renderFeed(); renderTop()
-
-    // 1. Insert into report_votes (unique constraint prevents double voting)
-    const { error: vErr } = await sb.from('report_votes').insert([{
-        report_id:  reportId,
-        user_id:    me.id,
-        user_name:  me.name,
-        user_email: me.email,
-        vote_type:  type
-    }])
-
-    if (vErr) {
-        if (vErr.code === '23505') {
-            // Already in DB — our optimistic update was correct, keep it
-            showLiveToast('Vote recorded!')
-        } else {
-            // Real error — roll back optimistic update
-            delete myVotes[reportId]
-            localStorage.setItem('myVotes', JSON.stringify(myVotes))
-            renderFeed(); renderTop()
-            showLiveToast('Error saving vote. Try again.')
-        }
-        return
-    }
-
-    // 2. Increment the counter on the report using RPC-safe arithmetic
-    const up   = r.upvotes   + (type === 'up'   ? 1 : 0)
-    const down = r.downvotes + (type === 'down' ? 1 : 0)
-    await sb.from('reports').update({ upvotes: up, downvotes: down }).eq('id', reportId)
-
-    showLiveToast(type === 'up' ? '↑ Upvoted!' : '↓ Downvoted')
+    if (myVotes[reportId]) { alert('You already voted on this report'); return }
+    const r = reports.find(x=>x.id===reportId); if(!r) return
+    const up   = r.upvotes   + (type==='up'   ? 1 : 0)
+    const down = r.downvotes + (type==='down' ? 1 : 0)
+    const {error} = await sb.from('reports').update({upvotes:up,downvotes:down}).eq('id',reportId)
+    if (error) { console.error(error); return }
+    myVotes[reportId] = type; localStorage.setItem('myVotes',JSON.stringify(myVotes))
     await loadReports()
 }
 
 // ── Comments ─────────────────────────────────────────────────────────────────
 function getComments(reportId) { return comments[reportId] || [] }
-
-async function loadComments(reportId) {
-    const { data, error } = await sb
-        .from('report_comments')
-        .select('*')
-        .eq('report_id', reportId)
-        .order('created_at', { ascending: true })
-    if (error) { console.error(error); return }
-    comments[reportId] = (data || []).map(c => ({
-        id: c.id, uid: c.user_id, name: c.user_name, photo: c.user_photo, text: c.text, ts: c.created_at
-    }))
-}
-
-async function saveComment(reportId, text) {
-    if (!me) return null
-    if (me.id && me.id.startsWith('demo_')) { showLiveToast('Sign in with Google to comment'); return null }
-    const { data, error } = await sb.from('report_comments').insert([{
-        report_id:  reportId,
-        user_id:    me.id,
-        user_name:  me.name,
-        user_photo: me.photo || null,
-        text
-    }]).select().single()
-    if (error) {
-        console.error('Comment error:', error)
-        if (error.code === '42501' || error.message?.includes('policy') || error.message?.includes('permission') || error.status === 403) {
-            showLiveToast('\u26A0\uFE0F Comment blocked \u2014 RLS policy needed')
-            console.warn('%c[WarRoom] Fix: run in Supabase SQL Editor:\nCREATE POLICY \"Users can insert comments\" ON report_comments FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);\nCREATE POLICY \"Anyone can read comments\" ON report_comments FOR SELECT USING (true);', 'color:#f59e0b;font-weight:bold')
-        } else {
-            showLiveToast('Could not post comment. Try again.')
-        }
-        return null
-    }
-    if (!data) return null
+function saveComment(reportId, text) {
+    if (!me) return
     if (!comments[reportId]) comments[reportId] = []
-    const alreadyHave = comments[reportId].some(x => x.id === data.id)
-    if (!alreadyHave) {
-        comments[reportId].push({ id: data.id, uid: me.id, name: me.name, photo: me.photo, text, ts: data.created_at })
-    }
-    return data
+    comments[reportId].push({ id:'c_'+Date.now(), uid:me.id, name:me.name, photo:me.photo, text, ts:new Date().toISOString() })
+    localStorage.setItem('wrComments', JSON.stringify(comments))
 }
-
 function renderComments(reportId, el) {
     const list = getComments(reportId)
     if (!list.length) { el.innerHTML='<div style="color:var(--sub);font-size:13px;padding:8px 0;">No comments yet. Be first!</div>'; return }
@@ -1702,27 +1347,16 @@ function renderComments(reportId, el) {
             </div>
         </div>`).join('')
 }
-
 function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-
-async function submitComment(reportId) {
+function submitComment(reportId) {
     const inp = document.getElementById('commentInput_'+reportId)
-    const txt = inp?.value.trim()
+    const txt = inp.value.trim()
     if (!txt) return
     if (!me) { showAuthModal(); return }
-    const sendBtn = inp?.nextElementSibling
+    saveComment(reportId, txt)
     inp.value = ''
-    inp.disabled = true
-    if (sendBtn) { sendBtn.disabled = true; sendBtn.style.opacity = '.5' }
-    const result = await saveComment(reportId, txt)
-    inp.disabled = false
-    if (sendBtn) { sendBtn.disabled = false; sendBtn.style.opacity = '1' }
-    if (result) {
-        const listEl = document.getElementById('commentList_'+reportId)
-        if (listEl) renderComments(reportId, listEl)
-        renderFeed()
-        showLiveToast('\u2713 Comment posted!')
-    }
+    const listEl = document.getElementById('commentList_'+reportId)
+    renderComments(reportId, listEl)
 }
 
 // ── Journalist Profile ────────────────────────────────────────────────────────
@@ -1858,7 +1492,7 @@ function renderTop() {
     el.innerHTML = createCard(top, true)
 }
 
-// ── Report Modal (with comments + delete + voters) ───────────────────────────
+// ── Report Modal (with comments) ─────────────────────────────────────────────
 function openReportModal(reportId) {
     const r = reports.find(x=>x.id===reportId); if(!r) return
     const sc     = score(r)
@@ -1867,13 +1501,9 @@ function openReportModal(reportId) {
     const commentListId  = 'commentList_'+reportId
     const commentInputId = 'commentInput_'+reportId
 
-    // Is the currently logged-in journalist the author?
-    const isAuthor = me && me.role === 'journalist' && me.verified &&
-        (me.email === r.journalist_email || me.name === r.journalist)
-
     document.getElementById('modalContent').innerHTML = `
         <!-- Journalist header -->
-        <div style="display:flex;gap:14px;margin-bottom:16px;align-items:start;">
+        <div style="display:flex;gap:14px;margin-bottom:16px;">
             <div class="av lg" onclick="closeModal(null,'reportModal');setTimeout(()=>openJournalistProfile('${jname}'),200)">
                 ${jname.charAt(0).toUpperCase()}
             </div>
@@ -1887,13 +1517,6 @@ function openReportModal(reportId) {
                 <div class="r-meta">${r.location}</div>
                 <div class="r-meta">${new Date(r.created_at).toLocaleString()}</div>
             </div>
-            ${isAuthor ? `
-            <button onclick="confirmDeleteReport('${r.id}')" title="Delete report"
-                style="flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.08);color:#ef4444;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;"
-                onmouseover="this.style.background='rgba(239,68,68,.18)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">
-                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                Delete
-            </button>` : ''}
         </div>
 
         <div class="r-txt" style="font-size:16px;line-height:1.65;margin-bottom:16px;">${r.text}</div>
@@ -1909,19 +1532,6 @@ function openReportModal(reportId) {
             </button>
             <span class="r-meta">Overall Score: <strong style="color:var(--txt);font-size:15px;">${sc}</strong></span>
         </div>
-
-        <!-- Voters panel — only visible to the report's author -->
-        ${isAuthor ? `
-        <div class="div"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-size:14px;font-weight:700;">Who voted</div>
-            <button onclick="loadVoters('${r.id}')" id="loadVotersBtn"
-                style="font-size:12px;color:var(--sub);background:transparent;border:none;cursor:pointer;text-decoration:underline;">
-                Load
-            </button>
-        </div>
-        <div id="votersList_${r.id}" style="min-height:32px;"></div>
-        ` : ''}
 
         <!-- Comments -->
         <div class="div"></div>
@@ -1944,73 +1554,6 @@ function openReportModal(reportId) {
     `
     renderComments(reportId, document.getElementById(commentListId))
     openModal('reportModal')
-    // Load comments from Supabase then re-render
-    loadComments(reportId).then(() => {
-        const el = document.getElementById(commentListId)
-        if (el) renderComments(reportId, el)
-    })
-}
-
-// ── Delete report ─────────────────────────────────────────────────────────────
-async function confirmDeleteReport(reportId) {
-    if (!confirm('Delete this report? This cannot be undone.')) return
-
-    // Delete child rows first to avoid foreign key violations
-    await sb.from('report_votes').delete().eq('report_id', reportId)
-    await sb.from('report_comments').delete().eq('report_id', reportId)
-
-    const { error } = await sb.from('reports').delete().eq('id', reportId)
-    if (error) { alert('Error deleting: ' + error.message); return }
-
-    // Clean up local caches
-    delete myVotes[reportId]
-    delete comments[reportId]
-    localStorage.setItem('myVotes', JSON.stringify(myVotes))
-
-    closeModal(null, 'reportModal')
-    showLiveToast('Report deleted')
-    await loadReports()
-}
-
-// ── Load voters (journalist-only) ─────────────────────────────────────────────
-async function loadVoters(reportId) {
-    const btn = document.getElementById('loadVotersBtn')
-    const el  = document.getElementById('votersList_' + reportId)
-    if (!el) return
-    if (btn) { btn.style.display = 'none' }
-    el.innerHTML = `<div style="color:var(--sub);font-size:13px;padding:4px 0;">Loading…</div>`
-
-    const { data, error } = await sb
-        .from('report_votes')
-        .select('user_name, user_email, vote_type, created_at')
-        .eq('report_id', reportId)
-        .order('created_at', { ascending: false })
-
-    if (error) { el.innerHTML = `<div style="color:#ef4444;font-size:12px;">${error.message}</div>`; return }
-    if (!data || !data.length) { el.innerHTML = `<div style="color:var(--sub);font-size:13px;">No votes yet</div>`; return }
-
-    const ups   = data.filter(v => v.vote_type === 'up')
-    const downs = data.filter(v => v.vote_type === 'down')
-
-    const renderGroup = (list, label, color, icon) => list.length === 0 ? '' : `
-        <div style="margin-bottom:10px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:${color};margin-bottom:6px;">${icon} ${label} (${list.length})</div>
-            ${list.map(v => `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:8px;background:var(--hov);margin-bottom:4px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;">
-                        ${(v.user_name||'?').charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                        <div style="font-size:13px;font-weight:600;">${v.user_name || 'Anonymous'}</div>
-                        <div style="font-size:11px;color:var(--sub);">${v.user_email || ''}</div>
-                    </div>
-                </div>
-                <div style="font-size:11px;color:var(--sub);">${fmtDate(v.created_at)}</div>
-            </div>`).join('')}
-        </div>`
-
-    el.innerHTML = renderGroup(ups, 'Upvoted', '#10b981', '↑') + renderGroup(downs, 'Downvoted', '#ef4444', '↓')
 }
 
 // ── Submit report ─────────────────────────────────────────────────────────────
@@ -2026,16 +1569,7 @@ async function handleSubmitReport(e) {
     const txt = document.getElementById('reportText').value.trim()
     const btn = document.getElementById('submitFormBtn')
     btn.disabled=true; btn.textContent='Submitting...'
-    const {error} = await sb.from('reports').insert([{
-        journalist:         me.name,
-        journalist_email:   me.email,
-        journalist_user_id: me.id,
-        location:           loc,
-        text:               txt,
-        verified:           true,
-        upvotes:            0,
-        downvotes:          0
-    }])
+    const {error} = await sb.from('reports').insert([{journalist:me.name,location:loc,text:txt,verified:true,upvotes:0,downvotes:0}])
     btn.disabled=false; btn.textContent='Submit Report'
     if (error) { console.error(error); alert('Error. Try again.'); return }
     document.getElementById('reportLocation').value=''
@@ -2103,75 +1637,19 @@ document.addEventListener('keydown', e => {
     if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); document.body.style.overflow='auto' }
 })
 
-// ── Location autocomplete (OpenStreetMap Nominatim — no API key needed) ──────
-let locDebounce = null
-async function handleLocationInput(val) {
-    const el = document.getElementById('locSuggestions')
-    clearTimeout(locDebounce)
-    if (!val || val.trim().length < 2) { el.style.display = 'none'; return }
-    locDebounce = setTimeout(async () => {
-        try {
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&addressdetails=1&limit=5`,
-                { headers: { 'Accept-Language': 'en' } }
-            )
-            const data = await res.json()
-            if (!data.length) { el.style.display = 'none'; return }
-            el.innerHTML = data.map(item => {
-                const a = item.address || {}
-                const city    = a.city || a.town || a.village || a.county || ''
-                const country = a.country || ''
-                const label   = city && country ? `${city}, ${country}` : item.display_name.split(',').slice(0,2).join(',').trim()
-                const sub     = item.display_name
-                return `<div class="loc-item" onmousedown="pickLocation('${label.replace(/'/g,"\\'")}')">
-                    <span class="loc-item-pin">📍</span>
-                    <div>
-                        <div class="loc-item-main">${label}</div>
-                        <div class="loc-item-sub">${sub.length > 60 ? sub.slice(0,60)+'…' : sub}</div>
-                    </div>
-                </div>`
-            }).join('')
-            el.style.display = 'block'
-        } catch(e) { el.style.display = 'none' }
-    }, 350)
-}
-function pickLocation(label) {
-    document.getElementById('reportLocation').value = label
-    closeLocSuggestions()
-}
-function closeLocSuggestions() {
-    const el = document.getElementById('locSuggestions')
-    if (el) el.style.display = 'none'
-}
-
-// ── Founder popup ─────────────────────────────────────────────────────────────
-function initFounderPopup() {
-    if (sessionStorage.getItem('founderDismissed')) return
-    // Load X/Twitter profile via external oEmbed proxy-friendly fallback
-    // We use a known avatar CDN approach — load pic from unavatar.io which proxies X avatars
-    const avEl = document.getElementById('founderAv')
-    const img = document.createElement('img')
-    img.className = 'founder-av'
-    img.src = 'https://unavatar.io/twitter/masudview?fallback=false'
-    img.alt = 'Masud'
-    img.onload = () => { avEl.parentNode.replaceChild(img, avEl) }
-    img.onerror = () => { /* keep initials fallback */ }
-
-    // Show popup after 3s delay
-    setTimeout(() => {
-        const popup = document.getElementById('founderPopup')
-        popup.classList.add('show')
-    }, 3000)
-}
-function closeFounderPopup() {
-    document.getElementById('founderPopup').classList.remove('show')
-    sessionStorage.setItem('founderDismissed', '1')
+// ── Newsletter ────────────────────────────────────────────────────────────────
+function handleNewsletter() {
+    const el = document.getElementById('nlEmail')
+    const val = el.value.trim()
+    if (!val || !val.includes('@')) { el.focus(); el.style.borderColor='#ef4444'; setTimeout(()=>el.style.borderColor='',1200); return }
+    el.value = ''
+    el.placeholder = '✓ You\'re subscribed!'
+    el.style.borderColor = '#10b981'
+    setTimeout(() => { el.placeholder = 'your@email.com'; el.style.borderColor = ''; }, 3000)
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 init()
-initFounderPopup()
-window.addEventListener('beforeunload', () => { try { livePresenceChannel?.untrack() } catch(e) {} })
 
 </script>
 </body>
